@@ -43,9 +43,9 @@
             <div id="client-list-container">
               <h2>Lista de Clientes</h2>
               <ul id="client-list">
-                <li v-for="client in clients">
-                  {{ client.ID || 'No ID' }} - {{ client.firstName }} {{ client.lastName }} - {{ client.email }}
-                </li>
+                <li v-for="client in clients" :key="client.id">
+                  ID: {{ client.id }} - {{ client.firstName }} {{ client.lastName }} - {{ client.email }}
+                </li>                
               </ul>
             </div>
           </div>
