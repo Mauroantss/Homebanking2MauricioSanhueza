@@ -6,6 +6,7 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./Cuentascliente.css">
    
 </head>
 <body>
@@ -40,34 +41,34 @@
             </div>
         </div>
     </nav>
-    <header class="bg-primary text-white text-center py-4">
-        <h1>Perfil de Cuenta Bancaria</h1>
-    </header>
-    <main class="container mt-5" id="main-container">
-        <div class="row">
-            <!-- Tarjeta 1 - Información de Cuenta -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title">Cuenta de Ahorro</h2>
-                        <p class="card-text">Número de Cuenta: 1234567890</p>
-                        <p class="card-text">Saldo Disponible: $5,000.00</p>
-                    </div>
-                </div>
+    <div id="app">
+        <!-- Encabezado de la aplicación -->
+        <header>
+            <h1>Accounts</h1>
+            <div class="form-group">
+                <label for="clientIdSelect">Seleccionar Cliente:</label>
+                <!-- Usamos v-model para enlazar la selección a la propiedad selectedClientId en Vue -->
+                <select id="clientIdSelect" v-model="selectedClientId" class="form-control">
+                    <option v-for="client in clients" :key="client.id" :value="client.id">{{ `Cliente ID: ${client.id}` }}</option>
+                </select>
+                <button @click="loadAccounts" class="btn btn-primary mt-2">Ver Cuentas</button>
             </div>
-
-            <!-- Tarjeta 2 - Información de Cuenta -->
-            <div class="col-md-6">
+        </header>
+        
+        <!-- Contenedor de las tarjetas de cuentas -->
+        <div id="accountsContainer" class="row mt-4">
+            <div class="col-md-6 mb-4" v-for="account in accounts" :key="account.id">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title">Cuenta Corriente</h2>
-                        <p class="card-text">Número de Cuenta: 0987654321</p>
-                        <p class="card-text">Saldo Disponible: $7,500.00</p>
+                        <h2 class="card-title">Cuenta de {{ account.Id }}</h2>
+                        <p class="card-text">Número de Cuenta: {{ account.number }}</p>
+                        <p class="card-text">Saldo Disponible: ${{ account.balance }}</p>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+
     <footer>
         <nav class="navbar" style="background-color: #e3f2fd;">
             <div class="container-fluid">
@@ -84,8 +85,7 @@
       
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
     <script type="" src="./Cuentasclientes.js" ></script>
     
 </body>
