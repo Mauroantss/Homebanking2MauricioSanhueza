@@ -3,10 +3,9 @@ package com.mindhub.HomeBanking2.models;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 // Indicamos que esta clase es una entidad que se mapeará a una tabla en la base de datos
 @Entity
@@ -21,6 +20,9 @@ public class Client {
 
     // Definimos las propiedades del cliente
     private String firstName, lastName, email;
+
+    @OneToMany( mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<Account> accounts = new HashSet<>();//genera espacio de refererncia en la memoria de la app
 
     // Constructor vacío necesario para Hibernate
     public Client() {}
@@ -60,6 +62,15 @@ public class Client {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void addAccount(Account account){
+        account.setClient(this);
+        this.accounts.add(account); //Push en jS
     }
 
     // Método para imprimir el objeto en un formato legible
