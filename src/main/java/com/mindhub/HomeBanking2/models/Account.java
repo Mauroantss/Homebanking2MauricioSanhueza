@@ -14,13 +14,12 @@ public class Account {
 @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 @GenericGenerator( name = "native", strategy = "native")
 
+    private Long id;
 
+    private String number;
+    private LocalDate creationDate;
+    private double balance;
 
-    private Long Id;
-
-    private String Number;
-
-    private int Balance;
 
 
 
@@ -34,39 +33,48 @@ public class Account {
     public Account() {
     }
 
-    public Account(Long id, String number, int balance, Client client) {
-        Id = id;
-        Number = number;
-        Balance = balance;
-        this.client = client;
+    public Account(String number, LocalDate creationDate, double balance) {
+        this.number = number;
+        this.creationDate = creationDate;
+        this.balance = balance;
     }
 
 
     //Metodos o Comportamiento
 
 
-    public Long getId() {
-        return Id;
-    }
-
     public String getNumber() {
-        return Number;
+        return number;
     }
 
-    public int getBalance() {
-        return Balance;
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Client getClient() {
         return client;
-    }
-
-    public void setNumber(String number) {
-        Number = number;
-    }
-
-    public void setBalance(int balance) {
-        Balance = balance;
     }
 
     public void setClient(Client client) {

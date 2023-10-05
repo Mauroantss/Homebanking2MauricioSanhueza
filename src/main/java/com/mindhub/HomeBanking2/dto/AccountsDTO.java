@@ -2,30 +2,33 @@ package com.mindhub.HomeBanking2.dto;
 
 import com.mindhub.HomeBanking2.models.Account;
 
+import java.time.LocalDate;
+
 public class AccountsDTO {
-
-    private Long Id;
-
-    private String Number;
-
-    private int Balance;
-
+    private Long id;
+    private String number;
+    private LocalDate creationDate;
+    private double balance;
     public AccountsDTO(Account account){
-
-        Id = account.getId();
-        Number = account.getNumber();
-        Balance = account.getBalance();
+        this.id = account.getId();
+        this.number = account.getNumber();
+        this.creationDate = account.getCreationDate();
+        this.balance = account.getBalance();
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public String getNumber() {
-        return Number;
+        return number;
     }
 
-    public int getBalance() {
-        return Balance;
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public double getBalance() {
+        return balance;
     }
 }

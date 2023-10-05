@@ -6,24 +6,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ClientDTO {
-    private long ID;
-
-    // Definimos las propiedades del cliente
-    private String firstName, lastName, email;
-
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
     private List<AccountsDTO> accounts;
+
 
     public ClientDTO(Client client){
 
-        ID = client.getID();
-        firstName = client.getFirstName();
-        lastName = client.getLastName();
-        email = client.getEmail();
-        accounts = client.getAccounts().stream().map(account -> new AccountsDTO(account)).collect(Collectors.toList());
+        this.id = client.getID();
+        this.firstName = client.getFirstName();
+        this.lastName = client.getLastName();
+        this.email = client.getEmail();
+        this.accounts = client
+                .getAccounts()
+                .stream()
+                .map(AccountsDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public long getID() {
-        return ID;
+    public Long getId() {
+        return id;
     }
 
     public String getFirstName() {

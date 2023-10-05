@@ -41,35 +41,28 @@
             </div>
         </div>
     </nav>
-    <div id="app">
-        <!-- Encabezado de la aplicación -->
-        <header>
-            <h1>Accounts</h1>
-            <div class="form-group">
-                <label for="clientIdSelect">Seleccionar Cliente:</label>
-                <!-- Usamos v-model para enlazar la selección a la propiedad selectedClientId en Vue -->
-                <select id="clientIdSelect" v-model="selectedClientId" class="form-control">
-                    <option v-for="client in clients" :key="client.id" :value="client.id">{{ `Cliente ID: ${client.id}` }}</option>
-                </select>
-                <button @click="loadAccounts" class="btn btn-primary mt-2">Ver Cuentas</button>
-            </div>
-        </header>
-        
-        <!-- Contenedor de las tarjetas de cuentas -->
-        <div id="accountsContainer" class="row mt-4">
-            <div class="col-md-6 mb-4" v-for="account in accounts" :key="account.id">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title">Cuenta de {{ account.Id }}</h2>
-                        <p class="card-text">Número de Cuenta: {{ account.number }}</p>
-                        <p class="card-text">Saldo Disponible: ${{ account.balance }}</p>
-                    </div>
+    <div id="create-client-app" class="container mt-5">
+        <h2 class="text-center">Clientes</h2>
+        <ul class="list-group">
+            <li v-for="client in clients" :key="client.id" class="list-group-item d-flex justify-content-between align-items-center">
+                {{ client.firstName }} {{ client.lastName }} - {{ client.email }}
+                <button @click="selectClient(client.id)" class="btn btn-primary">Ver Cuentas</button>
+            </li>
+        </ul>
+        <div v-if="selectedClientAccounts.length" class="mt-4">
+            <h3 class="text-center">Cuentas de {{ selectedClientName }}</h3>
+            <div v-for="account in selectedClientAccounts" :key="account.id" class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Número de cuenta: {{ account.number }}</h5>
+                    <p class="card-text">Fecha de creación: {{ account.creationDate }}</p>
+                    <p class="card-text">Saldo: ${{ account.balance }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer>
+
+    <footer class="fixed-bottom">
         <nav class="navbar" style="background-color: #e3f2fd;">
             <div class="container-fluid">
                 <a href="https://www.tiktok.com/es/"><i class="bi bi-tiktok"></i></a>
@@ -78,15 +71,17 @@
                 <a href="https://web.telegram.org/a/"><i class="bi bi-telegram"></i></a>
                 <a href="https://www.instagram.com/"><i class="bi bi-instagram"></i></a>
                 <a href="https://web.whatsapp.com/"><i class="bi bi-whatsapp"></i></a>
-
             </div>
         </nav>
+    </footer>
     </footer>
       
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
-    <script type="" src="./Cuentasclientes.js" ></script>
-    
+    <script src="./Cuentasclientes.js"></script>
+</body>
+</html>
+
 </body>
 </html>

@@ -1,57 +1,41 @@
-const app = Vue.createApp({
-    data() {
-        return {
-            clients: [], // Almacenará los datos de los clientes
-            selectedClientId: null, // Almacenará el ID del cliente seleccionado
-            accounts: [] // Almacenará las cuentas del cliente seleccionado
-        };
-    },
-    methods: {
-        loadAccounts() {
-            // Verificamos si se ha seleccionado un cliente
-            if (!this.selectedClientId) {
-                return;
-            }
-
-            // Realizar una solicitud para obtener las cuentas del cliente seleccionado
-            const accountsUrl = `http://localhost:8080/accounts?clientId=${this.selectedClientId}`;
-            
-            fetch(accountsUrl)
-              .then(response => {
-                if (response.status === 200) {
-                  return response.json();
-                } else {
-                  throw new Error('No se pudo obtener los datos de las cuentas');
-                }
-              })
-              .then(accounts => {
-                this.accounts = accounts; // Actualizar las cuentas en Vue
+const listClientsApp = Vue.createApp({
+  data() {
+      return {
+          clients: [],
+          selectedClientAccounts: [],
+          selectedClientName: ''
+      };
+  },
+  mounted() {
+      this.fetchClients();
+  },
+  methods: {
+      fetchClients() {
+          fetch('http://localhost:8080/api/clients')
+              .then(response => response.json())
+              .then(data => {
+                  this.clients = data;
               })
               .catch(error => {
-                console.error('Error al obtener las cuentas:', error);
+                  console.error('Error al obtener clientes:', error);
               });
-        }
-    },
-    mounted() {
-        // Realizar una solicitud para obtener los IDs de los clientes
-        const clientsUrl = 'http://localhost:8080/api/clients';
-
-        fetch(clientsUrl)
-          .then(response => {
-            if (response.status === 200) {
-              return response.json();
-            } else {
-              throw new Error('No se pudo obtener los IDs de los clientes');
-            }
-          })
-          .then(clients => {
-            this.clients = clients; // Actualizar los clientes en Vue
-          })
-          .catch(error => {
-            console.error('Error al obtener los IDs de los clientes:', error);
-          });
-    }
-});
-
-// Montamos la aplicación en el elemento con id "app"
-app.mount('#app');
+      },
+      selectClient(clientId) {
+        fetch(`http://localhost:8080/api/clients/${clientId}`) // Asume que esta es la URL correcta
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.selectedClientAccounts = data.accounts; // Asume que "accounts" es un campo directo en la respuesta
+                const client = this.clients.find(c => c.id === clientId);
+                this.selectedClientName = `${client.firstName} ${client.lastName}`;
+            })
+            .catch(error => {
+                console.error('Error al obtener cuentas:', error);
+              });
+      }
+  }
+}).mount('#create-client-app');
