@@ -1,0 +1,62 @@
+body {
+    background-color: #e9ecef;
+    font-family: 'Roboto', sans-serif; /* Cambiamos a Roboto */
+    font-weight: 400; /* Peso normal para el contenido general */
+    line-height: 1.6; /* Ajusta el espacio entre líneas para una mejor legibilidad */
+    color: #333; /* Color oscuro general para el texto */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700; /* Peso bold para los encabezados */
+    margin-top: 0; /* Elimina margen superior para un espaciado uniforme */
+}
+
+.container {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    transition: transform .2s; 
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.btn-primary {
+    background-color: #333;
+    border: none;
+}
+
+.main-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    padding: 1rem 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Ligero efecto de sombreado */
+}
+header {
+    margin-top: 150px;
+}
+
+.carousel img {
+    height: 350px;
+    object-fit: cover;
+    object-position: center;
+}
+
+footer {
+    margin-top: auto;
+    padding: 1rem 0;
+    text-align: center;
+}
+
