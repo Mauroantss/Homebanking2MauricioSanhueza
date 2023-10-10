@@ -20,12 +20,12 @@ public class Account {
     private double balance;
 
     //---- Many to one de Account a Client
-    @ManyToOne
-    @JoinColumn(name = "Client_Id")
+    @ManyToOne// Muchas cuentas a un cliente
+    @JoinColumn(name = "Client_Id")//Solo le doy el nombre a la columna
     private Client client;
 
     //---- One to many de Account a Transaction
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)// Una cuenta a muchas transacciones
     private Set<Transaction> transactions = new HashSet<>(); //Le asignamos un espacio en memoria
 
 

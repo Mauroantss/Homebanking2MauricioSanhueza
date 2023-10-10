@@ -20,7 +20,7 @@ public class Transaction {
 
     //---- Relacion Many to one entre Transaction y Account
 
-    @ManyToOne
+    @ManyToOne// Muhcas transacciones a una cuenta
     private Account account;
 
 

@@ -20,7 +20,7 @@ public class AccountController {
     private AccountRepository accountRepository;
 
     @GetMapping
-    public List<AccountDTO> getAllAccounts(){ // Esto solo es un metodo!
+    public List<AccountDTO> getAllAccounts(){ // Convierto la list en un stream y hago al stream un map
         List<Account> accounts = accountRepository.findAll(); //Le pido al JPARepository el listado
         Stream<Account> accountStream = accounts.stream();
         Stream<AccountDTO> accountDTOStream = accountStream.map(AccountDTO::new);

@@ -9,14 +9,14 @@ import java.util.Set;
 @Entity
 public class Client {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @Id// Genero un Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")// hago que el id se haga solo con nativo
     @GenericGenerator(name = "native", strategy = "native")
     private long ID;
 
     private String firstName, lastName, email;
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    private Set<Account> accounts = new HashSet<>();
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER) //un cliente, varias cuentas
+    private Set<Account> accounts = new HashSet<>();// asocio las cuentas con el cliente
 
     public Client() {
     }
