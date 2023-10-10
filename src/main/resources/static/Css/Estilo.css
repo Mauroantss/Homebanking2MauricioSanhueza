@@ -49,14 +49,24 @@ header {
 }
 
 .carousel img {
-    height: 350px;
+    height: 125px;
     object-fit: cover;
     object-position: center;
 }
+
 
 footer {
     margin-top: auto;
     padding: 1rem 0;
     text-align: center;
+}
+.custom-carousel .carousel-item {
+    height: 125px;  /* Ajusta este valor según tus necesidades */
+    overflow: hidden;  /* Esto asegurará que las imágenes que excedan este tamaño sean recortadas */
+}
+.custom-carousel .carousel-item img {
+    height: 100%;  /* Asegura que la imagen cubra todo el espacio del .carousel-item */
+    object-fit: cover;
+    object-position: center;
 }
 
