@@ -33,9 +33,17 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.05);
 }
 
-.btn-primary {
-    background-color: #333;
+.card .btn {
+    background-color: #E74C3C;
+    color: white;
     border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+.card .btn:hover {
+    background-color: #C0392B;
 }
 
 .main-header h1 {
@@ -49,7 +57,7 @@ header {
 }
 
 .carousel img {
-    height: 125px;
+    height: 220px;
     object-fit: cover;
     object-position: center;
 }
@@ -61,7 +69,7 @@ footer {
     text-align: center;
 }
 .custom-carousel .carousel-item {
-    height: 125px;  /* Ajusta este valor según tus necesidades */
+    height: 220px;  /* Ajusta este valor según tus necesidades */
     overflow: hidden;  /* Esto asegurará que las imágenes que excedan este tamaño sean recortadas */
 }
 .custom-carousel .carousel-item img {
