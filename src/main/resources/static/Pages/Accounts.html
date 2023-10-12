@@ -48,22 +48,37 @@
         <ul class="list-group">
             <li v-for="client in clients" :key="client.id" class="list-group-item d-flex justify-content-between align-items-center">
                 {{ client.firstName }} {{ client.lastName }} - {{ client.email }}
-                <button @click="selectClient(client.id)" class="btn btn-primary">Account</button>
+                <button @click="selectClient(client.id)" class="btn btn-primary button-style">Account & Loans</button>
+
             </li>
         </ul>
-        <div v-if="selectedClientAccounts.length" class="mt-4">
-            <h3 class="text-center">Welcome {{ selectedClientName }}</h3>
-            <div v-for="account in selectedClientAccounts" :key="account.id" class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Número de cuenta: {{ account.number }}</h5>
-                    <p class="card-text">Fecha de creación: {{ account.creationDate }}</p>
-                    <p class="card-text">Saldo: ${{ account.balance }}</p>
-                    <a href="http://localhost:8080/Pages/Account.html?id=1" class="btn btn-primary">See transaction</a>
+        <div v-if="selectedClientAccounts.length || selectedClientLoans.length" class="mt-4 row">
+            <div class="col-md-6">
+                <h3 class="text-center">Welcome {{ selectedClientName }}</h3>
+                <div v-for="account in selectedClientAccounts" :key="account.id" class="card mb-3 dashboard credit-card-style">
+                    <div class="card-body text-center"> <!-- Agregamos text-center para centrar el texto -->
+                        <h5 class="card-title">Account Number: {{ account.number }}</h5>
+                        <p class="card-text">Date Creation: {{ account.creationDate }}</p>
+                        <p class="card-text">Account Balance: ${{ account.balance }}</p>
+                        <a href="http://localhost:8080/Pages/Account.html?id=1" class="btn btn-primary">See transaction</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4 class="text-center">Loans for {{ selectedClientName }}</h4>
+                <div v-for="loan in selectedClientLoans" :key="loan.id" class="card mb-3 dashboard credit-card-style">
+                    <div class="card-body text-center"> <!-- Agregamos text-center para centrar el texto -->
+                        <h5 class="card-title">Loan Type: {{ loan.type }}</h5>
+                        <p class="card-text">Loan Amount: ${{ loan.amount }}</p>
+                        <p class="card-text">Payments: {{ loan.payments }}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    
+    
+    
 
     <footer class="fixed-bottom">
         <nav class="navbar" style="background-color: #e3f2fd;">

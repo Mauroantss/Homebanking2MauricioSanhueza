@@ -57,3 +57,15 @@ background-color: #e3f2fd;
     transform: rotate(60deg);
     pointer-events: none;
 }
+.card .btn {
+    background-color: #E74C3C;
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+.card .btn:hover {
+    background-color: #C0392B;
+}
