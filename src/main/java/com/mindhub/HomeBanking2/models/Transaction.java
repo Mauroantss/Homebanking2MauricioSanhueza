@@ -5,28 +5,25 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity // Indica que esta clase es una entidad de JPA (será mapeada a una tabla en la base de datos)
 public class Transaction {
     // Propiedades
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private Long ID;
+    private Long ID; // Identificador único de la transacción
 
-    private TransactionType type;
-    private double amount;
-    private LocalDateTime date;
-    private String description;
+    private TransactionType type; // Tipo de transacción (CRÉDITO o DÉBITO)
+    private double amount; // Monto de la transacción
+    private LocalDateTime date; // Fecha y hora de la transacción
+    private String description; // Descripción de la transacción
 
-    //---- Relacion Many to one entre Transaction y Account
-
-    @ManyToOne// Muhcas transacciones a una cuenta
-    private Account account;
-
+    // Relación Many-to-One con Account (muchas transacciones pueden pertenecer a una cuenta)
+    @ManyToOne // Muchas transacciones a una cuenta
+    private Account account; // Cuenta a la que pertenece esta transacción
 
     // Constructores
     public Transaction() {
-
     }
 
     public Transaction(TransactionType type, Double amount, LocalDateTime date, String description) {
@@ -36,13 +33,11 @@ public class Transaction {
         this.description = description;
     }
 
-    // Metodos
-
+    // Métodos getter y setter para acceder y modificar los atributos de la transacción
 
     public Long getID() {
         return ID;
     }
-
 
     public TransactionType getType() {
         return type;
@@ -85,3 +80,7 @@ public class Transaction {
     }
 }
 
+//En resumen, la clase Transaction representa una transacción con atributos como el tipo de transacción (CRÉDITO o DÉBITO),
+// el monto, la fecha y hora, y una descripción. También tiene una relación de muchos a uno con la cuenta a la que pertenece esta transacción.
+// Los métodos getter y setter permiten acceder y modificar estos atributos, y la anotación
+// @Entity indica que esta clase es una entidad de JPA y se mapea a una tabla en la base de datos.

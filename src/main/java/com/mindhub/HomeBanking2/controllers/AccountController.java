@@ -19,14 +19,16 @@ public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
 
+    // Manejar la solicitud GET para obtener todas las cuentas
     @GetMapping
-    public List<AccountDTO> getAllAccounts(){ // Convierto la list en un stream y hago al stream un map
-        List<Account> accounts = accountRepository.findAll(); //Le pido al JPARepository el listado
-        Stream<Account> accountStream = accounts.stream();
-        Stream<AccountDTO> accountDTOStream = accountStream.map(AccountDTO::new);
-        return accountDTOStream.collect(Collectors.toList());
+    public List<AccountDTO> getAllAccounts() {
+        List<Account> accounts = accountRepository.findAll(); // Obtener todas las cuentas de la base de datos
+        Stream<Account> accountStream = accounts.stream(); // Convertir la lista en un flujo (stream)
+        Stream<AccountDTO> accountDTOStream = accountStream.map(AccountDTO::new); // Mapear cada cuenta a su DTO correspondiente
+        return accountDTOStream.collect(Collectors.toList()); // Convertir el flujo de DTOs en una lista y devolverla
     }
 
+    // Manejar la solicitud GET para obtener una cuenta por su ID
     @GetMapping("/{id}")
     public AccountDTO getAccountById(@PathVariable Long id) {
         return accountRepository.findById(id)
@@ -34,3 +36,14 @@ public class AccountController {
                 .orElse(null); // Si no se encuentra, retorna null
     }
 }
+
+//En este controlador AccountController, se manejan dos rutas:
+//
+//GET /api/accounts: Devuelve una lista de todas las cuentas en forma de objetos AccountDTO.
+// Estos objetos se crean mapeando las cuentas originales a DTOs utilizando un flujo (Stream) y luego se recopilan en una lista.
+//
+//GET /api/accounts/{id}: Devuelve los detalles de una cuenta específica por su ID. Busca la cuenta en la base de datos a
+// través de su ID y la convierte en un objeto AccountDTO si se encuentra. Si no se encuentra, devuelve null.
+//
+//Este controlador permite interactuar con las cuentas bancarias y proporciona información sobre ellas en formato
+// AccountDTO, lo que facilita la comunicación de datos a través de la API.

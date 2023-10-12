@@ -7,29 +7,28 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Entity // Indica que esta clase es una entidad de JPA (será mapeada a una tabla en la base de datos)
 public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    private long id; // Identificador único de la cuenta
 
-    private String number;
-    private LocalDate creationDate;
-    private double balance;
+    private String number; // Número de cuenta
+    private LocalDate creationDate; // Fecha de creación de la cuenta
+    private double balance; // Saldo de la cuenta
 
-    //---- Many to one de Account a Client
-    @ManyToOne// Muchas cuentas a un cliente
-    @JoinColumn(name = "Client_Id")//Solo le doy el nombre a la columna
-    private Client client;
+    // Relación Many-to-One de Account a Client
+    @ManyToOne // Muchas cuentas pertenecen a un cliente
+    @JoinColumn(name = "Client_Id") // Especifica el nombre de la columna en la base de datos
+    private Client client; // Cliente al que pertenece esta cuenta
 
-    //---- One to many de Account a Transaction
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)// Una cuenta a muchas transacciones
-    private Set<Transaction> transactions = new HashSet<>(); //Le asignamos un espacio en memoria
+    // Relación One-to-Many de Account a Transaction
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER) // Una cuenta puede tener muchas transacciones
+    private Set<Transaction> transactions = new HashSet<>(); // Conjunto de transacciones asociadas a esta cuenta
 
-
-    //---- Constructores
+    // Constructores
     public Account() {
     }
 
@@ -39,8 +38,8 @@ public class Account {
         this.balance = balance;
     }
 
+    // Métodos getter y setter para acceder y modificar los atributos de la cuenta
 
-    // Metodos
     public long getId() {
         return id;
     }
@@ -80,9 +79,15 @@ public class Account {
     public Set<Transaction> getTransactions() {
         return transactions;
     }
+
     public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);
         this.transactions.add(transaction);
     }
-
 }
+
+//En resumen, la clase Account representa una cuenta bancaria con atributos como número de cuenta, fecha de creación,
+// saldo y una relación con el cliente al que pertenece. También tiene una relación de uno a muchos con las transacciones
+// asociadas a esa cuenta. Los métodos getter y setter permiten acceder y modificar estos atributos,
+// y el método addTransaction se utiliza para agregar transacciones a la cuenta.
+// Esta clase está anotada para su uso con JPA y se mapea a una tabla en la base de datos.

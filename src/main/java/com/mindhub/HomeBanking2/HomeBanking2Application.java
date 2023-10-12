@@ -1,11 +1,7 @@
 package com.mindhub.HomeBanking2;
 
-import com.mindhub.HomeBanking2.models.Account;
-import com.mindhub.HomeBanking2.models.Client;
-import com.mindhub.HomeBanking2.models.Transaction;
-import com.mindhub.HomeBanking2.repositories.AccountRepository;
-import com.mindhub.HomeBanking2.repositories.ClientRepository;
-import com.mindhub.HomeBanking2.repositories.TransactionRepository;
+import com.mindhub.HomeBanking2.models.*;
+import com.mindhub.HomeBanking2.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static com.mindhub.HomeBanking2.models.TransactionType.CREDIT;
 import static com.mindhub.HomeBanking2.models.TransactionType.DEBIT;
@@ -29,24 +26,28 @@ public class HomeBanking2Application {
 
 	// Definimos un Bean para iniciar algunos datos cuando la aplicación arranca
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository) {
+	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository,
+									  TransactionRepository transactionRepository, LoanRepository loanRepository,
+									  ClientLoanRepository clientLoanRepository) {
 
 		return args -> {
-			LocalDate today = LocalDate.now(); // LocalDate es un objeto
+			// Obtener la fecha actual y formatearla
+			LocalDate today = LocalDate.now();
 			LocalDate tomorrow = today.plusDays(1);
 			LocalDateTime now = LocalDateTime.now();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 			String formattedDateTime = now.format(formatter);
 			LocalDateTime formattedLocalDateTime = LocalDateTime.parse(formattedDateTime, formatter);
 
-			// Creamos una nueva instancia de la clase Client
+			// Crear y guardar un cliente
 			Client client2 = new Client("Mauricio", "Sanhueza", "sanhuezamauricio.a@gmail.com");
-			// Guardamos el cliente en la base de datos usando el repositorio
 			clientRepository.save(client2);
 
+			// Crear y guardar otro cliente
 			Client client1 = new Client("Melba", "Morel", "melbam@gmail.com");
 			clientRepository.save(client1);
 
+			// Crear cuentas bancarias y asociarlas con clientes
 			Account account1 = new Account("VIN001", LocalDate.now(), 5000);
 			client1.addAccount(account1);
 			accountRepository.save(account1);
@@ -55,12 +56,51 @@ public class HomeBanking2Application {
 			client1.addAccount(account2);
 			accountRepository.save(account2);
 
+			Account account3 = new Account("VIN003", LocalDate.now(), 154054);
+			client2.addAccount(account3);
+			accountRepository.save(account3);
+
+			// Crear transacciones y asociarlas con cuentas
 			Transaction transactionOne = new Transaction(DEBIT, 1000.00, formattedLocalDateTime, "First transaction");
 			account1.addTransaction(transactionOne);
 			transactionRepository.save(transactionOne);
+
 			Transaction transactionTwo = new Transaction(CREDIT, 10000.000, formattedLocalDateTime, "Second transaction");
 			account1.addTransaction(transactionTwo);
 			transactionRepository.save(transactionTwo);
+
+			// Crear tipos de préstamos y guardarlos
+			Loan mortgage = new Loan("Mortgage", 500000.00, List.of(12, 24, 36, 48, 60, 72));
+			loanRepository.save(mortgage);
+
+			Loan car = new Loan("Car", 300000.00, List.of(6, 12, 24, 36, 48));
+			loanRepository.save(car);
+
+			Loan personal = new Loan("Personal", 100000.00, List.of(6, 12, 24, 36));
+			loanRepository.save(personal);
+
+
+
+			// Crear ClientLoan y asociarlos con clientes y préstamos
+			ClientLoan mortgageClient1 = new ClientLoan(400000.00, 60);
+			client1.addClientLoan(mortgageClient1);
+			mortgage.addClientLoan(mortgageClient1);
+			clientLoanRepository.save(mortgageClient1);
+
+			ClientLoan personalClient1 = new ClientLoan(50000.00, 12);
+			client1.addClientLoan(personalClient1);
+			personal.addClientLoan(personalClient1);
+			clientLoanRepository.save(personalClient1);
+
+			ClientLoan personalClient2 = new ClientLoan(100000.00, 24);
+			client2.addClientLoan(personalClient2);
+			personal.addClientLoan(personalClient2);
+			clientLoanRepository.save(personalClient2);
+
+			ClientLoan carClient2 = new ClientLoan(200000.00, 36);
+			client2.addClientLoan(carClient2);
+			car.addClientLoan(carClient2);
+			clientLoanRepository.save(carClient2);
 		};
 	}
 }
