@@ -25,6 +25,9 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER) // Un cliente puede tener muchos préstamos de cliente
     private Set<ClientLoan> clientLoans = new HashSet<>(); // Conjunto de préstamos de cliente asociados a este cliente
 
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<Card> cards = new HashSet<>();
+
     // Constructores
     public Client() {
     }
@@ -104,6 +107,17 @@ public class Client {
                 ", email='" + email + '\'' +
                 '}';
     }
+    public String fullName() {
+        return this.firstName + " " + this.lastName;
+    }
+    public void addCard(Card card) {
+        card.setClient(this);
+        this.cards.add(card);
+    }
+
+    public Set<Card> getCards() { return cards; }
+
+
 }
 
 

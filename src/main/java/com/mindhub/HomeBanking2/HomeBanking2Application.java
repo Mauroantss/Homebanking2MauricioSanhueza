@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static com.mindhub.HomeBanking2.models.CardColor.*;
 import static com.mindhub.HomeBanking2.models.TransactionType.CREDIT;
 import static com.mindhub.HomeBanking2.models.TransactionType.DEBIT;
 
@@ -28,7 +29,7 @@ public class HomeBanking2Application {
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository,
 									  TransactionRepository transactionRepository, LoanRepository loanRepository,
-									  ClientLoanRepository clientLoanRepository) {
+									  ClientLoanRepository clientLoanRepository, CardRepository cardRepository ) {
 
 		return args -> {
 			// Obtener la fecha actual y formatearla
@@ -101,6 +102,18 @@ public class HomeBanking2Application {
 			client2.addClientLoan(carClient2);
 			car.addClientLoan(carClient2);
 			clientLoanRepository.save(carClient2);
+
+			LocalDate treeYears = today.plusYears(3);
+
+			Card card1 = new Card(client1.fullName(), "1234-5678-9012-3456", "123", DEBIT, GOLD, treeYears, today);
+			client1.addCard(card1); cardRepository.save(card1);
+
+			Card card2 = new Card(client1.fullName(), "7890-1234-5678-9012", "456", CREDIT, TITANIUM, treeYears, today);
+			client1.addCard(card2); cardRepository.save(card2);
+
+			Card card3 = new Card(client2.fullName(), "3456-7890-1234-5678", "789", CREDIT, SILVER, treeYears, today);
+			client2.addCard(card3); cardRepository.save(card3);
+
 		};
 	}
 }
