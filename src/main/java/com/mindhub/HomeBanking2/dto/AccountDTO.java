@@ -21,7 +21,15 @@ public class AccountDTO {
 
         // Mapear las transacciones de la cuenta a objetos TransactionDTO y recopilarlas en un conjunto (Set)
         transactions = account.getTransactions().stream().map(transaction -> new TransactionDTO(transaction)).collect(Collectors.toSet());
+
+        // Inicio llamando al método 'getTransactions()' del objeto 'account', que me devuelve una lista de objetos 'Transaction'.
+// Después, aplico '.stream()' para convertir esa lista en un flujo de datos (stream) y poder manipularla de manera más eficiente y funcional.
+// A continuación, uso '.map()' para operar sobre cada objeto 'Transaction' en el stream. Dentro de 'map', invoco el constructor 'new TransactionDTO(transaction)'
+// para crear un nuevo objeto 'TransactionDTO' a partir de cada objeto 'Transaction'. Así, genero un nuevo stream que contiene objetos 'TransactionDTO'.
+// Finalmente, con '.collect(Collectors.toSet())', recojo todos los objetos 'TransactionDTO' del stream y los almaceno en un conjunto (Set), eliminando duplicados si los hubiera.
     }
+
+
 
     // Métodos getter para acceder a los atributos del DTO
 
