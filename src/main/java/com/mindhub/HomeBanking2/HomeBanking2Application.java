@@ -70,6 +70,23 @@ public class HomeBanking2Application {
 			account1.addTransaction(transactionTwo);
 			transactionRepository.save(transactionTwo);
 
+			Transaction transaction1 = new Transaction(DEBIT, 4000.00, formattedLocalDateTime, "First transaction");
+			account2.addTransaction(transaction1);
+			transactionRepository.save(transaction1);
+
+			Transaction transaction2 = new Transaction(CREDIT, 23000.000, formattedLocalDateTime, "Second transaction");
+			account2.addTransaction(transaction2);
+			transactionRepository.save(transaction2);
+
+			Transaction transaction3 = new Transaction(DEBIT, 4000.00, formattedLocalDateTime, "First transaction");
+			account3.addTransaction(transaction3);
+			transactionRepository.save(transaction3);
+
+			Transaction transaction4 = new Transaction(CREDIT, 23000.000, formattedLocalDateTime, "Second transaction");
+			account3.addTransaction(transaction4);
+			transactionRepository.save(transaction4);
+
+
 			// Crear tipos de préstamos y guardarlos
 			Loan mortgage = new Loan("Mortgage", 500000.00, List.of(12, 24, 36, 48, 60, 72));
 			loanRepository.save(mortgage);
@@ -83,7 +100,7 @@ public class HomeBanking2Application {
 
 
 			// Crear ClientLoan y asociarlos con clientes y préstamos
-			ClientLoan mortgageClient1 = new ClientLoan(400000.00, 60);
+			ClientLoan mortgageClient1 = new ClientLoan( 400000.00, 60);
 			client1.addClientLoan(mortgageClient1);
 			mortgage.addClientLoan(mortgageClient1);
 			clientLoanRepository.save(mortgageClient1);

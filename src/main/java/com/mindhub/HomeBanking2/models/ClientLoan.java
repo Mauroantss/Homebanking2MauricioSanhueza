@@ -11,6 +11,8 @@ public class ClientLoan {
     @GenericGenerator(name = "native", strategy = "native")
     private Long ID; // Identificador único del préstamo de cliente
 
+    private String name;
+
     private double amount; // Monto del préstamo
     private int payments; // Número de pagos del préstamo
 
@@ -31,6 +33,7 @@ public class ClientLoan {
     public ClientLoan(double amount, int payments) {
         this.amount = amount;
         this.payments = payments;
+        this.name = name;
     }
 
     // Métodos getter y setter para acceder y modificar los atributos del préstamo de cliente
@@ -49,6 +52,10 @@ public class ClientLoan {
 
     public int getPayments() {
         return payments;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setPayments(int payments) {
