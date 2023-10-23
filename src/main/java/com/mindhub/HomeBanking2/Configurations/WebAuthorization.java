@@ -22,13 +22,15 @@ class WebAuthorization extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/clients").permitAll()
-                .antMatchers("/web/index.html","/web/js/index.js","/web/css/style.css","/web/img/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/clients/current","/api/loans").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers(HttpMethod.POST,"/api/clients/current/accounts","/api/clients/current/cards","/api/loans",
-                        "/api/clients/current/transactions").hasAnyAuthority("CLIENT","ADMIN")
+                .antMatchers("/web/index.html","/web/js/**", "/web/pages/login.html", "/web/pages/register.html"
+                        ,"/web/css/**","/web/images/**","/api/clients/current").permitAll()
+                .antMatchers(HttpMethod.POST, "/web/pages/account.html", "/web/pages/accounts.html", "/web/pages/card.html").hasAnyAuthority("CLIENT")
+                .antMatchers(HttpMethod.POST,"/api/clients/current/accounts","/api/clients/current/cards").hasAnyAuthority("CLIENT","ADMIN")
                 .antMatchers(HttpMethod.PATCH,"/api/clients/current/accounts/**","/api/clients/current/cards/**").hasAnyAuthority("CLIENT","ADMIN")
                 .antMatchers("/web/**").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/rest/**","/h2-console/**","/api/**","/manager.html","/manager.js").hasAnyAuthority("ADMIN")
+                .antMatchers("/rest/**","/h2-console/**","/api/**","/web/pages/manager.html","web/js/crearcliente.js").hasAnyAuthority("ADMIN")
+                .antMatchers("/api/logout/").authenticated()
+                .anyRequest().authenticated();
         ;
 
 

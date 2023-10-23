@@ -1,0 +1,80 @@
+body {
+    background-color: #e9ecef;
+    font-family: 'Roboto', sans-serif; /* Cambiamos a Roboto */
+    font-weight: 400; /* Peso normal para el contenido general */
+    line-height: 1.6; /* Ajusta el espacio entre líneas para una mejor legibilidad */
+    color: #333; /* Color oscuro general para el texto */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700; /* Peso bold para los encabezados */
+    margin-top: 0; /* Elimina margen superior para un espaciado uniforme */
+}
+
+.container {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    transition: transform .2s; 
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card .btn {
+    background-color: #E74C3C;
+    color: white;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+.card .btn:hover {
+    background-color: #C0392B;
+}
+
+.main-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    padding: 1rem 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Ligero efecto de sombreado */
+}
+header {
+    margin-top: 150px;
+}
+
+.carousel img {
+    height: 220px;
+    object-fit: cover;
+    object-position: center;
+}
+
+
+footer {
+    margin-top: auto;
+    padding: 1rem 0;
+    text-align: center;
+}
+.custom-carousel .carousel-item {
+    height: 220px;  /* Ajusta este valor según tus necesidades */
+    overflow: hidden;  /* Esto asegurará que las imágenes que excedan este tamaño sean recortadas */
+}
+.custom-carousel .carousel-item img {
+    height: 100%;  /* Asegura que la imagen cubra todo el espacio del .carousel-item */
+    object-fit: cover;
+    object-position: center;
+}
+

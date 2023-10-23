@@ -14,51 +14,72 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RestController // Controlador bajo los parametros de REST(HTTP)/ le digo que esta clase va hacer el controlador.
-@RequestMapping("/api/clients") // Asocio las peticiones a esta ruta(base).
+@RestController // Indica que esta clase es un controlador REST
+@RequestMapping("/api/clients") // Define la URL base para todas las rutas en este controlador
 public class ClientController {
-    @Autowired //Injeccion de dependencias, le pedimos a Spring Boot que introduzca ClientRepository en esta clase.
+
+    @Autowired // Inyecta automáticamente la dependencia de ClientRepository
     private ClientRepository clientRepository;
 
-    @Autowired
+    @Autowired // Inyecta automáticamente la dependencia de PasswordEncoder
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping // Servlet micro programa
-    public List<ClientDTO> getAllClients() { // Esto solo es un metodo!
-        List<Client> clients = clientRepository.findAll(); //Le pido al JPARepository el listado
+    @GetMapping // Anotación para manejar peticiones GET a la URL base
+    public List<ClientDTO> getAllClients() {
+        // Obtiene todos los clientes de la base de datos
+        List<Client> clients = clientRepository.findAll();
+
+        // Convierte la lista de clientes en un flujo (stream) para operaciones posteriores
         Stream<Client> clientStream = clients.stream();
+
+        // Mapea cada objeto Client a un objeto ClientDTO
         Stream<ClientDTO> clientDTOStream = clientStream.map(ClientDTO::new);
+
+        // Convierte el flujo a una lista y la retorna
         return clientDTOStream.collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}") // Endpoints
+    @GetMapping("/{id}") // Anotación para manejar peticiones GET a una URL con un parámetro (el ID del cliente)
     public ClientDTO getClientById(@PathVariable Long id) {
+        // Busca el cliente por ID y lo convierte a un DTO, si no se encuentra retorna null
         return clientRepository.findById(id)
-                .map(ClientDTO::new) // Convierte el cliente a un DTO
-                .orElse(null); // Si no se encuentra, retorna null
+                .map(ClientDTO::new)
+                .orElse(null);
     }
 
-    @PostMapping
+    @PostMapping // Anotación para manejar peticiones POST a la URL base
     public ResponseEntity<Object> newClient(
-            @RequestParam String firstName, @RequestParam String lastName, @RequestParam String email, @RequestParam String password) {
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam String password) {
 
+        // Comprueba si alguno de los campos está vacío
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
 
+        // Comprueba si el email ya está en uso
         if (clientRepository.findByEmail(email) != null) {
             return new ResponseEntity<>("Email already in use", HttpStatus.FORBIDDEN);
         }
 
+        // Crea un nuevo objeto de cliente y lo guarda en la base de datos
         Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password), false);
         clientRepository.save(client);
+
+        // Retorna un mensaje de éxito
         return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
     }
+
+    // Ruta adicional para obtener el cliente actual basado en la autenticación
     @RequestMapping("/currents")
     public ClientDTO getClientCurrent(Authentication authentication) {
+        // Obtiene el cliente actual usando el email del objeto de autenticación y lo convierte a DTO
         return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
     }
 }
+
 
 //En este controlador ClientController, se manejan dos rutas:
 //

@@ -128,6 +128,8 @@ public class HomeBanking2Application {
 
 			LocalDate treeYears = today.plusYears(3);
 
+			//Cards para los clientes
+
 			Card card1 = new Card(client1.fullName(),  CardType.DEBIT, GOLD,"1234-5678-9012-3456", "123", treeYears, today);
 			client1.addCard(card1); cardRepository.save(card1);
 

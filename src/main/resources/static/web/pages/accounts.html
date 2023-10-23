@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts | MindhubBanking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/web/Css/Cuentascliente.css">
+   
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/web/index.html">Home banking</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/web/index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Client
+                        </a>
+                        <ul class="dropdown-menu">
+
+                            <li><a class="dropdown-item" href="/web/pages/manager.html">New Client</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">
+                                    Accounts</a></li>
+                            <li><a class="dropdown-item" href="/web/pages/account.html">
+                                    Transactions</a></li>
+                            <li><a class="dropdown-item" href="/web/pages/card.html">
+                                        Cards</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="create-client-app" class="container mt-5">
+        <h2 class="text-center">Clients</h2>
+        <ul class="list-group">
+            <li v-for="client in clients" :key="client.id" class="list-group-item d-flex justify-content-between align-items-center">
+                {{ client.firstName }} {{ client.lastName }} - {{ client.email }}
+                <button @click="selectClient(client.id)" class="btn btn-primary button-style">Account & Loans</button>
+
+            </li>
+        </ul>
+        <div v-if="selectedClientAccounts.length || selectedClientLoans.length" class="mt-4 row">
+            <div class="col-md-6">
+                <h3 class="text-center">Welcome {{ selectedClientName }}</h3>
+                <div v-for="account in selectedClientAccounts" :key="account.id" class="card mb-3 dashboard credit-card-style">
+                    <div class="card-body text-center"> 
+                        <h5 class="card-title">Account Number: {{ account.number }}</h5>
+                        <p class="card-text">Date Creation: {{ account.creationDate }}</p>
+                        <p class="card-text">Account Balance: ${{ account.balance }}</p>
+            
+                        <!-- Modifica la URL dinámicamente usando la propiedad id de la cuenta -->
+                        <a :href="'http://localhost:8080/Pages/Account.html?id=' + account.id" class="btn btn-primary">See transaction</a>
+                        <a :href="'http://localhost:8080/Pages/Card.html?id=' + account.id" class="btn btn-primary">See Card</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h4 class="text-center">Loans for {{ selectedClientName }}</h4>
+                <div v-for="loan in selectedClientLoans" :key="loan.id" class="card mb-3 dashboard credit-card-style">
+                    <div class="card-body text-center"> <!-- Agregamos text-center para centrar el texto -->
+                        <h5 class="card-title">Loan Type: {{ loan.type }}</h5>
+                        <p class="card-text">Loan Amount: ${{ loan.amount }}</p>
+                        <p class="card-text">Payments: {{ loan.payments }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+
+    <footer class="fixed-bottom">
+        <nav class="navbar" style="background-color: #e3f2fd;">
+            <div class="container-fluid">
+                <a href="https://www.tiktok.com/es/"><i class="bi bi-tiktok"></i></a>
+                <a href="https://web.facebook.com/?locale=es_LA&_rdc=1&_rdr"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.messenger.com/?locale=es_ES"><i class="bi bi-messenger"></i></a>
+                <a href="https://web.telegram.org/a/"><i class="bi bi-telegram"></i></a>
+                <a href="https://www.instagram.com/"><i class="bi bi-instagram"></i></a>
+                <a href="https://web.whatsapp.com/"><i class="bi bi-whatsapp"></i></a>
+            </div>
+        </nav>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
+    <script type="module" src="/web/Js/Cuentasclientes.js"></script>
+</body>
+</html>
+
