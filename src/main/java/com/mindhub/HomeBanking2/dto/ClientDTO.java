@@ -7,20 +7,23 @@ import java.util.stream.Collectors;
 
 public class ClientDTO {
     private long ID;
+
     private String firstName, lastName, email;
     private Set<AccountDTO> accounts;
+    private Set<ClientLoanDTO> loans;
+    private Set<CardDTO> cards;
+
 
     public ClientDTO(Client client) {
-        ID = client.getID(); // Obtener el ID del cliente
-        firstName = client.getFirstName(); // Obtener el primer nombre del cliente
-        lastName = client.getLastName(); // Obtener el apellido del cliente
-        email = client.getEmail(); // Obtener el correo electrónico del cliente
-
-        // Mapear las cuentas del cliente a objetos AccountDTO y recopilarlas en un conjunto (Set)
+        ID = client.getID();
+        firstName = client.getFirstName();
+        lastName = client.getLastName();
+        email = client.getEmail();
         accounts = client.getAccounts().stream().map(account -> new AccountDTO(account)).collect(Collectors.toSet());
-    }
+        loans = client.getClientLoans().stream().map(loan-> new ClientLoanDTO(loan)).collect(Collectors.toSet());
+        cards = client.getCards().stream().map(card-> new CardDTO(card)).collect(Collectors.toSet());
 
-    // Métodos getter para acceder a los atributos del DTO
+    }
 
     public long getID() {
         return ID;
@@ -41,7 +44,15 @@ public class ClientDTO {
     public Set<AccountDTO> getAccounts() {
         return accounts;
     }
+    public Set<ClientLoanDTO> getLoans() {
+        return loans;
+    }
+
+    public Set<CardDTO> getCards() {
+        return cards;
+    }
 }
+
 
 //En resumen, esta clase ClientDTO toma una instancia de la clase Client como parámetro en su constructor y
 // extrae información relevante del cliente, como su ID, primer nombre, apellido, correo electrónico y cuentas asociadas.

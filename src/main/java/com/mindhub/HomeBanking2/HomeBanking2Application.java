@@ -2,10 +2,12 @@ package com.mindhub.HomeBanking2;
 
 import com.mindhub.HomeBanking2.models.*;
 import com.mindhub.HomeBanking2.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +26,9 @@ public class HomeBanking2Application {
 		// Inicia la aplicación Spring Boot
 		SpringApplication.run(HomeBanking2Application.class, args);
 	}
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 
 	// Definimos un Bean para iniciar algunos datos cuando la aplicación arranca
 	@Bean
@@ -41,12 +46,13 @@ public class HomeBanking2Application {
 			LocalDateTime formattedLocalDateTime = LocalDateTime.parse(formattedDateTime, formatter);
 
 			// Crear y guardar un cliente
-			Client client2 = new Client("Mauricio", "Sanhueza", "sanhuezamauricio.a@gmail.com");
+			Client client2 = new Client("Mauricio", "Sanhueza", "sanhuezamauricio.a@gmail.com", passwordEncoder.encode("mauro123"), false );
 			clientRepository.save(client2);
 
 			// Crear y guardar otro cliente
-			Client client1 = new Client("Melba", "Morel", "melbam@gmail.com");
+			Client client1 = new Client("Melba", "Morel", "melbamorel@homebanking.com", passwordEncoder.encode("melba123"), false);
 			clientRepository.save(client1);
+
 
 			// Crear cuentas bancarias y asociarlas con clientes
 			Account account1 = new Account("VIN001", LocalDate.now(), 5000);
@@ -122,15 +128,16 @@ public class HomeBanking2Application {
 
 			LocalDate treeYears = today.plusYears(3);
 
-			Card card1 = new Card(client1.fullName(), "1234-5678-9012-3456", "123", DEBIT, GOLD, treeYears, today);
+			Card card1 = new Card(client1.fullName(),  CardType.DEBIT, GOLD,"1234-5678-9012-3456", "123", treeYears, today);
 			client1.addCard(card1); cardRepository.save(card1);
 
-			Card card2 = new Card(client1.fullName(), "7890-1234-5678-9012", "456", CREDIT, TITANIUM, treeYears, today);
+			Card card2 = new Card(client1.fullName(), CardType.CREDIT, TITANIUM,"7890-1234-5678-9012","456", treeYears, today);
 			client1.addCard(card2); cardRepository.save(card2);
 
-			Card card3 = new Card(client2.fullName(), "3456-7890-1234-5678", "789", CREDIT, SILVER, treeYears, today);
+			Card card3 = new Card(client2.fullName(), CardType.DEBIT, SILVER, "3456-7890-1234-5678", "789", treeYears, today);
 			client2.addCard(card3); cardRepository.save(card3);
 
 		};
 	}
+
 }

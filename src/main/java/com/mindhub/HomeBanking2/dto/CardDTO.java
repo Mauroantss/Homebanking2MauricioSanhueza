@@ -2,29 +2,28 @@ package com.mindhub.HomeBanking2.dto;
 
 import com.mindhub.HomeBanking2.models.Card;
 import com.mindhub.HomeBanking2.models.CardColor;
+import com.mindhub.HomeBanking2.models.CardType;
 import com.mindhub.HomeBanking2.models.TransactionType;
 
 import java.time.LocalDate;
 
 public class CardDTO {
-
     private long id;
+    private String cardHolder;
+    private CardType cardType;
+    private CardColor cardColor;
+    private String number;
+    private String cvv;
+    private LocalDate thruDate;
+    private LocalDate fromDate;
 
-    private String cardholder, number, cvv;
-
-    private TransactionType type;
-
-    private CardColor color;
-
-    private LocalDate thruDate, fromDate;
-
-    public CardDTO( Card card ) {
+    public CardDTO(Card card) {
         id = card.getId();
-        cardholder = card.getCardholder();
-        number = card.getNumber();
+        cardHolder = card.getCardHolder();
+        cardType = card.getCardType();
+        cardColor = card.getCardColor();
+        number = card.getMaskedCard();
         cvv = card.getCvv();
-        type = card.getType();
-        color = card.getColor();
         thruDate = card.getThruDate();
         fromDate = card.getFromDate();
     }
@@ -33,8 +32,16 @@ public class CardDTO {
         return id;
     }
 
-    public String getCardholder() {
-        return cardholder;
+    public String getCardHolder() {
+        return cardHolder;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public CardColor getCardColor() {
+        return cardColor;
     }
 
     public String getNumber() {
@@ -43,14 +50,6 @@ public class CardDTO {
 
     public String getCvv() {
         return cvv;
-    }
-
-    public TransactionType getType() {
-        return type;
-    }
-
-    public CardColor getColor() {
-        return color;
     }
 
     public LocalDate getThruDate() {

@@ -3,21 +3,24 @@ package com.mindhub.HomeBanking2.dto;
 import com.mindhub.HomeBanking2.models.ClientLoan;
 
 public class ClientLoanDTO {
+
     private Long ID;
     private Long loanId;
     private String loanName;
     private double amount;
+
     private int payments;
 
-    public ClientLoanDTO(ClientLoan clientLoan) {
-        ID = clientLoan.getID(); // Obtener el ID del préstamo del cliente
-        loanId = clientLoan.getLoan().getID(); // Obtener el ID del préstamo asociado
-        loanName = clientLoan.getLoan().getName(); // Obtener el nombre del préstamo
-        amount = clientLoan.getAmount(); // Obtener el monto del préstamo
-        payments = clientLoan.getPayments(); // Obtener la cantidad de pagos del préstamo
-    }
 
-    // Métodos getter para acceder a los atributos del DTO
+    public ClientLoanDTO(ClientLoan clientLoan) {
+        ID = clientLoan.getID();
+        loanId = clientLoan.getLoan().getID();
+        loanName = clientLoan.getLoan().getName();
+        amount = clientLoan.getAmount();
+        payments = clientLoan.getPayments();
+
+
+    }
 
     public Long getID() {
         return ID;
@@ -38,7 +41,10 @@ public class ClientLoanDTO {
     public int getPayments() {
         return payments;
     }
+
+
 }
+
 
 //En resumen, esta clase ClientLoanDTO toma una instancia de la clase ClientLoan como parámetro en su constructor y
 // extrae información relevante del préstamo del cliente, como su ID, el ID del préstamo asociado, el nombre del préstamo,

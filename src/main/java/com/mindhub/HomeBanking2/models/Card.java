@@ -8,52 +8,63 @@ import java.time.LocalDate;
 
 @Entity
 public class Card {
-
-    // PROPERTIES
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    private Long ID;
 
-    private String cardholder, number, cvv;
+    private String cardHolder;
+    private CardType cardType;
+    private CardColor cardColor;
+    private String number;
+    private String cvv;
+    private LocalDate thruDate;
+    private LocalDate fromDate;
 
-    private TransactionType type;
+    public Card() {
+    }
 
-    private CardColor color;
 
-    private LocalDate thruDate, fromDate;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="client_id")
-    private Client client;
-
-    // CONSTRUCTORS
-
-    public Card() { }
-
-    public Card(String cardholder, String number, String cvv, TransactionType type, CardColor color, LocalDate thruDate, LocalDate fromDate) {
-        this.cardholder = cardholder;
+    public Card(String cardHolder, CardType cardType, CardColor cardColor, String number, String cvv, LocalDate thruDate, LocalDate fromDate) {
+        this.cardHolder = cardHolder;
+        this.cardType = cardType;
+        this.cardColor = cardColor;
         this.number = number;
         this.cvv = cvv;
-        this.type = type;
-        this.color = color;
         this.thruDate = thruDate;
         this.fromDate = fromDate;
     }
 
-    // METHODS
-
-
-    public long getId() {
-        return id;
+    public Long getId() {
+        return ID;
     }
 
-    public String getCardholder() {
-        return cardholder;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    public Client client;
+
+    public String getCardHolder() {
+        return cardHolder;
     }
 
-    public void setCardholder(String cardholder) {
-        this.cardholder = cardholder;
+    public void setCardHolder(String cardHolder) {
+        this.cardHolder = cardHolder;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
+    public CardColor getCardColor() {
+        return cardColor;
+    }
+
+    public void setCardColor(CardColor cardColor) {
+        this.cardColor = cardColor;
     }
 
     public String getNumber() {
@@ -72,22 +83,6 @@ public class Card {
         this.cvv = cvv;
     }
 
-    public TransactionType getType() {
-        return type;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
-    }
-
-    public CardColor getColor() {
-        return color;
-    }
-
-    public void setColor(CardColor color) {
-        this.color = color;
-    }
-
     public LocalDate getThruDate() {
         return thruDate;
     }
@@ -104,8 +99,18 @@ public class Card {
         this.fromDate = fromDate;
     }
 
-    @JsonIgnore
-    public Client getClient() { return client; }
+    public Client getClient() {
+        return client;
+    }
 
-    public void setClient(Client client) { this.client = client; }
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public String getMaskedCard() {
+        int length = number.length();
+        String lastFourDigits = number.substring(Math.max(0, length - 3)); // Extrae los últimos 3 dígitos, independientemente de los espacios.
+        String masked = "****-****-****-" + lastFourDigits;
+        return masked;
+    }
 }

@@ -196,13 +196,13 @@ body {
 	bottom: -10px;
 	position: relative;
 }
-.credit-card-wrap .footer {
+.credit-card-wrap .footer1 {
 	left: 30px;
 	right: 30px;
 	bottom: 30px;
 	position: absolute;
 }
-.credit-card-wrap .footer .pull-left {
+.credit-card-wrap .footer1 .pull-left {
 	width: 70%;
 }
 
@@ -220,7 +220,7 @@ body {
     color: rgba(255, 255, 255, 0.8);
 }
 
-.credit-card-wrap .footer .pull-right.text-center {
+.credit-card-wrap .footer1 .pull-right.text-center {
     display: flex;
     align-items: center;
     justify-content: center;

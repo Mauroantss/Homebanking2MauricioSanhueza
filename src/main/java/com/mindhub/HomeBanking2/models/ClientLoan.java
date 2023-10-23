@@ -4,39 +4,34 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
-@Entity // Indica que esta clase es una entidad de JPA (será mapeada a una tabla en la base de datos)
+@Entity
 public class ClientLoan {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private Long ID; // Identificador único del préstamo de cliente
+    private Long ID;
 
-    private String name;
+    private double amount;
 
-    private double amount; // Monto del préstamo
-    private int payments; // Número de pagos del préstamo
+    private int payments;
 
-    // Relación Many-to-One con Client (muchos préstamos de cliente pueden pertenecer a un cliente)
+    // --- Relacion con el cliente
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "client_id") // Nombre de la columna que almacena la clave foránea del cliente
-    private Client client; // Cliente al que pertenece este préstamo de cliente
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-    // Relación Many-to-One con Loan (muchos préstamos de cliente pueden ser del mismo tipo de préstamo)
+    // ---- Relacion con el prestamo
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "loan_id") // Nombre de la columna que almacena la clave foránea del tipo de préstamo
-    private Loan loan; // Tipo de préstamo asociado a este préstamo de cliente
+    @JoinColumn(name = "loan_id")
+    private Loan loan;
 
-    // Constructores
     public ClientLoan() {
     }
 
     public ClientLoan(double amount, int payments) {
         this.amount = amount;
         this.payments = payments;
-        this.name = name;
     }
-
-    // Métodos getter y setter para acceder y modificar los atributos del préstamo de cliente
 
     public Long getID() {
         return ID;
@@ -52,10 +47,6 @@ public class ClientLoan {
 
     public int getPayments() {
         return payments;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setPayments(int payments) {
@@ -77,6 +68,16 @@ public class ClientLoan {
     public void setLoan(Loan loan) {
         this.loan = loan;
     }
+
+    public Client getClientLoan() {
+        return client;
+    }
+
+    public void setClientLoan(Client clientLoan) {
+        this.client = clientLoan;
+    }
+
+
 }
 
 

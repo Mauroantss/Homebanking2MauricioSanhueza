@@ -6,43 +6,52 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity // Indica que esta clase es una entidad de JPA (será mapeada a una tabla en la base de datos)
+@Entity
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private Long ID; // Identificador único del cliente
+    private Long ID;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private Boolean admin;
 
-    private String firstName; // Primer nombre del cliente
-    private String lastName; // Apellido del cliente
-    private String email; // Correo electrónico del cliente
+    // ---- One to many de Client to Account
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<Account> accounts = new HashSet<>();
 
-    // Relación One-to-Many de Client a Account
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER) // Un cliente puede tener muchas cuentas
-    private Set<Account> accounts = new HashSet<>(); // Conjunto de cuentas asociadas a este cliente
+    // ---- One to many de Client to ClientLoan
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<ClientLoan> clientLoans = new HashSet<>();
 
-    // Relación One-to-Many de Client a ClientLoan
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER) // Un cliente puede tener muchos préstamos de cliente
-    private Set<ClientLoan> clientLoans = new HashSet<>(); // Conjunto de préstamos de cliente asociados a este cliente
-
+    // ---- One to many de Client to Card
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Card> cards = new HashSet<>();
 
-    // Constructores
     public Client() {
     }
 
-    public Client(String firstName, String lastName, String email) {
+
+    public Client(String firstName, String lastName, String email, String password, Boolean admin) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
+        this.admin = admin;
+
     }
 
-    // Métodos getter y setter para acceder y modificar los atributos del cliente
+
+// Sobre carga de metodos.
+    // Getters y setters
+
 
     public Long getID() {
         return ID;
     }
+
 
     public String getFirstName() {
         return firstName;
@@ -68,8 +77,20 @@ public class Client {
         this.email = email;
     }
 
-    public Set<Account> getAccounts() {
-        return accounts;
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 
     public void setAccounts(Set<Account> accounts) {
@@ -84,7 +105,10 @@ public class Client {
         this.clientLoans = clientLoans;
     }
 
-    // Métodos para agregar cuentas y préstamos de cliente a este cliente
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
 
     public void addAccount(Account account) {
         account.setClient(this);
@@ -96,7 +120,20 @@ public class Client {
         this.clientLoans.add(clientLoan);
     }
 
-    // Método toString para representar el cliente como una cadena
+    public Set<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(Set<Card> cards) {
+        this.cards = cards;
+    }
+    public void addCard(Card card){
+        card.setClient(this);
+        this.cards.add(card);
+    }
+    public String fullName(){
+        return  getFirstName() + " " + getLastName();
+    }
 
     @Override
     public String toString() {
@@ -107,18 +144,9 @@ public class Client {
                 ", email='" + email + '\'' +
                 '}';
     }
-    public String fullName() {
-        return this.firstName + " " + this.lastName;
-    }
-    public void addCard(Card card) {
-        card.setClient(this);
-        this.cards.add(card);
+
     }
 
-    public Set<Card> getCards() { return cards; }
-
-
-}
 
 
 //En resumen, la clase Client representa un cliente con atributos como el primer nombre,

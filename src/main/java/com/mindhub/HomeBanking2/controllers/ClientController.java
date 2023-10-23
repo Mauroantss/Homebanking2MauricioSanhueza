@@ -4,39 +4,61 @@ import com.mindhub.HomeBanking2.dto.ClientDTO;
 import com.mindhub.HomeBanking2.models.Client;
 import com.mindhub.HomeBanking2.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RestController // Indica que esta clase es un controlador REST
-@RequestMapping("/api/clients") // Define la ruta base para todas las solicitudes en este controlador
+@RestController // Controlador bajo los parametros de REST(HTTP)/ le digo que esta clase va hacer el controlador.
+@RequestMapping("/api/clients") // Asocio las peticiones a esta ruta(base).
 public class ClientController {
-    @Autowired // Inyección de dependencias: Spring Boot introduce ClientRepository en esta clase
+    @Autowired //Injeccion de dependencias, le pedimos a Spring Boot que introduzca ClientRepository en esta clase.
     private ClientRepository clientRepository;
 
-    // Manejar la solicitud GET para obtener todos los clientes
-    @GetMapping
-    public List<ClientDTO> getAllClients() {
-        List<Client> clients = clientRepository.findAll(); // Obtener todos los clientes de la base de datos
-        Stream<Client> clientStream = clients.stream(); // Convertir la lista en un flujo (stream)
-        Stream<ClientDTO> clientDTOStream = clientStream.map(ClientDTO::new); // Mapear cada cliente a su DTO correspondiente
-        return clientDTOStream.collect(Collectors.toList()); // Convertir el flujo de DTOs en una lista y devolverla
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @GetMapping // Servlet micro programa
+    public List<ClientDTO> getAllClients() { // Esto solo es un metodo!
+        List<Client> clients = clientRepository.findAll(); //Le pido al JPARepository el listado
+        Stream<Client> clientStream = clients.stream();
+        Stream<ClientDTO> clientDTOStream = clientStream.map(ClientDTO::new);
+        return clientDTOStream.collect(Collectors.toList());
     }
 
-    // Manejar la solicitud GET para obtener un cliente por su ID
-    @GetMapping("/{id}") // Anotación para manejar las solicitudes GET a /api/clients/{id}
+    @GetMapping("/{id}") // Endpoints
     public ClientDTO getClientById(@PathVariable Long id) {
         return clientRepository.findById(id)
                 .map(ClientDTO::new) // Convierte el cliente a un DTO
                 .orElse(null); // Si no se encuentra, retorna null
     }
-}
 
+    @PostMapping
+    public ResponseEntity<Object> newClient(
+            @RequestParam String firstName, @RequestParam String lastName, @RequestParam String email, @RequestParam String password) {
+
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        }
+
+        if (clientRepository.findByEmail(email) != null) {
+            return new ResponseEntity<>("Email already in use", HttpStatus.FORBIDDEN);
+        }
+
+        Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password), false);
+        clientRepository.save(client);
+        return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
+    }
+    @RequestMapping("/currents")
+    public ClientDTO getClientCurrent(Authentication authentication) {
+        return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
+    }
+}
 
 //En este controlador ClientController, se manejan dos rutas:
 //
