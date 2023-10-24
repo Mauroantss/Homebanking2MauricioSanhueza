@@ -16,19 +16,15 @@ import javax.servlet.http.HttpSession;
 
 @EnableWebSecurity
 @Configuration
-class WebAuthorization extends WebSecurityConfigurerAdapter {
+public class WebAuthorization {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/api/clients").permitAll()
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests() // Autoriza peticiones
+                .antMatchers(HttpMethod.POST,"/api/clients/").permitAll()
                 .antMatchers("/web/index.html","/web/js/**", "/web/pages/login.html", "/web/pages/register.html"
-                        ,"/web/css/**","/web/images/**","/api/clients/current").permitAll()
-                .antMatchers(HttpMethod.POST, "/web/pages/account.html", "/web/pages/accounts.html", "/web/pages/card.html").hasAnyAuthority("CLIENT")
-                .antMatchers(HttpMethod.POST,"/api/clients/current/accounts","/api/clients/current/cards").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers(HttpMethod.PATCH,"/api/clients/current/accounts/**","/api/clients/current/cards/**").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/web/**").hasAnyAuthority("CLIENT","ADMIN")
-                .antMatchers("/rest/**","/h2-console/**","/api/**","/web/pages/manager.html","web/js/crearcliente.js").hasAnyAuthority("ADMIN")
+                        ,"/web/css/**","/web/images/**","/api/clients/currents").permitAll()
+                .antMatchers("/h2-console/**", "/rest/", "/web/pages/manager.html").hasAuthority("ADMIN")
                 .antMatchers("/api/logout/").authenticated()
                 .anyRequest().authenticated();
         ;
@@ -65,8 +61,10 @@ class WebAuthorization extends WebSecurityConfigurerAdapter {
         // if logout is successful, just send a success response
 
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+        return http.build();
 
     }
+
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {
 

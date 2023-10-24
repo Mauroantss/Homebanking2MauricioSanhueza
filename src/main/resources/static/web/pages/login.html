@@ -65,19 +65,20 @@
             <div class="container d-flex justify-content-center align-items-center mt-5">
                 <div class="text-center">
                     <h1>Log In</h1>
-                    <form>
+                    <form @submit.prevent="login">
                         <div class="mb-3">
                             <label for="emailInput" class="form-label">Username</label>
-                            <input type="email" class="form-control" id="emailInput" placeholder="Email" required>
+                            <input type="email" class="form-control" id="emailInput" v-model="email" placeholder="Email" required>
                         </div>
                         <div class="mb-3">
                             <label for="passwordInput" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="passwordInput" required>
+                            <input type="password" class="form-control" id="passwordInput" v-model="password" required>
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary">LOGIN</button>
                         </div>
                     </form>
+                    
                 </div>
             </div>
 

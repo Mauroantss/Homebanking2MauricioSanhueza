@@ -1,46 +1,45 @@
-const cardApp = Vue.createApp({
-    data() {
-        return {
-            cardData: [],
-            accounts: [],
-            selectedAccountId: null,
-        };
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      client: [],
+      cards: [],
+      creditCards: [],
+      debitCards: [],
+    };
+  },
+  created() {
+    axios
+      .get("/api/clients/currents")
+      .then((response) => {
+        this.client = response.data;
+        this.cards = response.data.cards;
+        this.creditCards = this.cards.filter(
+          (card) => card.cardType == "CREDIT"
+        );
+        this.debitCards = this.cards.filter((card) => card.cardType == "DEBIT");
+        setTimeout(() => (this.loading = false), 800);
+        console.log(this.debitCards);
+      })
+      .catch((error) => {
+        error;
+      });
+  },
+  methods: {
+    logOut() {
+      axios.post("/api/logout").then((response) => {
+        console.log("Signed out");
+        location.pathname = "/web/index.html"; // Redirige al usuario a la página de inicio.
+      });
     },
-    mounted() {
-        this.selectedAccountId = this.getAccountIdFromUrl(); // Asigna el ID de la cuenta desde la URL
-        this.fetchCards();
-        this.fetchAccounts(); 
+  },
+  computed: {
+    totalBalance() {
+      return this.accounts.reduce(
+        (total, account) => total + account.balance,
+        0
+      );
     },
-    computed: {
-        filteredCards() {
-            if (this.selectedAccountId) {
-                return this.cardData.filter(card => card.accountId == this.selectedAccountId);
-            }
-            return [];
-        }
-    },
-    methods: {
-        getAccountIdFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
-        },
-        fetchCards() {
-            axios.get('http://localhost:8080/rest/cards')
-                .then(response => {
-                    this.cardData = response.data._embedded.cards;
-                })
-                .catch(error => {
-                    console.error('Error al obtener las tarjetas:', error);
-                });
-        },
-        fetchAccounts() {
-            axios.get('http://localhost:8080/api/accounts')
-                .then(response => {
-                    this.accounts = response.data;
-                })
-                .catch(error => {
-                    console.error('Error al obtener las cuentas:', error);
-                });
-        },
-    }
-}).mount('#card-app');
+  },
+}).mount("#card-app");

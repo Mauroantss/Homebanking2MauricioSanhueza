@@ -65,27 +65,27 @@
                 <div class="container d-flex justify-content-center align-items-center mt-5">
                     <div class="text-center">
                         <h1>Register</h1>
-                        <form>
+                        <form @submit.prevent="register">
                             <div class="row gap-2">
                                 <div class="col">
                                     <div class="user-box">
-                                        <input type="text" name="" class="form-control" required>
+                                        <input type="text" v-model="firstName" class="form-control" required>
                                         <label>First Name</label>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="user-box">
-                                        <input type="text" name="" class="form-control" required>
+                                        <input type="text" v-model="lastName" class="form-control" required>
                                         <label>Last Name</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="user-box mt-2">
-                                <input type="text" name="" class="form-control" required>
+                                <input type="text" v-model="email" class="form-control" required>
                                 <label>Email</label>
                             </div>
                             <div class="user-box mt-2">
-                                <input type="password" name="" class="form-control" required>
+                                <input type="password" v-model="password" class="form-control" required>
                                 <label>Password</label>
                             </div>
                             <div class="user-box mt-2">

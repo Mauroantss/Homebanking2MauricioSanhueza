@@ -11,17 +11,6 @@ createApp({
   },
   created() {},
   methods: {
-    login() {
-      axios
-        .post("/api/login", `email=${this.email}&password=${this.password}`)
-        .then((response) => {
-          console.log("Signed in");
-          location.pathname = "/web/pages/accounts.html";
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     register() {
       axios
         .post(

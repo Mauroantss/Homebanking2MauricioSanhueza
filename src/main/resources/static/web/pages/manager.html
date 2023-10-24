@@ -19,6 +19,17 @@
             aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                
+                    <li>
+                        <a @click="logOut" class="nav-link" href="../index.html">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                        </a>   
+                    </li>
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -80,7 +91,7 @@
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script type="module" src="/web/js/crearcliente.js"></script>
+  <script type="module" src="/web/js/manager.js"></script>
 
 </body>
 
