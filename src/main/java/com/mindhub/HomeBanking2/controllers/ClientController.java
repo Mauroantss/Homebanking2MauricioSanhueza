@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -77,14 +78,16 @@ public class ClientController {
         Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password), false);
         clientRepository.save(client);
 
+
         // Crear y guardar una cuenta asociada al nuevo cliente
         Random random = new Random();
         String accountNumber = "VIN-" + (10000000 + random.nextInt(90000000));
 
         Account newAccount = new Account();
-        newAccount.setAccountNumber(accountNumber);
+        newAccount.setNumber(accountNumber);  // Asegúrate de que estás usando el nombre correcto del setter
         newAccount.setBalance(0);
-        newAccount.setClient(client);
+        newAccount.setCreationDate(LocalDate.now());  // Establece la fecha actual
+        newAccount.setClient(client);  // Asegúrate de que 'client' está correctamente inicializado
         accountRepository.save(newAccount);
 
         // Retorna un mensaje de éxito

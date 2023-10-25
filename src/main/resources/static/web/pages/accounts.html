@@ -62,7 +62,7 @@
                     <div class="col-md-6">
                         <h3 class="text-center">Accounts</h3>
                         <!-- Condición para mostrar el botón solo si el cliente tiene menos de 3 cuentas -->
-                        <button v-if="canCreateAccount" @click="createAccount" class="btn btn-success">Create</button>
+                        <button v-if='client.accounts.length < 3' @click="createAccount" class="btn btn-success">Create</button>
                         <div v-for="account of client.accounts" :key="account.id" class="card mb-3 dashboard credit-card-style">
                             <div class="card-body text-center">
                                 <h5 class="card-title">Account Number: #{{ account.number }}</h5>
