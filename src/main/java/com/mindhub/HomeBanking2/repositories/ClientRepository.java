@@ -8,7 +8,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Client findByEmail(String email);
+
+    default int countAccountsByClient(Client currentClient) {
+        return 0;
     }
+}
+
     //La interfaz creada hereda con "extends" los metodos de JpaRepository, entre los diamantes tengo que
     // poner la clase y el tipo de dato del id
 //Esta interfaz extiende JpaRepository<Client, Long>, lo que significa que hereda las operaciones

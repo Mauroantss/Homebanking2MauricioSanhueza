@@ -57,38 +57,37 @@
     <div id="create-client-app" class="container mt-5">
         <main class="min-vh-100 bg-light">
             <div class="container">
-              <h2 class="text-center">Welcome, {{ client.firstName + " " + client.lastName }}!</h2>
-          
-              <div class="mt-4 row">
-                <div class="col-md-6">
-                  <h3 class="text-center">Accounts</h3>
-                  <div v-for="account of client.accounts" :key="account.id" class="card mb-3 dashboard credit-card-style">
-                    <div class="card-body text-center">
-                      <h5 class="card-title">Account Number: #{{ account.number }}</h5>
-                      <p class="card-text">Date Creation: {{ account.creationDate }}</p>
-                      <p class="card-text">Account Balance: ${{ account.balance.toLocaleString() }}</p>
-                      <a :href="'./account.html?id=' + account.id" class="btn btn-primary">See transaction</a>
-                      <a :href="'./card.html?id=' + account.id" class="btn btn-primary">See card</a>
+                <h2 class="text-center">Welcome, {{ client.firstName + " " + client.lastName }}!</h2>
+                <div class="mt-4 row">
+                    <div class="col-md-6">
+                        <h3 class="text-center">Accounts</h3>
+                        <!-- Condición para mostrar el botón solo si el cliente tiene menos de 3 cuentas -->
+                        <button v-if="canCreateAccount" @click="createAccount" class="btn btn-success">Create</button>
+                        <div v-for="account of client.accounts" :key="account.id" class="card mb-3 dashboard credit-card-style">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Account Number: #{{ account.number }}</h5>
+                                <p class="card-text">Date Creation: {{ account.creationDate }}</p>
+                                <p class="card-text">Account Balance: ${{ account.balance.toLocaleString() }}</p>
+                                <a :href="'./account.html?id=' + account.id" class="btn btn-primary">See transaction</a>
+                                <a :href="'./card.html?id=' + account.id" class="btn btn-primary">See card</a>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-          
-                <div class="col-md-6">
-                  <h4 class="text-center">Loans</h4>
-                  <div v-for="loan of client.loans" :key="loan.id" class="card mb-3 dashboard credit-card-style">
-                    <div class="card-body text-center">
-                      <h5 class="card-title">Loan Type: {{ loan.loanName }}</h5>
-                      <p class="card-text">Loan Amount: ${{ loan.amount.toLocaleString() }}</p>
-                      <p class="card-text">Payments: {{ loan.payments }}</p>
+                    <div class="col-md-6">
+                        <h4 class="text-center">Loans</h4>
+                        <div v-for="loan of client.loans" :key="loan.id" class="card mb-3 dashboard credit-card-style">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Loan Type: {{ loan.loanName }}</h5>
+                                <p class="card-text">Loan Amount: ${{ loan.amount.toLocaleString() }}</p>
+                                <p class="card-text">Payments: {{ loan.payments }}</p>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </main>
-          
+        </main>
     </div>
-
+    
 
 
 

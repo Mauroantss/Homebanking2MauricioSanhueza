@@ -3,33 +3,38 @@ const { createApp } = Vue;
 createApp({
   data() {
     return {
-      client: {},  // Cambiado de [] a {}
+      client: {},
       accounts: [],
-      loading: true, // Agregamos una propiedad de carga
+      loading: true,
     };
   },
   created() {
     axios
       .get("/api/clients/currents")
       .then((response) => {
-        console.log(response)
         this.client = response.data;
         this.accounts = response.data.accounts;
-        setTimeout(() => (this.loading = false), 800); // Quitamos la pantalla de carga después de 800 ms
+        setTimeout(() => (this.loading = false), 800);
       })
       .catch((error) => {
-        console.error("Hubo un error:", error); // Mejor manejo del error
+        console.error("Hubo un error:", error);
       });
   },
   methods: {
+    createAccount() {
+      // Tu lógica para crear la cuenta aquí
+    },
     logOut() {
       axios.post("/api/logout").then((response) => {
         console.log("Signed out");
-        location.pathname = "/web/index.html"; // Redirige al usuario a la página de inicio.
+        location.pathname = "/web/index.html";
       });
     },
   },
   computed: {
+    canCreateAccount() {
+      return this.client.accounts.length < 3;
+    },
     totalBalance() {
       return this.accounts.reduce(
         (total, account) => total + account.balance,
@@ -37,4 +42,4 @@ createApp({
       );
     },
   },
-}).mount("#create-client-app");  // Cambiado de "#app" a "#create-client-app"
+}).mount("#create-client-app");

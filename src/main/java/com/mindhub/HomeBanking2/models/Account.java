@@ -85,6 +85,9 @@ public class Account {
         this.transactions.add(transaction);
     }
 
+    public void setAccountNumber(String accountNumber) {
+
+    }
 }
 
 
