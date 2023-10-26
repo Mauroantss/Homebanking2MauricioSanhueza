@@ -22,7 +22,7 @@ createApp({
   },
   methods: {
     createAccount() {
-      // Tu lógica para crear la cuenta aquí
+      window.location.href = "/web/pages/create-card.html";
     },
     logOut() {
       axios.post("/api/logout").then((response) => {

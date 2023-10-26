@@ -114,5 +114,4 @@ public class Card {
         return masked;
     }
 
-
 }

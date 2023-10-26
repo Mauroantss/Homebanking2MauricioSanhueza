@@ -145,6 +145,9 @@ public class Client {
                 '}';
     }
 
+    public String nameCard(){
+        return this.firstName+this.lastName;
+    }
     }
 
 

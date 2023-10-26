@@ -8,6 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface CardRepository extends JpaRepository<Card, Long> {
-    int countCardsByClientAndCardType(Client currentClient, CardType cardType);
+    boolean existsByCvv(String number);
+    boolean existsByNumber(String number);
 
 }

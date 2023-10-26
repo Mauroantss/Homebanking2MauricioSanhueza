@@ -80,15 +80,15 @@ public class ClientController {
 
 
         // Crear y guardar una cuenta asociada al nuevo cliente
-        Random random = new Random();
-        String accountNumber = "VIN-" + (10000000 + random.nextInt(90000000));
+        Random random = new Random();  // Inicializa un objeto de la clase Random para generar números aleatorios
+        String accountNumber = "VIN-" + (10000000 + random.nextInt(90000000));  // Genera un número de cuenta único con el prefijo "VIN-"
 
-        Account newAccount = new Account();
-        newAccount.setNumber(accountNumber);  // Asegúrate de que estás usando el nombre correcto del setter
-        newAccount.setBalance(0);
-        newAccount.setCreationDate(LocalDate.now());  // Establece la fecha actual
-        newAccount.setClient(client);  // Asegúrate de que 'client' está correctamente inicializado
-        accountRepository.save(newAccount);
+        Account newAccount = new Account();  // Crea un nuevo objeto de la clase Account
+        newAccount.setNumber(accountNumber);  // Establece el número de la cuenta con el número generado aleatoriamente
+        newAccount.setBalance(0);  // Inicializa el saldo de la cuenta a 0
+        newAccount.setCreationDate(LocalDate.now());  // Establece la fecha de creación de la cuenta a la fecha actual
+        newAccount.setClient(client);  // Asocia la cuenta con el cliente existente
+        accountRepository.save(newAccount);  // Guarda la nueva cuenta en la base de datos
 
         // Retorna un mensaje de éxito
         return new ResponseEntity<>("Client and account created successfully", HttpStatus.CREATED);
