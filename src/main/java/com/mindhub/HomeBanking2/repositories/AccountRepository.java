@@ -6,6 +6,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface AccountRepository extends JpaRepository<Account, Long> {
+    boolean existsByNumber(String number);
+    Account findByNumber(String number);
 }
 
 //Esta interfaz extiende JpaRepository<Account, Long>, lo que significa que hereda las operaciones CRUD
