@@ -25,12 +25,13 @@ table.table-striped {
 }
 
 .debit {
-    color: red;
-}
-
-.credit {
-    color: green;
-}
+    background-color: red;
+  }
+  
+  .credit {
+    background-color: green;
+  }
+  
 
 nav{
 background-color: #e3f2fd;
