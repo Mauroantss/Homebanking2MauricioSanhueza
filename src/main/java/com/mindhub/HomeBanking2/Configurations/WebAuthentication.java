@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // para que cuando se configure el módulo de spring utilice ese objeto ya creado.
 public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
     @Autowired
-    ClientRepository clientRepository;
+   private ClientRepository clientRepository;
 
 
     @Override

@@ -26,6 +26,9 @@ public class AccountController {
 
     @Autowired
     private ClientRepository clientRepository;
+    private int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
 
     @GetMapping
     public List<AccountDTO> getAllAccounts() {
@@ -48,8 +51,16 @@ public class AccountController {
         if (clientRepository.countAccountsByClient(currentClient) >= 3) {
             return new ResponseEntity<>("You already have the maximum number of possible accounts (3)", HttpStatus.FORBIDDEN);
         }
+        int accountsNumber;
+        String accountNumberString;
+        do {
+            accountsNumber = getRandomNumber(0, 99999999);
+            accountNumberString = String.valueOf(accountsNumber);
+        } while (accountRepository.existsByNumber(accountNumberString));
+
         Random random = new Random();
         String accountNumber = "VIN-" + (10000000 + random.nextInt(90000000));
+        //hacer la comprobacion de que el numero de cuenta existe o no para que no se repita
         Account newAccount = new Account();
         newAccount.setAccountNumber(accountNumber);
         newAccount.setBalance(0);

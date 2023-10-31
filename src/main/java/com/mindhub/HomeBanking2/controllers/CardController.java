@@ -29,72 +29,80 @@ public class CardController {
     private CardRepository cardRepository;
 
     // Método privado para generar un número aleatorio entre min y max
-    private int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
+
+    private int getRandomNumber(int min, int max) {return (int) ((Math.random() * (max - min)) + min);
+        // Math.random() devuelve un número entre 0.0 y 1.0
+        // Se multiplica por la diferencia entre max y min para ajustar el rango
+        // Se suma min para desplazar el rango
+        // Finalmente, se convierte a int para obtener un número entero
     }
 
     // Método privado para generar un número de tarjeta único
     private String generateNumberCard() {
-        StringBuilder cardNumber = new StringBuilder();
+        StringBuilder cardNumber = new StringBuilder(); // Iniciar el StringBuilder para almacenar el número de tarjeta
+
         do {
-            cardNumber.setLength(0); // Limpiar el contenido
+            cardNumber.setLength(0); // Limpiar el contenido del StringBuilder
+            // Generar 16 dígitos para el número de tarjeta
             for (int i = 0; i < 16; i++) {
-                cardNumber.append(getRandomNumber(0, 9));
+                cardNumber.append(getRandomNumber(0, 9)); // Añadir un dígito aleatorio al número de tarjeta
+                // Insertar un guion después de cada conjunto de 4 dígitos, excepto al final
                 if ((i + 1) % 4 == 0 && i != 15) cardNumber.append("-");
             }
+            // Repetir si el número de tarjeta ya existe en el repositorio
         } while (cardRepository.existsByNumber(cardNumber.toString()));
-        return cardNumber.toString();
+
+        return cardNumber.toString(); // Devolver el número de tarjeta como una cadena
     }
 
     // Método privado para generar un número CVV único para la tarjeta
     private String generateCvvCard() {
-        StringBuilder cvvNumber = new StringBuilder();
-        do {
-            cvvNumber.setLength(0); // Limpiar el contenido
-            for (byte i = 0; i <= 2; i++) {
-                cvvNumber.append(getRandomNumber(0, 9));
-            }
-        } while (cardRepository.existsByCvv(cvvNumber.toString()));
-        return cvvNumber.toString();
+        StringBuilder cvvNumber = new StringBuilder(); // Iniciar el StringBuilder para almacenar el número CVV
+
+        // Generar 3 dígitos para el número CVV
+        for (byte i = 0; i <= 2; i++) {
+            cvvNumber.append(getRandomNumber(0, 9)); // Añadir un dígito aleatorio al número CVV
+        }
+
+        return cvvNumber.toString(); // Devolver el número CVV como una cadena
     }
+
+
 
     // Método privado para validar los datos de la tarjeta
     private boolean validateCardData(String cardType, String cardColor) {
-        return !(cardType.isEmpty() || cardType.isBlank() || cardColor.isEmpty() || cardColor.isBlank());
+        return !(cardType.isEmpty() || cardType.isBlank() || cardColor.isBlank());
     }
 
     // Endpoint para crear una nueva tarjeta
-    @PostMapping("/clients/current/cards")
-    public ResponseEntity<Object> newCard(Authentication authentication, @RequestParam String cardType, @RequestParam String cardColor) {
+    @PostMapping("/current/cards")
+    public ResponseEntity<Object> newCard(@RequestParam String cardType, @RequestParam String cardColor,
+                                          Authentication authentication) {
 
-        // Validar los datos de entrada
-        if (!validateCardData(cardType, cardColor)) {
-            return new ResponseEntity<>("Missing or invalid data for cardType or cardColor", HttpStatus.FORBIDDEN);
+        if (cardColor.isEmpty()) {
+            return new ResponseEntity<>("You must choose a card type.", HttpStatus.FORBIDDEN);
+        }
+        if (cardType.isEmpty()) {
+            return new ResponseEntity<>("You must choose a card color.", HttpStatus.FORBIDDEN);
         }
 
-        // Obtener el cliente actual
         Client client = clientRepository.findByEmail(authentication.getName());
 
-        // Contar el número de tarjetas del mismo tipo que tiene el cliente
-        int numberOfCardType = (int) client.getCards().stream()
-                .filter(Card -> Card.getCardType().equals(CardType.valueOf(cardType)))
-                .count();
+        int numberOfCardType =
+                (int) client.getCards().stream().filter(card -> card.getCardType().equals(CardType.valueOf(cardType))).count();
 
-        // Verificar si el cliente ya tiene 3 tarjetas del mismo tipo
-        if (numberOfCardType >= 3) {
+        if (numberOfCardType == 3) {
             return new ResponseEntity<>("You cannot have more than three cards of the same type.", HttpStatus.FORBIDDEN);
         }
 
-        // Crear una nueva instancia de Card y añadirla al cliente
-        Card card = new Card(client.nameCard(), CardType.valueOf(cardType), CardColor.valueOf(cardColor),
-                generateNumberCard(), generateCvvCard(), LocalDate.now().plusYears(5), LocalDate.now());
+        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), generateNumberCard(), generateCvvCard(), LocalDate.now().plusYears(5), LocalDate.now());
         client.addCard(card);
-
-        // Guardar la nueva tarjeta y el cliente en la base de datos
         cardRepository.save(card);
         clientRepository.save(client);
 
-        // Retornar una respuesta exitosa
-        return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
     }
 }
+
+
+//verificar el recibir con el enum, con postma, como use el js con las 2 condicionales por eso es que me renderiza bien

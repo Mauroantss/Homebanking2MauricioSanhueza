@@ -16,38 +16,39 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #e3f2fd;">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/web/index.html">Home banking</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
-            aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarScroll">
-            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/web/Index.html">Home</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Client
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/web/Pages/accounts.html">Accounts</a></li>
-                  <li><a class="dropdown-item" href="/web/pages/account.html">Transactions</a></li>
-                  <li><a class="dropdown-item" href="/web/pages/card.html">Cards</a></li>
-                  <li><a class="dropdown-item" href="#">Transfers</a></li>
+            <a class="navbar-brand" href="/web/index.html">Home banking</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/web/Index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Client
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/web/Pages/accounts.html">Accounts</a></li>
+                            <li><a class="dropdown-item" href="/web/pages/account.html">Transactions</a></li>
+                            <li><a class="dropdown-item" href="/web/pages/card.html">Cards</a></li>
+                            <li><a class="dropdown-item" href="#">Transfers</a></li>
+                        </ul>
+                    </li>
                 </ul>
-              </li>
-            </ul>
-            <ul class="navbar-nav ms-auto my-2 my-lg-0">
-              <li class="nav-item">
-                <a @click="logOut" class="nav-link" href="../index.html">
-                  <i class="bi bi-box-arrow-right"></i>
-                  Logout
-                </a>
-              </li>
-            </ul>
-          </div>
-      </nav>
+                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                    <li class="nav-item">
+                        <a @click="logOut" class="nav-link" href="../index.html">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+    </nav>
     </nav>
     <header class="main-header">
         <div>
@@ -89,72 +90,133 @@
         <main>
             <div class="container d-flex justify-content-center align-items-center mt-5">
                 <div class="text-center">
-                    <h1>Transferencia</h1>
-                    <form @submit.prevent="makeTransfer">
-                        <!-- Tipo de transferencia -->
+                    <h1>Transfers</h1>
+                    <form @submit.prevent="createTransfer">
+
+                        <!-- Elegir tipo de transferencia -->
                         <div class="mb-3">
                             <label for="transferType" class="form-label">Tipo de Transferencia</label>
-                            <select class="form-control" id="transferType" v-model="transferType" @change="toggleAccountField">
-                                <option value="Propia">Propia</option>
-                                <option value="Terceros">A Terceros</option>
+                            <select class="form-control" id="transferType" v-model="transferType">
+                                <option value="own">Propia</option>
+                                <option value="thirdParty">A Terceros</option>
                             </select>
                         </div>
-    
-                        <!-- Si la transferencia es propia -->
-                        <div class="mb-3" id="ownAccount" v-if="transferType === 'Propia'">
-                            <label for="ownAccountSelect" class="form-label">Cuenta Destino</label>
-                            <select class="form-control" id="ownAccountSelect" v-model="ownAccount">
-                                <!-- Opciones de cuentas propias -->
+
+                        <!-- Tipo de transacción -->
+                        <div class="mb-3">
+                            <label for="transactionType" class="form-label">Transaction Type</label>
+                            <select class="form-control" id="transactionType" v-model="transactionType">
+                                <option value="credit">Credit</option>
+                                <option value="debit">Debit</option>
                             </select>
                         </div>
-    
-                        <!-- Si la transferencia es a terceros -->
-                        <div class="mb-3" id="thirdPartyAccount" v-if="transferType === 'Terceros'">
-                            <label for="thirdPartyAccountInput" class="form-label">Número de Cuenta</label>
-                            <input type="text" class="form-control" id="thirdPartyAccountInput" v-model="thirdPartyAccount" required>
+
+                        <!-- Cuenta de origen -->
+                        <div class="mb-3" v-if="transferType === 'own'">
+                            <label for="fromAccount" class="form-label">From Account</label>
+                            <select class="form-control" id="fromAccount" v-model="fromAccount">
+                                <option value="">From Account</option>
+                                <option v-for="account in client.accounts" :value="account.number">
+                                    {{ account.number }}
+                                </option>
+                            </select>
                         </div>
-    
+
+                        <!-- Cuenta de destino -->
+                        <div class="mb-3">
+                            <label for="toAccount" class="form-label">To Account</label>
+                            <select v-if="transferType === 'own'" class="form-control" id="toAccount"
+                                v-model="toAccount">
+                                <option value="">To Account</option>
+                                <option v-for="account in client.accounts" :value="account.number">
+                                    {{ account.number }}
+                                </option>
+                            </select>
+                            <input v-else type="text" class="form-control" id="toAccount" v-model="toAccount"
+                                placeholder="To Account" required>
+                        </div>
+
                         <!-- Monto -->
                         <div class="mb-3">
-                            <label for="amountInput" class="form-label">Monto</label>
-                            <input type="number" class="form-control" id="amountInput" v-model="amount" required>
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="amount" v-model="amount" min="1" required>
                         </div>
-    
+
                         <!-- Descripción -->
                         <div class="mb-3">
-                            <label for="descriptionInput" class="form-label">Descripción</label>
-                            <input type="text" class="form-control" id="descriptionInput" v-model="description" required>
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" v-model="description" required>
                         </div>
-    
+
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmationModal">Transferir</button>
+                            <button type="submit" class="btn btn-primary">Transfer</button>
                         </div>
                     </form>
-                    
-                    <!-- Modal -->
-                    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="confirmationModalLabel">Confirm Transfer</h5>
+                </div>
+            </div>
+
+
+            <!-- Modal for confirming the transfer -->
+            <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            Are you sure you want to proceed with this transfer?
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                            <button type="button" class="btn btn-primary" @click="confirmTransfer">Yes</button>
-                          </div>
                         </div>
-                      </div>
+                        <div class="modal-body">
+                            Are you sure you want to make this transfer?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                @click="cancelTransfer">No</button>
+                            <button type="button" class="btn btn-primary" @click="confirmTransfer">Yes</button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Modal for successful transfer -->
+            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="successModalLabel">Success</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Your transfer has been successfully completed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal for canceled transfer -->
+            <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cancelModalLabel">Cancelled</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Your transfer has been cancelled.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
+
+
+
+
     </div>
-    
-    
+
+
     <footer>
         <nav class="navbar" style="background-color: #e3f2fd;">
             <div class="container-fluid">

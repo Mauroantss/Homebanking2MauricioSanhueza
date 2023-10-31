@@ -29,71 +29,71 @@ public class TransactionController {
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private TransactionRepository transactionRepository;
+    TransactionRepository transactionRepository;
 
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String formattedDateTime = now.format(formatter);
+    LocalDateTime formattedLocalDateTime = LocalDateTime.parse(formattedDateTime, formatter);
     @Transactional
     @PostMapping("/clients/current/transaction")
     public ResponseEntity<Object> newTransaction(@RequestParam Double amount, @RequestParam String description, @RequestParam String fromAccount, @RequestParam String toAccount, Authentication authentication) {
 
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = now.format(formatter);
-        LocalDateTime formattedLocalDateTime = LocalDateTime.parse(formattedDateTime, formatter);
-
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientRepository.findByEmail(authentication.getName()); // Cliente autenticado
 
         if (amount <= 0) {
-            return new ResponseEntity<>("Please enter an amount greater than zero.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("The amount must not be zero", HttpStatus.FORBIDDEN);
         }
         if (description.isEmpty()) {
-            return new ResponseEntity<>("Please provide a description for the transaction.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Fill description field", HttpStatus.FORBIDDEN);
         }
         if (fromAccount.isEmpty()) {
-            return new ResponseEntity<>("Please specify the account you are sending money from.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Fill 'FROM' account field", HttpStatus.FORBIDDEN);
         }
         if (toAccount.isEmpty()) {
-            return new ResponseEntity<>("Please specify the destination account.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Fill 'TO' account field", HttpStatus.FORBIDDEN);
         }
 
         if (fromAccount.equals(toAccount)) {
-            return new ResponseEntity<>("You can't transfer money to the same account.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Same accounts numbers", HttpStatus.FORBIDDEN);
         }
 
         Account sAccount = accountRepository.findByNumber(fromAccount); // Cuenta origen
         if (sAccount == null) {
-            return new ResponseEntity<>("The account you're trying to send money from doesn't exist.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Sender account does not exists", HttpStatus.FORBIDDEN);
         }
 
+
         if (!sAccount.getClient().equals(client)) {
-            return new ResponseEntity<>("Oops! This account doesn't belong to you.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Account does not belong to the authenticated client", HttpStatus.FORBIDDEN);
         }
 
         Account rAccount = accountRepository.findByNumber(toAccount); // Cuenta destino
         if (rAccount == null) {
-            return new ResponseEntity<>("The destination account doesn't exist.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Recipient account does not exists", HttpStatus.FORBIDDEN);
         }
 
-        if (sAccount.getBalance() < amount) {
-            return new ResponseEntity<>("You don't have enough funds to complete this transaction.", HttpStatus.FORBIDDEN);
+        if (sAccount.getBalance() <= amount) {
+            return new ResponseEntity<>("Your balance is insufficient", HttpStatus.FORBIDDEN);
         }
 
-        // Crear la transacción de débito con descripción y número de cuenta origen concatenados
-        Transaction debitTransaction = new Transaction(TransactionType.DEBIT, -amount, formattedLocalDateTime, description + " VIN" + fromAccount);
+        // Crear la transacción de débito
+        Transaction debitTransaction = new Transaction(TransactionType.DEBIT, amount, formattedLocalDateTime, description);
         sAccount.addTransaction(debitTransaction);
+
         sAccount.setBalance(sAccount.getBalance() - amount);
         transactionRepository.save(debitTransaction);
 
-// Crear la transacción de crédito con descripción y número de cuenta destino concatenados
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount, formattedLocalDateTime, description + " VIN" + toAccount);
+        // Crear la transacción de crédito
+        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount, formattedLocalDateTime, description);
         rAccount.addTransaction(creditTransaction);
+
+
         rAccount.setBalance(rAccount.getBalance() + amount);
         transactionRepository.save(creditTransaction);
 
 
-        accountRepository.save(sAccount);
-        accountRepository.save(rAccount);
-
-        return new ResponseEntity<>("Transaction completed successfully!", HttpStatus.CREATED);
+        return new ResponseEntity<>("Transfer successfully", HttpStatus.CREATED);
     }
 }
 

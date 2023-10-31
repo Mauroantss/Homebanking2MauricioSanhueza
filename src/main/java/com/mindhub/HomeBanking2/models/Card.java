@@ -107,11 +107,4 @@ public class Card {
         this.client = client;
     }
 
-    public String getMaskedCard() {
-        int length = number.length();
-        String lastFourDigits = number.substring(Math.max(0, length - 3)); // Extrae los últimos 3 dígitos, independientemente de los espacios.
-        String masked = "****-****-****-" + lastFourDigits;
-        return masked;
-    }
-
 }

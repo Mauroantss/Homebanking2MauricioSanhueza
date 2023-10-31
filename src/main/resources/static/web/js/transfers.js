@@ -3,86 +3,64 @@ const { createApp } = Vue;
 createApp({
   data() {
     return {
+      toAccount: "",
+      fromAccount: "",
+      amount: "",
+      transactionType: "",
+      description: "",
+      accounts: [],
       client: [],
-      cards: [],
-      creditCards: [],
-      debitCards: [],
-      transferType: '',
-      ownAccount: '',
-      thirdPartyAccount: '',
-      amount: null,
-      description: '',
+      transferType: 'own'
     };
   },
   created() {
-    axios
-      .get("/api/clients/currents")
-      .then((response) => {
-        this.client = response.data;
-        this.cards = response.data.cards;
-        this.creditCards = this.cards.filter(
-          (card) => card.cardType == "CREDIT"
-        );
-        this.debitCards = this.cards.filter((card) => card.cardType == "DEBIT");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-       // Obtener cuentas del cliente
-    axios.get("/api/clients/current/accounts")
-    .then((response) => {
-      this.accounts = response.data;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+    this.getClient();
   },
   methods: {
+    getClient() {
+      axios.get("/api/clients/currents")
+        .then((response) => {
+          this.client = response.data;
+          this.accounts = response.data.accounts;
+          setTimeout(() => (this.loading = false), 800);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
     logOut() {
       axios.post("/api/logout").then((response) => {
         console.log("Signed out");
         location.pathname = "/web/index.html";
       });
     },
-    makeTransfer() {
-      const transferData = {
-        transferType: this.transferType,
-        ownAccount: this.ownAccount,
-        thirdPartyAccount: this.thirdPartyAccount,
-        amount: this.amount,
-        description: this.description,
-      };
-
-      axios.post('/api/clients/current/transaction', transferData)
-        .then(response => {
-          alert('Transferencia realizada con éxito');
-          location.reload();
-        })
-        .catch(error => {
-          alert(`Ocurrió un error al realizar la transferencia: ${error}`);
-        });
-    },
-    toggleAccountField() {
-      // Aquí va el código para alternar entre las opciones de cuenta
-      console.log(`El tipo de transferencia seleccionado es: ${this.transferType}`);
+    createTransfer() {
+      // Muestra el modal de confirmación
+      new bootstrap.Modal(document.getElementById('confirmationModal')).show();
     },
     confirmTransfer() {
-      const transferData = {
-        transferType: this.transferType,
-        ownAccount: this.ownAccount,
-        thirdPartyAccount: this.thirdPartyAccount,
-        amount: this.amount,
-        description: this.description,
-      };
+      // Realiza la transferencia aquí
+      const endpoint = "/api/clients/current/transaction";
+      const params = `amount=${this.amount}&description=${this.description}&fromAccount=${this.fromAccount}&toAccount=${this.toAccount}`;
+      axios.post(endpoint, params)
+        .then((response) => {
+          // Actualiza la información del cliente
+          this.getClient();
 
-      axios.post('/api/clients/current/transaction', transferData)
-        .then(response => {
-          alert('Transferencia realizada con éxito');
-          location.reload();
+          // Muestra el modal de éxito
+          new bootstrap.Modal(document.getElementById('successModal')).show();
+
+          // Navega a la página de cuentas
+          location.pathname = "/web/pages/accounts.html";
         })
-        .catch(error => {
-          alert(`Ocurrió un error al realizar la transferencia: ${error}`);
+        .catch((error) => {
+          console.error("Error:", error);
         });
+    },
+    cancelTransfer() {
+      // Muestra el modal de cancelación
+      new bootstrap.Modal(document.getElementById('cancelModal')).show();
     }
-  }
+  },
+  computed: {}
 }).mount("#app");
