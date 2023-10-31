@@ -33,7 +33,6 @@ public class ClientController {
     @Autowired
     private AccountRepository accountRepository;
 
-
     @GetMapping // Anotación para manejar peticiones GET a la URL base
     public List<ClientDTO> getAllClients() {
         // Obtiene todos los clientes de la base de datos
@@ -78,7 +77,6 @@ public class ClientController {
         Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password), false);
         clientRepository.save(client);
 
-
         // Crear y guardar una cuenta asociada al nuevo cliente
         Random random = new Random();  // Inicializa un objeto de la clase Random para generar números aleatorios
         String accountNumber = "VIN-" + (10000000 + random.nextInt(90000000));  // Genera un número de cuenta único con el prefijo "VIN-"
@@ -101,6 +99,7 @@ public class ClientController {
         return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
     }
 }
+
 
 
 //En este controlador ClientController, se manejan dos rutas:

@@ -21,45 +21,13 @@ public class WebAuthorization {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests() // Autoriza peticiones
-                .antMatchers(
-                        HttpMethod.POST,
-                        "/api/clients", // Registro de clientes // ROLES
-                        "/api/clients/currents/**", // Registro de cuentas
-                        "/api/login", // Logueo
-                        "/api/clients/current/transaction",
-                        "/web/pages/transfers.html"
-                ).permitAll()
-                .antMatchers(
-                        "/web/index.html",
-                        "/web/pages/login.html",
-                        "/web/register.html",
-                        "/web/css/**",
-                        "/web/js/**",
-                        "/web/images/**"
-                ).permitAll()
-
-                // Rutas de Administrador
-                .antMatchers(
-                        "/h2-console/**",
-                        "/rest/**",
-                        "/web/pages/manager.html"
-                ).hasAuthority("ADMIN")
-
-                // Rutas de Solo Lectura para Administradores(Obtener listado de clientes)
-                .antMatchers(HttpMethod.GET, "/api/clients").hasAuthority("ADMIN")
-
-                // Rutas Autenticadas (Requieren autenticación)
-                .antMatchers(
-                        "/api/logout/",
-                        "/web/pages/**",
-                        "/api/clients/current/accounts",
-                        "/api/clients/current/accounts/transaction",
-                        "/api/clients/current/transaction"
-                ).authenticated()
-
-                // Ruta Denegada si no coincide con las rutas previamente definidas (Sin acceso)
-                .antMatchers("/api", "/rest").denyAll(); // anyrequest deny all
-        ;
+                .antMatchers(HttpMethod.POST,"/api/clients","/api/login/").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/clients/currents/card","/web/pages/cards.html").authenticated()
+                .antMatchers("/web/index.html","/web/js/**", "/web/pages/login.html", "/web/pages/register.html"
+                        ,"/web/css/**","/web/images/**","/api/clients/currents/**","/api/clients").permitAll()
+                .antMatchers("/h2-console/**", "/rest/", "/web/pages/manager.html").hasAuthority("ADMIN")
+                .antMatchers("/api/logout/").authenticated()
+                .anyRequest().authenticated();
 //hasAuthority(client)
 
         http.formLogin()

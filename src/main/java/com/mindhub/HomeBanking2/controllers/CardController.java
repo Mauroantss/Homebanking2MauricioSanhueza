@@ -29,8 +29,8 @@ public class CardController {
     private CardRepository cardRepository;
 
     // Método privado para generar un número aleatorio entre min y max
-
-    private int getRandomNumber(int min, int max) {return (int) ((Math.random() * (max - min)) + min);
+    private int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
         // Math.random() devuelve un número entre 0.0 y 1.0
         // Se multiplica por la diferencia entre max y min para ajustar el rango
         // Se suma min para desplazar el rango
@@ -67,8 +67,6 @@ public class CardController {
         return cvvNumber.toString(); // Devolver el número CVV como una cadena
     }
 
-
-
     // Método privado para validar los datos de la tarjeta
     private boolean validateCardData(String cardType, String cardColor) {
         return !(cardType.isEmpty() || cardType.isBlank() || cardColor.isBlank());
@@ -79,30 +77,51 @@ public class CardController {
     public ResponseEntity<Object> newCard(@RequestParam String cardType, @RequestParam String cardColor,
                                           Authentication authentication) {
 
+        // Comprobación si cardColor está vacío
         if (cardColor.isEmpty()) {
             return new ResponseEntity<>("You must choose a card type.", HttpStatus.FORBIDDEN);
         }
+
+        // Comprobación si cardType está vacío
         if (cardType.isEmpty()) {
             return new ResponseEntity<>("You must choose a card color.", HttpStatus.FORBIDDEN);
         }
 
+        // Obtener el cliente actual autenticado
         Client client = clientRepository.findByEmail(authentication.getName());
 
+        // Contar cuántas tarjetas del mismo tipo tiene el cliente
         int numberOfCardType =
                 (int) client.getCards().stream().filter(card -> card.getCardType().equals(CardType.valueOf(cardType))).count();
 
+        // Comprobar si el cliente ya tiene tres tarjetas del mismo tipo
         if (numberOfCardType == 3) {
             return new ResponseEntity<>("You cannot have more than three cards of the same type.", HttpStatus.FORBIDDEN);
         }
 
-        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), generateNumberCard(), generateCvvCard(), LocalDate.now().plusYears(5), LocalDate.now());
+        // Generar un nuevo número de tarjeta único
+        String cardNumber = generateNumberCard();
+
+        // Generar un nuevo número CVV único
+        String cvv = generateCvvCard();
+
+        // Crear una nueva tarjeta con los datos proporcionados y algunos valores generados
+        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), cardNumber, cvv, LocalDate.now().plusYears(5), LocalDate.now());
+
+        // Agregar la tarjeta al cliente
         client.addCard(card);
+
+        // Guardar la tarjeta en el repositorio de tarjetas
         cardRepository.save(card);
+
+        // Actualizar el cliente en el repositorio de clientes
         clientRepository.save(client);
 
-        return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
+        // Devolver una respuesta exitosa con un mensaje
+        return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
     }
 }
+
 
 
 //verificar el recibir con el enum, con postma, como use el js con las 2 condicionales por eso es que me renderiza bien
