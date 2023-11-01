@@ -21,12 +21,18 @@ public class WebAuthorization {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests() // Autoriza peticiones
-                .antMatchers(HttpMethod.POST,"/api/clients","/api/login/").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/clients/currents/card","/web/pages/cards.html").authenticated()
+                .antMatchers(HttpMethod.POST,"/api/clients","/api/login/","/api/clients/current/**").permitAll()
                 .antMatchers("/web/index.html","/web/js/**", "/web/pages/login.html", "/web/pages/register.html"
-                        ,"/web/css/**","/web/images/**","/api/clients/currents/**","/api/clients").permitAll()
+                        ,"/web/css/**","/web/images/**","/api/clients/current/**","/api/clients","/api/clients/current/transaction","/api/clients/current/cards").permitAll()
+
+                .antMatchers(HttpMethod.POST,"/api/clients/current/cards","/web/pages/cards.html","/api/clients/current/transaction","/api/clients/current/**").authenticated()
+
                 .antMatchers("/h2-console/**", "/rest/", "/web/pages/manager.html").hasAuthority("ADMIN")
-                .antMatchers("/api/logout/").authenticated()
+                .antMatchers("/api/clients/current/cards").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.POST,"/api/logout/","/api/logout/",
+                        "/web/pages/**",
+                        "/api/clients/current/accounts",
+                        "/api/clients/current/accounts/transaction").authenticated()
                 .anyRequest().authenticated();
 //hasAuthority(client)
 

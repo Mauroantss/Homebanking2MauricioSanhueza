@@ -18,7 +18,7 @@ createApp({
   },
   methods: {
     getClient() {
-      axios.get("/api/clients/currents")
+      axios.get("/api/clients/current")
         .then((response) => {
           this.client = response.data;
           this.accounts = response.data.accounts;

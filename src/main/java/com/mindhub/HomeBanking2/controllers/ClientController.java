@@ -93,7 +93,7 @@ public class ClientController {
     }
 
     // Ruta adicional para obtener el cliente actual basado en la autenticación
-    @RequestMapping("/currents")
+    @RequestMapping("/current")
     public ClientDTO getClientCurrent(Authentication authentication) {
         // Obtiene el cliente actual usando el email del objeto de autenticación y lo convierte a DTO
         return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
