@@ -31,10 +31,11 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#">Accounts</a></li>
-                  <li><a class="dropdown-item" href="/web/Pages/account.html">Transactions</a></li>
+                  <li><a class="dropdown-item" href="/web/pages/account.html">Transactions</a></li>
                   <li><a class="dropdown-item" href="/web/pages/card.html">Cards</a></li>
                   <li><a class="dropdown-item" href="/web/pages/transfers.html">Transfers</a></li>
-                </ul>
+                  <li><a class="dropdown-item" href="/web/pages/loan-application.html">Loan</a></li>
+              </ul>
               </li>
             </ul>
             <ul class="navbar-nav ms-auto my-2 my-lg-0">
@@ -68,6 +69,7 @@
                     </div>
                     <div class="col-md-6">
                         <h4 class="text-center">Loans</h4>
+                        <button><a class="btn btn-success" href="/web/pages/loan-application.html">Request Loan</a></button>
                         <div v-for="loan of client.loans" :key="loan.id" class="card mb-3 dashboard credit-card-style">
                             <div class="card-body text-center">
                                 <h5 class="card-title">Loan Type: {{ loan.loanName }}</h5>

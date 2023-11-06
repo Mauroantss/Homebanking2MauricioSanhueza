@@ -21,18 +21,25 @@ public class WebAuthorization {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests() // Autoriza peticiones
-                .antMatchers(HttpMethod.POST,"/api/clients","/api/login/","/api/clients/current/**").permitAll()
-                .antMatchers("/web/index.html","/web/js/**", "/web/pages/login.html", "/web/pages/register.html"
-                        ,"/web/css/**","/web/images/**","/api/clients/current/**","/api/clients","/api/clients/current/transaction","/api/clients/current/cards").permitAll()
 
-                .antMatchers(HttpMethod.POST,"/api/clients/current/cards","/web/pages/cards.html","/api/clients/current/transaction","/api/clients/current/**").authenticated()
+                // Permisos sin autenticación
+                .antMatchers(HttpMethod.POST,"/api/clients","/api/login/").permitAll()
+                .antMatchers("/web/index.html", "/web/js/**", "/web/pages/login.html",
+                        "/web/pages/register.html","/api/loans" ,"/web/css/**", "/web/images/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/loans").permitAll() // permiso público para obtener préstamos
 
-                .antMatchers("/h2-console/**", "/rest/", "/web/pages/manager.html").hasAuthority("ADMIN")
-                .antMatchers("/api/clients/current/cards").hasAuthority("CLIENT")
-                .antMatchers(HttpMethod.POST,"/api/logout/","/api/logout/",
-                        "/web/pages/**",
-                        "/api/clients/current/accounts",
-                        "/api/clients/current/accounts/transaction").authenticated()
+                // Permisos para usuarios autenticados
+                .antMatchers(HttpMethod.POST,"/api/clients/current/**", "/api/loans",
+                        "/api/clients/current/transaction", "/api/clients/current/cards").authenticated()
+
+                // Permisos específicos para ADMIN
+                .antMatchers("/h2-console/**", "/api/clients", "/web/pages/manager.html").hasAuthority("ADMIN")
+
+                // Permisos específicos para CLIENT
+                .antMatchers("/api/clients/current/cards", "/api/client/current/loans",
+                        "/api/loans").hasAuthority("CLIENT")
+
+                // Requiere autenticación para cualquier otra petición no especificada
                 .anyRequest().authenticated();
 //hasAuthority(client)
 
