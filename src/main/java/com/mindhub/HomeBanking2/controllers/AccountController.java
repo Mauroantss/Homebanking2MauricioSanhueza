@@ -17,6 +17,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
+
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -27,12 +29,9 @@ public class AccountController {
     @Autowired
     private ClientRepository clientRepository;
 
-    // Definición de un método para obtener un número aleatorio en un rango
-    private int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
 
-    @GetMapping
+
+    @GetMapping ("/accounts")
     // Este método maneja las solicitudes GET para obtener todas las cuentas
     public List<AccountDTO> getAllAccounts() {
         // Obtiene todas las cuentas de la base de datos a través del repositorio

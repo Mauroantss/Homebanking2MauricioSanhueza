@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.Random;
 
+import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
+import static com.mindhub.HomeBanking2.utils.CardUtils.generateCvvCard;
+import static com.mindhub.HomeBanking2.utils.CardUtils.generateNumberCard;
+
 @RestController
 @RequestMapping("/api")
 public class CardController {
@@ -28,44 +32,13 @@ public class CardController {
     @Autowired
     private CardRepository cardRepository;
 
-    // Método privado para generar un número aleatorio entre min y max
-    private int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-        // Math.random() devuelve un número entre 0.0 y 1.0
-        // Se multiplica por la diferencia entre max y min para ajustar el rango
-        // Se suma min para desplazar el rango
-        // Finalmente, se convierte a int para obtener un número entero
-    }
 
-    // Método privado para generar un número de tarjeta único
-    private String generateNumberCard() {
-        StringBuilder cardNumber = new StringBuilder(); // Iniciar el StringBuilder para almacenar el número de tarjeta
 
-        do {
-            cardNumber.setLength(0); // Limpiar el contenido del StringBuilder
-            // Generar 16 dígitos para el número de tarjeta
-            for (int i = 0; i < 16; i++) {
-                cardNumber.append(getRandomNumber(0, 9)); // Añadir un dígito aleatorio al número de tarjeta
-                // Insertar un guion después de cada conjunto de 4 dígitos, excepto al final
-                if ((i + 1) % 4 == 0 && i != 15) cardNumber.append("-");
-            }
-            // Repetir si el número de tarjeta ya existe en el repositorio
-        } while (cardRepository.existsByNumber(cardNumber.toString()));
 
-        return cardNumber.toString(); // Devolver el número de tarjeta como una cadena
-    }
+
 
     // Método privado para generar un número CVV único para la tarjeta
-    private String generateCvvCard() {
-        StringBuilder cvvNumber = new StringBuilder(); // Iniciar el StringBuilder para almacenar el número CVV
 
-        // Generar 3 dígitos para el número CVV
-        for (byte i = 0; i <= 2; i++) {
-            cvvNumber.append(getRandomNumber(0, 9)); // Añadir un dígito aleatorio al número CVV
-        }
-
-        return cvvNumber.toString(); // Devolver el número CVV como una cadena
-    }
 
     // Método privado para validar los datos de la tarjeta
     private boolean validateCardData(String cardType, String cardColor) {
