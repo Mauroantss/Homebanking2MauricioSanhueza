@@ -5,10 +5,11 @@ import com.mindhub.HomeBanking2.models.Client;
 import com.mindhub.HomeBanking2.repositories.ClientRepository;
 import com.mindhub.HomeBanking2.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class ClientServiceImpl implements ClientService {
     @Autowired
     ClientRepository clientRepository;

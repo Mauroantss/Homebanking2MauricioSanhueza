@@ -20,27 +20,41 @@ public class WebAuthorization {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests() // Autoriza peticiones
+        http.authorizeRequests()
+                // Rutas Públicas (Acceso sin autenticación)
+                .antMatchers(
+                        HttpMethod.POST,
+                        "/api/clients" // Registro de clientes
+                ).permitAll()
+                .antMatchers(
+                        "/web/index.html",
+                        "/web/pages/login.html",
+                        "/web/pages/register.html",
+                        "/web/css/**",
+                        "/web/js/**",
+                        "/web/images/**"
+                ).permitAll()
+                // Rutas de Administrador
+                .antMatchers(
+                        "/h2-console/**",
+                        "/rest/**",
+                        "/web/pages/manager.html",
+                        "/web/pages/admin-loan.html"
+                ).hasAuthority("ADMIN")
+                // Rutas de Solo Lectura para Administradores(Obtener listado de clientes)
+                .antMatchers(HttpMethod.GET, "/api/clients", "/api/loans").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/loans/create").hasAuthority("ADMIN")
+                // Rutas Autenticadas (Requieren autenticación)
+                .antMatchers(
+                        "/web/pages/**",
+                        "/api/clients/current/**"
+                ).authenticated()
+                // Restringir el acceso a /api/loans solo a CLIENT (si es necesario)
+                .antMatchers(HttpMethod.GET, "/api/loans").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/loans", "/api/loans/payments").authenticated()
 
-                // Permisos sin autenticación
-                .antMatchers(HttpMethod.POST,"/api/clients","/api/login/").permitAll()
-                .antMatchers("/web/index.html", "/web/js/**", "/web/pages/login.html",
-                        "/web/pages/register.html","/api/loans" ,"/web/css/**", "/web/images/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/loans").permitAll() // permiso público para obtener préstamos
-
-                // Permisos para usuarios autenticados
-                .antMatchers(HttpMethod.POST,"/api/clients/current/**", "/api/loans",
-                        "/api/clients/current/transaction", "/api/clients/current/cards").authenticated()
-
-                // Permisos específicos para ADMIN
-                .antMatchers("/h2-console/**", "/api/clients", "/web/pages/manager.html").hasAuthority("ADMIN")
-
-                // Permisos específicos para CLIENT
-                .antMatchers("/api/clients/current/cards", "/api/client/current/loans",
-                        "/api/loans").hasAuthority("CLIENT")
-
-                // Requiere autenticación para cualquier otra petición no especificada
-                .anyRequest().authenticated();
+                // Ruta Denegada si no coincide con las rutas previamente definidas (Sin acceso)
+                .anyRequest().denyAll();
 //hasAuthority(client)
 
         http.formLogin()

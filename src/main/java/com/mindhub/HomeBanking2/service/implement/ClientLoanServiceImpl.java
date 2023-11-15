@@ -4,7 +4,9 @@ import com.mindhub.HomeBanking2.models.ClientLoan;
 import com.mindhub.HomeBanking2.repositories.ClientLoanRepository;
 import com.mindhub.HomeBanking2.service.ClientLoanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ClientLoanServiceImpl implements ClientLoanService {
     @Autowired
     private ClientLoanRepository clientLoanRepository;
