@@ -7,6 +7,8 @@ import com.mindhub.HomeBanking2.models.CardType;
 import com.mindhub.HomeBanking2.models.Client;
 import com.mindhub.HomeBanking2.repositories.CardRepository;
 import com.mindhub.HomeBanking2.repositories.ClientRepository;
+import com.mindhub.HomeBanking2.service.CardService;
+import com.mindhub.HomeBanking2.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,70 +30,77 @@ import static com.mindhub.HomeBanking2.utils.CardUtils.generateNumberCard;
 public class CardController {
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
     @Autowired
-    private CardRepository cardRepository;
+    private CardService cardService;
 
 
+    // Metodo para generar un número de tarjeta de crédito aleatorio
+    private String generateRandomCardNumber() {
+
+        // String holaMundo = "Hola";
+        //    holaMundo+= "Mundo";
+        StringBuilder cardNumber; // String Builder(Clase de Java) me permite modificar el contenido de mi cadena sin necesitar de instanciar.
 
 
+        do {
+            cardNumber = new StringBuilder(); // Se crea un objeto nuevo cada vez que se completa un numero de tarjeta.
+            for (int i = 0; i < 16; i++) { // 16 iteraciones
+                int digit = (int) (Math.random() * 10); // Genera un número de 0 a 9 y lo guardamos en digit
+                cardNumber.append(digit); // El número generado lo guardamos con .append gracias a StringBuilder
 
+                if ((i + 1) % 4 == 0 && i != 15) {
+                    cardNumber.append("-"); // Agregar un guión después de cada 4 iteraciones.
+                }
+            }
+        } while (cardService.existsCardByNumber(cardNumber.toString()));
 
-    // Método privado para generar un número CVV único para la tarjeta
-
-
-    // Método privado para validar los datos de la tarjeta
-    private boolean validateCardData(String cardType, String cardColor) {
-        return !(cardType.isEmpty() || cardType.isBlank() || cardColor.isBlank());
+        return cardNumber.toString();
     }
 
-    // Endpoint para crear una nueva tarjeta
+
+    // Metodo para generar un número de tarjeta de crédito aleatorio
+    private String generateRandomCvvNumber() {
+        StringBuilder cardCvvNumber;
+
+        do {
+            cardCvvNumber = new StringBuilder();
+            for (int i = 0; i < 4; i++) { // 16 iteraciones
+                int digit = (int) (Math.random() * 4); // Genera un número de 0 a 9 y lo guardamos en digit
+                cardCvvNumber.append(digit); // El número generado lo guardamos con .append gracias a StringBuilder
+
+            }
+        } while (cardService.existsCardByNumber(cardCvvNumber.toString()));
+
+        return cardCvvNumber.toString();
+    }
+
     @PostMapping("/current/cards")
-    public ResponseEntity<Object> newCard(@RequestParam String cardType, @RequestParam String cardColor,
+    public ResponseEntity<String> newCard(@RequestParam String cardType, @RequestParam String cardColor,
                                           Authentication authentication) {
 
-        // Comprobación si cardColor está vacío
         if (cardColor.isEmpty()) {
             return new ResponseEntity<>("You must choose a card type.", HttpStatus.FORBIDDEN);
         }
-
-        // Comprobación si cardType está vacío
         if (cardType.isEmpty()) {
             return new ResponseEntity<>("You must choose a card color.", HttpStatus.FORBIDDEN);
         }
 
-        // Obtener el cliente actual autenticado
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.findClientByEmail(authentication.getName());
 
-        // Contar cuántas tarjetas del mismo tipo tiene el cliente
         int numberOfCardType =
                 (int) client.getCards().stream().filter(card -> card.getCardType().equals(CardType.valueOf(cardType))).count();
 
-        // Comprobar si el cliente ya tiene tres tarjetas del mismo tipo
         if (numberOfCardType == 3) {
             return new ResponseEntity<>("You cannot have more than three cards of the same type.", HttpStatus.FORBIDDEN);
         }
 
-        // Generar un nuevo número de tarjeta único
-        String cardNumber = generateNumberCard();
-
-        // Generar un nuevo número CVV único
-        String cvv = generateCvvCard();
-
-        // Crear una nueva tarjeta con los datos proporcionados y algunos valores generados
-        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), cardNumber, cvv, LocalDate.now().plusYears(5), LocalDate.now());
-
-        // Agregar la tarjeta al cliente
+        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), generateRandomCardNumber(), generateRandomCvvNumber(), LocalDate.now().plusYears(5), LocalDate.now());
         client.addCard(card);
+        cardService.saveCard(card);
+        clientService.saveClient(client);
 
-        // Guardar la tarjeta en el repositorio de tarjetas
-        cardRepository.save(card);
-
-        // Actualizar el cliente en el repositorio de clientes
-        clientRepository.save(client);
-
-        // Devolver una respuesta exitosa con un mensaje
-        return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
     }
 }
 
