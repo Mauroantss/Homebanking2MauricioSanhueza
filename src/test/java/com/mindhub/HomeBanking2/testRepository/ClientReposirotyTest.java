@@ -32,7 +32,7 @@ public class ClientReposirotyTest {
         // Utilizo un stream para procesar la lista de clientes. Con 'allMatch', verifico que cada cliente tenga un ID.
         // Esto se hace asegurándome de que el ID obtenido con 'getID()' no sea nulo.
         boolean allClientsHaveId = clients.stream()
-                .allMatch(client -> client.getID() != null);
+                .allMatch(client -> client.getId() != null);
 
         // Utilizo 'assertTrue' para afirmar que todos los clientes tienen un ID.
         // Si algún cliente no tiene ID, la prueba fallará con el mensaje dado.

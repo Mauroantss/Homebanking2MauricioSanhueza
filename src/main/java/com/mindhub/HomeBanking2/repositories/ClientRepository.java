@@ -5,13 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 
-@RepositoryRestResource
+@RepositoryRestResource // genericos
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Client findByEmail(String email);
-
-    default int countAccountsByClient(Client currentClient) {
-        return 0;
-    }
+    Boolean existsByEmail(String email);
 }
 
     //La interfaz creada hereda con "extends" los metodos de JpaRepository, entre los diamantes tengo que

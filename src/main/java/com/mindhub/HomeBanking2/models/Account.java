@@ -7,40 +7,54 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Entity // Anotación que indica que esta clase es una entidad JPA.
 public class Account {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
+    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
+    private long id; // Campo que almacena el identificador único de la cuenta.
 
-    private String number;
-    private LocalDate creationDate;
-    private double balance;
+    private String number; // Campo que almacena el número de cuenta.
+    private LocalDate creationDate; // Campo que almacena la fecha de creación de la cuenta.
+    private double balance; // Campo que almacena el saldo de la cuenta.
 
-    //---- Many to one de Account a Client
+    private AccountType accountType; // Campo que almacena el tipo de cuenta.
+
+    // Campo que almacena información sobre si la cuenta ha sido eliminada o no.
+    private Boolean isDeleted = false;
+
+    // Relación Many-to-One entre Account y Client, indicando que muchas cuentas pueden pertenecer a un cliente.
     @ManyToOne
-    @JoinColumn(name = "Client_Id")
-    private Client client;
+    @JoinColumn(name = "Client_Id") // Columna que se utilizará como clave foránea en la tabla.
+    private Client client; // Campo que almacena la referencia al cliente propietario de la cuenta.
 
-    //---- One to many de Account a Transaction
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
-    private Set<Transaction> transactions = new HashSet<>(); //Le asignamos un espacio en memoria
+    // Relación One-to-Many entre Account y Transaction, indicando que una cuenta puede tener muchas transacciones.
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER) // Se mapea con el campo "account" en la clase Transaction.
+    private Set<Transaction> transactions = new HashSet<>(); // Conjunto de transacciones asociadas a la cuenta.
 
-
-    //---- Constructores
+    // Constructor vacío por defecto.
     public Account() {
     }
 
-    public Account(String number, LocalDate creationDate, double balance) {
+    // Constructor que recibe datos para inicializar una cuenta.
+    public Account(String number, LocalDate creationDate, double balance, AccountType accountType) {
         this.number = number;
         this.creationDate = creationDate;
         this.balance = balance;
+        this.accountType = accountType;
     }
 
+    // Métodos "get" y "set" para acceder y modificar los valores de los campos de la cuenta.
 
-    // Metodos
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
+
     public long getId() {
         return id;
     }
@@ -80,15 +94,23 @@ public class Account {
     public Set<Transaction> getTransactions() {
         return transactions;
     }
+
+    // Método para agregar una transacción a la cuenta y establecer la relación bidireccional.
     public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);
         this.transactions.add(transaction);
     }
 
-    public void setAccountNumber(String accountNumber) {
+    // Métodos "get" y "set" para el campo "isDeleted".
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
 
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }
+
 
 
 //En resumen, la clase Account representa una cuenta bancaria con atributos como número de cuenta, fecha de creación,

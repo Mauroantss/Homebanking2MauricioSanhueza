@@ -13,40 +13,40 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
-// Le indica a Spring que debe crear un objeto de este tipo cuando se esta iniciando la aplicacion,
-// para que cuando se configure el módulo de spring utilice ese objeto ya creado.
+@Configuration // Indica que esta será la configuracion que tiene que usar la app antes de iniciar.
 public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
-    @Autowired
-   private ClientRepository clientRepository;
+    @Autowired // Permite la inyección de ClientRepository en esta clase.
+    ClientRepository clientRepository;
 
+    @Override // Indica que este método sobrescribe el método de una clase padre.
 
-    @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
+        // Configuración del servicio de detalles de usuario para autenticación.
 
         auth.userDetailsService(inputName -> {
-
+            // Busca un cliente por email y configura los roles según el tipo de usuario.
             Client client = clientRepository.findByEmail(inputName);
-
             if (client != null) {
                 if (client.getAdmin()) {
+                    // Si es administrador, asigna el rol ADMIN.
                     return new User(client.getEmail(), client.getPassword(),
                             AuthorityUtils.createAuthorityList("ADMIN"));
                 } else {
+                    // Si no es administrador, asigna el rol CLIENT.
                     return new User(client.getEmail(), client.getPassword(),
                             AuthorityUtils.createAuthorityList("CLIENT"));
                 }
             } else {
+                // Si el usuario no se encuentra, lanza una excepción.
                 throw new UsernameNotFoundException("Unknown user: " + inputName);
             }
-
-
         });
-
     }
 
-    @Bean
+    @Bean // Declara que un método produce un bean que será gestionado por el contexto de Spring.
     public PasswordEncoder passwordEncoder() {
+        // Provee un codificador de contraseña para la seguridad de la aplicación.
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
+

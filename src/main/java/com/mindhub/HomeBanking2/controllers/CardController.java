@@ -22,88 +22,78 @@ import java.time.LocalDate;
 import java.util.Random;
 
 import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
-import static com.mindhub.HomeBanking2.utils.CardUtils.generateCvvCard;
-import static com.mindhub.HomeBanking2.utils.CardUtils.generateNumberCard;
+import static com.mindhub.HomeBanking2.utils.CardUtils.*;
 
-@RestController
-@RequestMapping("/api")
+@RestController // Indico que esta es una clase controladora para servicios REST.
+@RequestMapping("/api/clients") // Especifico que las rutas de este controlador comienzan con '/api/clients'.
 public class CardController {
 
-    @Autowired
+    @Autowired // Inyecto automáticamente el servicio de clientes.
     private ClientService clientService;
-    @Autowired
+
+    @Autowired // Inyecto automáticamente el servicio de tarjetas.
     private CardService cardService;
 
+    // Método para generar un número de tarjeta de crédito aleatorio
+    // ... (Aquí iría el método generateRandomCardNumber y su comentario explicativo)
 
-    // Metodo para generar un número de tarjeta de crédito aleatorio
-    private String generateRandomCardNumber() {
-
-        // String holaMundo = "Hola";
-        //    holaMundo+= "Mundo";
-        StringBuilder cardNumber; // String Builder(Clase de Java) me permite modificar el contenido de mi cadena sin necesitar de instanciar.
-
-
-        do {
-            cardNumber = new StringBuilder(); // Se crea un objeto nuevo cada vez que se completa un numero de tarjeta.
-            for (int i = 0; i < 16; i++) { // 16 iteraciones
-                int digit = (int) (Math.random() * 10); // Genera un número de 0 a 9 y lo guardamos en digit
-                cardNumber.append(digit); // El número generado lo guardamos con .append gracias a StringBuilder
-
-                if ((i + 1) % 4 == 0 && i != 15) {
-                    cardNumber.append("-"); // Agregar un guión después de cada 4 iteraciones.
-                }
-            }
-        } while (cardService.existsCardByNumber(cardNumber.toString()));
-
-        return cardNumber.toString();
-    }
-
-
-    // Metodo para generar un número de tarjeta de crédito aleatorio
-    private String generateRandomCvvNumber() {
-        StringBuilder cardCvvNumber;
-
-        do {
-            cardCvvNumber = new StringBuilder();
-            for (int i = 0; i < 4; i++) { // 16 iteraciones
-                int digit = (int) (Math.random() * 4); // Genera un número de 0 a 9 y lo guardamos en digit
-                cardCvvNumber.append(digit); // El número generado lo guardamos con .append gracias a StringBuilder
-
-            }
-        } while (cardService.existsCardByNumber(cardCvvNumber.toString()));
-
-        return cardCvvNumber.toString();
-    }
-
-    @PostMapping("/current/cards")
+    @PostMapping("/current/cards") // Asocio esta ruta y método para manejar solicitudes POST a '/api/clients/current/cards'.
     public ResponseEntity<String> newCard(@RequestParam String cardType, @RequestParam String cardColor,
                                           Authentication authentication) {
 
-        if (cardColor.isEmpty()) {
+        // Verifico si el tipo de tarjeta está vacío y retorno un mensaje de error.
+        if (cardType.isEmpty()) {
             return new ResponseEntity<>("You must choose a card type.", HttpStatus.FORBIDDEN);
         }
-        if (cardType.isEmpty()) {
+
+        // Verifico si el color de la tarjeta está vacío y retorno un mensaje de error.
+        if (cardColor.isEmpty()) {
             return new ResponseEntity<>("You must choose a card color.", HttpStatus.FORBIDDEN);
         }
 
+        // Obtengo el cliente actual basado en su autenticación.
         Client client = clientService.findClientByEmail(authentication.getName());
 
+        // Cuento el número de tarjetas del tipo especificado que el cliente ya posee.
         int numberOfCardType =
                 (int) client.getCards().stream().filter(card -> card.getCardType().equals(CardType.valueOf(cardType))).count();
 
+        // Verifico si el cliente ya tiene tres tarjetas del mismo tipo y retorno un mensaje de error.
         if (numberOfCardType == 3) {
             return new ResponseEntity<>("You cannot have more than three cards of the same type.", HttpStatus.FORBIDDEN);
         }
 
-        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), generateRandomCardNumber(), generateRandomCvvNumber(), LocalDate.now().plusYears(5), LocalDate.now());
+        // Genero un número de tarjeta único.
+        String cardNumber;
+        do {
+            cardNumber = generateRandomCardNumber();
+        } while (cardService.existsCardByNumber(cardNumber));
+
+        // Creo una nueva tarjeta y la asocio con el cliente.
+        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), cardNumber, generateRandomCvvNumber(), LocalDate.now().plusYears(5), LocalDate.now());
         client.addCard(card);
+
+        // Guardo la tarjeta y el cliente en la base de datos.
         cardService.saveCard(card);
         clientService.saveClient(client);
 
-        return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
+        // Devuelvo un mensaje de éxito.
+        return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
     }
+
+    @PostMapping("/current/cards/delete") // Asocio esta ruta y método para manejar solicitudes POST a '/api/clients/current/cards/delete'.
+    public ResponseEntity<String> deletedCard(@RequestParam Long id, Authentication authentication) {
+
+        // Verifico si la tarjeta existe y retorno un mensaje de error si no es así.
+        if (!cardService.existsCardById(id)) {
+            return new ResponseEntity<>("Card does not exist.", HttpStatus.FORBIDDEN);
+        }
+
+        // Procedo a eliminar la tarjeta.
+        cardService.deletedCard(id);
+
+        // Devuelvo un mensaje confirmando la eliminación de la tarjeta.
+        return new ResponseEntity<>("Card deleted successfully.", HttpStatus.OK);
+    }
+
 }
-
-
-
-//verificar el recibir con el enum, con postma, como use el js con las 2 condicionales por eso es que me renderiza bien

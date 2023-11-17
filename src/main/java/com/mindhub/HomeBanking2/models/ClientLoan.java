@@ -4,37 +4,50 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
-@Entity
+@Entity // Anotación que indica que esta clase es una entidad JPA.
 public class ClientLoan {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private Long ID;
+    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
+    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
+    private Long id; // Campo que almacena el identificador único del préstamo del cliente.
 
-    private double amount;
+    private double amount; // Campo que almacena el monto del préstamo.
+    private int payments; // Campo que almacena la cantidad de pagos del préstamo.
+    private Boolean isPaid; // Campo que indica si el préstamo ha sido pagado o no.
 
-    private int payments;
-
-    // --- Relacion con el cliente
+    // Relación Many-to-One entre ClientLoan y Client, indicando que un préstamo del cliente pertenece a un cliente.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    // ---- Relacion con el prestamo
+    // Relación Many-to-One entre ClientLoan y Loan, indicando que un préstamo del cliente se relaciona con un tipo de préstamo.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
+    // Constructor vacío por defecto.
     public ClientLoan() {
     }
 
-    public ClientLoan(double amount, int payments) {
+    // Constructor que recibe datos para inicializar un préstamo del cliente.
+    public ClientLoan(double amount, int payments, boolean isPaid) {
         this.amount = amount;
         this.payments = payments;
+        this.isPaid = isPaid;
     }
 
-    public Long getID() {
-        return ID;
+    // Métodos "get" y "set" para acceder y modificar los valores de los campos del préstamo del cliente.
+
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public double getAmount() {
@@ -69,16 +82,12 @@ public class ClientLoan {
         this.loan = loan;
     }
 
+    // Método adicional getClientLoan() que devuelve el cliente asociado al préstamo del cliente.
     public Client getClientLoan() {
         return client;
     }
-
-    public void setClientLoan(Client clientLoan) {
-        this.client = clientLoan;
-    }
-
-
 }
+
 
 
 //En resumen, la clase ClientLoan representa un préstamo de cliente con atributos como el monto

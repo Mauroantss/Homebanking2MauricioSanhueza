@@ -6,25 +6,38 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@Entity // Anotación que indica que esta clase es una entidad JPA.
 public class Card {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private Long ID;
+    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
+    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
+    private Long ID; // Campo que almacena el identificador único de la tarjeta.
 
-    private String cardHolder;
-    private CardType cardType;
-    private CardColor cardColor;
-    private String number;
-    private String cvv;
-    private LocalDate thruDate;
-    private LocalDate fromDate;
+    private String cardHolder; // Campo que almacena el nombre del titular de la tarjeta.
+    private CardType cardType; // Campo que almacena el tipo de tarjeta (por ejemplo, débito o crédito).
+    private CardColor cardColor; // Campo que almacena el color de la tarjeta.
+    private String number; // Campo que almacena el número completo de la tarjeta.
+    private String cvv; // Campo que almacena el código de seguridad de la tarjeta.
+    private LocalDate thruDate; // Campo que almacena la fecha de vencimiento de la tarjeta.
+    private LocalDate fromDate; // Campo que almacena la fecha de emisión de la tarjeta.
 
+    // Campo que almacena información sobre si la tarjeta ha sido eliminada o no.
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    private Boolean isDeleted = false;
+
+
+    // Constructor vacío por defecto.
     public Card() {
     }
 
-
+    // Constructor que recibe datos para inicializar una tarjeta.
     public Card(String cardHolder, CardType cardType, CardColor cardColor, String number, String cvv, LocalDate thruDate, LocalDate fromDate) {
         this.cardHolder = cardHolder;
         this.cardType = cardType;
@@ -39,9 +52,12 @@ public class Card {
         return ID;
     }
 
+    // Relación Many-to-One entre Card y Client, indicando que muchas tarjetas pueden pertenecer a un cliente.
     @ManyToOne
-    @JoinColumn(name = "client_id")
-    public Client client;
+    @JoinColumn(name = "client_id") // Columna que se utilizará como clave foránea en la tabla.
+    public Client client; // Campo que almacena la referencia al cliente propietario de la tarjeta.
+
+    // Métodos "get" y "set" para acceder y modificar los valores de los campos de la tarjeta.
 
     public String getCardHolder() {
         return cardHolder;
@@ -107,4 +123,6 @@ public class Card {
         this.client = client;
     }
 
-}
+    }
+
+

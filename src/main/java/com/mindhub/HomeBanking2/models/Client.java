@@ -6,52 +6,49 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Entity // Anotación que indica que esta clase es una entidad JPA.
 public class Client {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private Long ID;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
-    private Boolean admin;
+    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
+    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
+    private Long id; // Campo que almacena el identificador único del cliente.
 
-    // ---- One to many de Client to Account
+    private String firstName; // Campo que almacena el primer nombre del cliente.
+    private String lastName; // Campo que almacena el apellido del cliente.
+    private String email; // Campo que almacena la dirección de correo electrónico del cliente.
+    private String password; // Campo que almacena la contraseña del cliente.
+    private Boolean admin; // Campo que indica si el cliente es un administrador o no.
+
+    // Relación One-to-Many entre Client y Account, indicando que un cliente puede tener muchas cuentas.
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
 
-    // ---- One to many de Client to ClientLoan
+    // Relación One-to-Many entre Client y ClientLoan, indicando que un cliente puede tener muchos préstamos de cliente.
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<ClientLoan> clientLoans = new HashSet<>();
 
-    // ---- One to many de Client to Card
+    // Relación One-to-Many entre Client y Card, indicando que un cliente puede tener muchas tarjetas.
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Card> cards = new HashSet<>();
 
+    // Constructor vacío por defecto.
     public Client() {
     }
 
-
+    // Constructor que recibe datos para inicializar un cliente.
     public Client(String firstName, String lastName, String email, String password, Boolean admin) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.admin = admin;
-
     }
 
+    // Métodos "get" y "set" para acceder y modificar los valores de los campos del cliente.
 
-// Sobre carga de metodos.
-    // Getters y setters
-
-
-    public Long getID() {
-        return ID;
+    public Long getId() {
+        return id;
     }
-
 
     public String getFirstName() {
         return firstName;
@@ -93,6 +90,10 @@ public class Client {
         this.admin = admin;
     }
 
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
     public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
     }
@@ -103,11 +104,6 @@ public class Client {
 
     public void setClientLoans(Set<ClientLoan> clientLoans) {
         this.clientLoans = clientLoans;
-    }
-
-
-    public Set<Account> getAccounts() {
-        return accounts;
     }
 
     public void addAccount(Account account) {
@@ -127,28 +123,29 @@ public class Client {
     public void setCards(Set<Card> cards) {
         this.cards = cards;
     }
-    public void addCard(Card card){
+
+    public void addCard(Card card) {
         card.setClient(this);
         this.cards.add(card);
     }
-    public String fullName(){
-        return  getFirstName() + " " + getLastName();
+
+    // Método que devuelve el nombre completo del cliente concatenando el primer nombre y el apellido.
+    public String fullName() {
+        return getFirstName() + " " + getLastName();
     }
 
+    // Método toString para representar el objeto Cliente como una cadena de texto.
     @Override
     public String toString() {
         return "Client{" +
-                "ID=" + ID +
+                "ID=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }
+}
 
-    public String nameCard(){
-        return this.firstName+this.lastName;
-    }
-    }
 
 
 

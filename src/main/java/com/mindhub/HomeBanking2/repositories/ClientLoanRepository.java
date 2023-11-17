@@ -1,11 +1,21 @@
 package com.mindhub.HomeBanking2.repositories;
 
+import com.mindhub.HomeBanking2.models.Client;
 import com.mindhub.HomeBanking2.models.ClientLoan;
+import com.mindhub.HomeBanking2.models.Loan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 @RepositoryRestResource
 public interface ClientLoanRepository extends JpaRepository<ClientLoan, Long> {
+    List<ClientLoan> findByClient(Client client);
+
+    boolean existsById(Long id);
+
+    ClientLoan findByClientAndLoan(Client client, Loan loan);
+
 }
 
 // Esta interfaz extiende JpaRepository<ClientLoan, Long>, lo que significa que hereda las operaciones CRUD

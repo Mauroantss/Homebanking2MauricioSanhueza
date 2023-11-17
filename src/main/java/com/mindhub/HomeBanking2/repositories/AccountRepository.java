@@ -11,8 +11,13 @@ import java.util.Set;
 public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByNumber(String number);
     Account findByNumber(String number);
+
     Set<Account> findByClient(Client client);
+    Set<Account> findByClientAndIsDeletedFalse(Client client);
+    int countByClientAndIsDeleted (Client client, boolean isDeleted);
+    boolean existsByIdAndBalanceGreaterThanEqual(Long id, Double balance);
 }
+
 
 //Esta interfaz extiende JpaRepository<Account, Long>, lo que significa que hereda las operaciones CRUD
 // (Crear, Leer, Actualizar, Eliminar) de Spring Data JPA para la entidad Account.

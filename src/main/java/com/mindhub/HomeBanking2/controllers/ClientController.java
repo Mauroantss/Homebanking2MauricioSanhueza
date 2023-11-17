@@ -2,6 +2,7 @@ package com.mindhub.HomeBanking2.controllers;
 
 import com.mindhub.HomeBanking2.dto.ClientDTO;
 import com.mindhub.HomeBanking2.models.Account;
+import com.mindhub.HomeBanking2.models.AccountType;
 import com.mindhub.HomeBanking2.models.Client;
 import com.mindhub.HomeBanking2.repositories.AccountRepository;
 import com.mindhub.HomeBanking2.repositories.ClientRepository;
@@ -22,35 +23,39 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RestController // Indica que esta clase es un controlador REST
-@RequestMapping("/api/clients") // Define la URL base para todas las rutas en este controlador
+@RestController // Indico que esta clase es un controlador REST. Manejará peticiones HTTP.
+@RequestMapping("/api/clients") // Especifico que todas las peticiones a este controlador empiezan con '/api/clients'.
 public class ClientController {
 
-    @Autowired //Injeccion de dependencias
+    @Autowired // Inyecto el servicio de clientes para su uso en este controlador.
     private ClientService clientService;
-    @Autowired
+
+    @Autowired // Inyecto el servicio de cuentas.
     private AccountService accountService;
-    @Autowired
+
+    @Autowired // Inyecto el codificador de contraseñas.
     private PasswordEncoder passwordEncoder;
 
+    // Método para generar un número aleatorio dentro de un rango.
     private int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
-    @GetMapping // Serverless es todo junto, metodo y EndPoint.
-    public List<ClientDTO> getAllClients() { // Esto solo es un metodo devuelve una lista de ClientDTO
+    @GetMapping // Método que maneja las peticiones GET a la ruta '/api/clients'.
+    public List<ClientDTO> getAllClients() { // Devuelve una lista de todos los clientes en formato DTO.
         return clientService.getAllClientsDTO();
     }
 
-    @GetMapping("/{id}") // Endpoint.
-    public ClientDTO getClientById(@PathVariable Long id) { //PathVariable toma el valor de la URL(id)
+    @GetMapping("/{id}") // Maneja las peticiones GET a '/api/clients/{id}'.
+    public ClientDTO getClientById(@PathVariable Long id) { // Usa el ID de la URL para encontrar el cliente.
         return clientService.findClientDTOById(id);
     }
 
-    @PostMapping // Solicitud a ruta principal /api/clients
+    @PostMapping // Maneja las solicitudes POST a '/api/clients'.
     public ResponseEntity<String> newClient(
             @RequestParam String firstName, @RequestParam String lastName, @RequestParam String email, @RequestParam String password) {
 
+        // Verifico que los campos obligatorios no estén en blanco.
         if (firstName.isBlank()) {
             return new ResponseEntity<>("Type your first name", HttpStatus.FORBIDDEN);
         }
@@ -64,45 +69,36 @@ public class ClientController {
             return new ResponseEntity<>("Type your password", HttpStatus.FORBIDDEN);
         }
 
+        // Verifico si el email ya está en uso.
         if (clientService.findClientByEmail(email) != null) {
             return new ResponseEntity<>("Email already in use", HttpStatus.FORBIDDEN);
         }
 
-        // Verificar si la cuenta ya existe en accountRepository
-        int accountNumber; // Guardamos el numero (int)
-        String accountNumberString; // Convertimos el numero a String
-        // Se ejecuta el do sin verificar la condicion la primera vez, y se guarda el numero
-        // Luego si revisa la condicion while
+        // Genero un número de cuenta único.
+        int accountNumber;
+        String accountNumberString;
         do {
-            accountNumber = getRandomNumber(0, 99999999); // Hacemos uso del metodo getRandomNumber previamente escrito.
-            accountNumberString = String.valueOf(accountNumber); // tipos primitivos no tienen toString().
-//          String vin = "VIN-" + accountNumber;
+            accountNumber = getRandomNumber(0, 99999999);
+            accountNumberString = String.valueOf(accountNumber);
         } while (accountService.existsAccountByNumber(accountNumberString));
 
-
-        if (accountService.existsAccountByNumber(accountNumberString) ) {
-            return new ResponseEntity<>("Account already in use", HttpStatus.FORBIDDEN);
-        }
-
-
-        // Crear un nuevo cliente y asociar la cuenta
+        // Creo el nuevo cliente y la cuenta asociada.
         Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password), false);
-        Account account = new Account(accountNumberString, LocalDate.now(), 0);
+        Account account = new Account(accountNumberString, LocalDate.now(), 1000, AccountType.SAVINGS);
         client.addAccount(account);
         clientService.saveClient(client);
-
         accountService.saveAccount(account);
 
         return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
     }
 
-    @RequestMapping("/current") // authentication es la cookie, contiene el token e informacion del usuario.
-    //// Interfaz que representa los detalles del usuario autenticado
-    // Obtenemos un ClientDTO Autenticado
+    @GetMapping("/current") // Manejo solicitudes GET a '/api/clients/current'.
     public ClientDTO getClientCurrent(Authentication authentication) {
+        // Devuelvo los detalles del cliente actual basándome en su autenticación.
         return new ClientDTO(clientService.findClientByEmail(authentication.getName()));
     }
 }
+
 
 
 

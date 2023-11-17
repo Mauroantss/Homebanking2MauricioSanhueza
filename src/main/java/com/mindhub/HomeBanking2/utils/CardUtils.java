@@ -5,34 +5,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
 
-public  class CardUtils {
-    @Autowired
-    static CardRepository cardRepository;
-    public static String generateCvvCard() {
-        StringBuilder cvvNumber = new StringBuilder(); // Iniciar el StringBuilder para almacenar el número CVV
+public final class CardUtils {
+    // Método para generar un número de tarjeta de crédito aleatorio
+    public static String generateRandomCardNumber() {
+        StringBuilder cardNumber = new StringBuilder(); // Usamos StringBuilder para construir el número de tarjeta
 
-        // Generar 3 dígitos para el número CVV
-        for (byte i = 0; i <= 2; i++) {
-            cvvNumber.append(getRandomNumber(0, 9)); // Añadir un dígito aleatorio al número CVV
+        for (int i = 0; i < 16; i++) { // Generamos 16 dígitos para el número de tarjeta
+            int digit = (int) (Math.random() * 10); // Generamos un dígito aleatorio entre 0 y 9
+            cardNumber.append(digit); // Agregamos el dígito al número de tarjeta
+
+            if ((i + 1) % 4 == 0 && i != 15) {
+                cardNumber.append("-"); // Agregamos un guión después de cada 4 dígitos (excepto al final)
+            }
         }
 
-        return cvvNumber.toString(); // Devolver el número CVV como una cadena
+        return cardNumber.toString(); // Devolvemos el número de tarjeta como una cadena
     }
-    // Método privado para generar un número de tarjeta único
-    public static String generateNumberCard() {
-        StringBuilder cardNumber = new StringBuilder(); // Iniciar el StringBuilder para almacenar el número de tarjeta
 
-        do {
-            cardNumber.setLength(0); // Limpiar el contenido del StringBuilder
-            // Generar 16 dígitos para el número de tarjeta
-            for (int i = 0; i < 16; i++) {
-                cardNumber.append(getRandomNumber(0, 9)); // Añadir un dígito aleatorio al número de tarjeta
-                // Insertar un guion después de cada conjunto de 4 dígitos, excepto al final
-                if ((i + 1) % 4 == 0 && i != 15) cardNumber.append("-");
-            }
-            // Repetir si el número de tarjeta ya existe en el repositorio
-        } while (cardRepository.existsByNumber(cardNumber.toString()));
+    // Método para generar un número de CVV (Código de Seguridad) aleatorio
+    public static String generateRandomCvvNumber() {
+        StringBuilder cardCvvNumber = new StringBuilder(); // Usamos StringBuilder para construir el CVV
 
-        return cardNumber.toString(); // Devolver el número de tarjeta como una cadena
+        for (int i = 0; i < 3; i++) { // Generamos 3 dígitos para el CVV
+            int digit = (int) (Math.random() * 10); // Generamos un dígito aleatorio entre 0 y 9
+            cardCvvNumber.append(digit); // Agregamos el dígito al CVV
+        }
+
+        return cardCvvNumber.toString(); // Devolvemos el CVV como una cadena
     }
 }
+
