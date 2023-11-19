@@ -13,14 +13,14 @@ createApp({
     console.log("Aplicación Vue creada");
   },
   methods: {
-    login() {
+    logn() {
       console.log("Intentando iniciar sesión con", this.email, this.password);
       axios
         .post("/api/login", `email=${this.email}&password=${this.password}`)
         .then((response) => {
           console.log("Respuesta del servidor al iniciar sesión:", response);
           console.log("Signed in");
-          window.location = "/web/pages/accounts.html";
+          window.location.href = "/web/pages/accounts.html";
         })
         .catch((error) => {
           console.log("Error al intentar iniciar sesión:", error);
