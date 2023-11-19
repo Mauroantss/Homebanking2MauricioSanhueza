@@ -54,7 +54,6 @@ class WebAuthorization {
                         "/web/pages/create-card.html",
                         "/web/pages/transfers.html",
                         "/web/pages/loan-application.html",
-
                         "/api/clients/current/**"
                 ).authenticated()
                 // Restrinjo el acceso a /api/loans solo a usuarios autenticados.
@@ -72,7 +71,7 @@ class WebAuthorization {
         // Configuro la ruta para cerrar sesión.
         http.logout().logoutUrl("/api/logout");
 
-        // Desactivo la protección CSRF ya que no utilizo formularios generados desde el servidor.
+        // Desactivo la protección CSRF, ya que no utilizo formularios generados desde el servidor.
         http.csrf().disable();
 
         // Deshabilito las restricciones de frameOptions para acceder a la consola H2.
