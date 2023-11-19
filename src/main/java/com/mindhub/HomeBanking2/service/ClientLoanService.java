@@ -6,23 +6,12 @@ import com.mindhub.HomeBanking2.models.Loan;
 
 import java.util.List;
 
+// Esta interfaz define el servicio para guardar información sobre préstamos de clientes.
+
 public interface ClientLoanService {
-    // Método para guardar un préstamo de cliente.
+
+    // Guarda la información de un préstamo de un cliente en el sistema.
     void saveClientLoan(ClientLoan clientLoan);
-
-    // Método para obtener todos los préstamos de un cliente.
-    List<ClientLoan> getAllClientLoans(Client client);
-
-    // Método para obtener un préstamo de cliente específico relacionado con un cliente y un préstamo.
-    ClientLoan getClientLoan(Client client, Loan loan);
-
-    // Método para verificar si existe un préstamo de cliente por su ID.
-    boolean existsById(Long id);
-
-    // Método para obtener un préstamo de cliente por su ID.
-    ClientLoan getClientLoanById(Long id);
-
-    // Método para marcar un préstamo de cliente como pagado por su ID.
-    void paidLoan(long id);
 }
+
 

@@ -1,15 +1,19 @@
 package com.mindhub.HomeBanking2.utils;
 
+// La clase AccountUtils proporciona utilidades relacionadas con las cuentas.
+// Al ser una clase final con un constructor privado, no se puede instanciar ni heredar.
+
 public final class AccountUtils {
-    // Genera un número aleatorio dentro del rango especificado.
-    public static int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
+
+    // Constructor privado para evitar instanciación.
+    private AccountUtils() {
     }
 
-    // Genera un número de cuenta aleatorio como una cadena de dígitos.
-    public static String generateAccountNumber() {
-        int accountNumber = getRandomNumber(1, 99999999);
-        return String.valueOf(accountNumber);
+    // Método estático que genera un número de cuenta utilizando la combinación "VIN" y un número aleatorio generado por CardUtils.
+    public static String generateNumber() {
+        String number = "VIN";
+        return number + CardUtils.generateRandomNumber(100, 99999999);
     }
 }
+
 

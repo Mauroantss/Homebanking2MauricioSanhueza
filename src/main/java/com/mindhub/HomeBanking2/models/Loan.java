@@ -8,57 +8,44 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Entity // Anotación que indica que esta clase es una entidad JPA.
+import static java.util.stream.Collectors.toList;
+
+// Esta clase representa la entidad "Loan" que se mapea a una tabla en la base de datos.
+
+@Entity
 public class Loan {
-    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
-    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
-    private Long ID; // Campo que almacena el identificador único del préstamo.
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private long id; // Identificador único del préstamo.
 
-    private String name; // Campo que almacena el nombre del préstamo.
-    private double maxAmount; // Campo que almacena el monto máximo del préstamo.
+    private String name; // Nombre del tipo de préstamo.
 
-    private Double interestRate; // Campo que almacena la tasa de interés del préstamo.
+    private Double maxAmount; // Monto máximo permitido para el préstamo.
 
-    @ElementCollection // Anotación que indica que esta propiedad es una colección de elementos embebidos.
-    private List<Integer> payments; // Campo que almacena la lista de pagos del préstamo.
+    @ElementCollection
+    private List<Integer> payments; // Lista de pagos asociados al préstamo.
 
-    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER) // Relación One-to-Many con la entidad ClientLoan.
-    private Set<ClientLoan> clientLoans = new HashSet<>(); // Conjunto de préstamos de clientes asociados a este tipo de préstamo.
+    private Double interestPercentage; // Porcentaje de interés del préstamo.
 
-    // Constructor vacío por defecto.
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
+    private Set<ClientLoan> clientLoans = new HashSet<>(); // Relación one-to-many con la entidad ClientLoan.
+
     public Loan() {
     }
 
-    // Constructor que recibe datos para inicializar un tipo de préstamo.
-    public Loan(String name, double maxAmount, Double interestRate, List<Integer> payments) {
+    // Constructor para crear una instancia de Loan con información específica.
+    public Loan(String name, Double maxAmount, List<Integer> payments, Double interestPercentage) {
         this.name = name;
         this.maxAmount = maxAmount;
         this.payments = payments;
-        this.interestRate = interestRate;
+        this.interestPercentage = interestPercentage;
     }
 
-    // Métodos "get" y "set" para acceder y modificar los valores de los campos del tipo de préstamo.
+    // Métodos getter y setter para acceder y modificar los atributos del préstamo.
 
-    public Double getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(Double interestRate) {
-        this.interestRate = interestRate;
-    }
-
-    public Long getID() {
-        return ID;
-    }
-
-    @JsonIgnore // Anotación que indica que esta propiedad debe ser ignorada al serializar a JSON (evita bucles infinitos).
-    public Set<ClientLoan> getClientLoans() {
-        return clientLoans;
-    }
-
-    public void setClientLoans(Set<ClientLoan> clientLoans) {
-        this.clientLoans = clientLoans;
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -69,11 +56,11 @@ public class Loan {
         this.name = name;
     }
 
-    public double getMaxAmount() {
+    public Double getMaxAmount() {
         return maxAmount;
     }
 
-    public void setMaxAmount(double maxAmount) {
+    public void setMaxAmount(Double maxAmount) {
         this.maxAmount = maxAmount;
     }
 
@@ -85,10 +72,38 @@ public class Loan {
         this.payments = payments;
     }
 
-    // Método addClientLoan() que permite agregar un préstamo de cliente a la lista asociada.
+    public Double getInterestPercentage() {
+        return interestPercentage;
+    }
+
+    public void setInterestPercentage(Double interestPercentage) {
+        this.interestPercentage = interestPercentage;
+    }
+
+    public Set<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    // Método para agregar un préstamo de cliente asociado a este tipo de préstamo.
     public void addClientLoan(ClientLoan clientLoan) {
         clientLoan.setLoan(this);
-        this.clientLoans.add(clientLoan);
+        clientLoans.add(clientLoan);
+    }
+
+    // Método para obtener la lista de clientes asociados a este tipo de préstamo.
+    public List<Client> getClients() {
+        return clientLoans.stream().map(loans -> loans.getClient()).collect(toList());
+    }
+
+    // Método toString para representar el objeto como una cadena de texto.
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", maxAmount=" + maxAmount +
+                ", payments=" + payments +
+                '}';
     }
 }
 

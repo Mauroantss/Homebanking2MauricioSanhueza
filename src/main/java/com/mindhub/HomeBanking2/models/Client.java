@@ -1,77 +1,80 @@
 package com.mindhub.HomeBanking2.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-@Entity // Anotación que indica que esta clase es una entidad JPA.
+import static java.util.stream.Collectors.toList;
+
+// Esta clase representa la entidad "Client" que se mapea a una tabla en la base de datos.
+
+@Entity
 public class Client {
-    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
-    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
-    private Long id; // Campo que almacena el identificador único del cliente.
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private Long id; // Identificador único del cliente.
 
-    private String firstName; // Campo que almacena el primer nombre del cliente.
-    private String lastName; // Campo que almacena el apellido del cliente.
-    private String email; // Campo que almacena la dirección de correo electrónico del cliente.
-    private String password; // Campo que almacena la contraseña del cliente.
-    private Boolean admin; // Campo que indica si el cliente es un administrador o no.
+    private String firstName; // Nombre del cliente.
 
-    // Relación One-to-Many entre Client y Account, indicando que un cliente puede tener muchas cuentas.
+    private String lastName; // Apellido del cliente.
+
+    private String email; // Correo electrónico del cliente.
+
+    private String password; // Contraseña del cliente.
+
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    private Set<Account> accounts = new HashSet<>();
+    private Set<Account> accounts = new HashSet<>(); // Relación one-to-many con la entidad Account.
 
-    // Relación One-to-Many entre Client y ClientLoan, indicando que un cliente puede tener muchos préstamos de cliente.
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    private Set<ClientLoan> clientLoans = new HashSet<>();
+    private Set<ClientLoan> clientLoans = new HashSet<>(); // Relación one-to-many con la entidad ClientLoan.
 
-    // Relación One-to-Many entre Client y Card, indicando que un cliente puede tener muchas tarjetas.
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    private Set<Card> cards = new HashSet<>();
+    private Set<Card> cards = new HashSet<>(); // Relación one-to-many con la entidad Card.
 
-    // Constructor vacío por defecto.
     public Client() {
     }
 
-    // Constructor que recibe datos para inicializar un cliente.
-    public Client(String firstName, String lastName, String email, String password, Boolean admin) {
+    // Constructor para crear una instancia del cliente con información específica.
+    public Client(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.admin = admin;
     }
 
-    // Métodos "get" y "set" para acceder y modificar los valores de los campos del cliente.
-
-    public Long getId() {
-        return id;
-    }
+    // Métodos getter y setter para acceder y modificar los atributos del cliente.
 
     public String getFirstName() {
         return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getEmail() {
         return email;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getPassword() {
@@ -82,71 +85,53 @@ public class Client {
         this.password = password;
     }
 
-    public Boolean getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
-    }
-
     public Set<Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(Set<Account> accounts) {
-        this.accounts = accounts;
+    // Método para agregar una cuenta al conjunto de cuentas del cliente.
+    public void addAccount(Account account) {
+        account.setClient(this);
+        accounts.add(account);
     }
 
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
     }
 
-    public void setClientLoans(Set<ClientLoan> clientLoans) {
-        this.clientLoans = clientLoans;
-    }
-
-    public void addAccount(Account account) {
-        account.setClient(this);
-        this.accounts.add(account);
-    }
-
+    // Método para agregar un préstamo al conjunto de préstamos del cliente.
     public void addClientLoan(ClientLoan clientLoan) {
         clientLoan.setClient(this);
-        this.clientLoans.add(clientLoan);
+        clientLoans.add(clientLoan);
     }
 
     public Set<Card> getCards() {
         return cards;
     }
 
-    public void setCards(Set<Card> cards) {
-        this.cards = cards;
-    }
-
+    // Método para agregar una tarjeta al conjunto de tarjetas del cliente.
     public void addCard(Card card) {
         card.setClient(this);
-        this.cards.add(card);
+        cards.add(card);
     }
 
-    // Método que devuelve el nombre completo del cliente concatenando el primer nombre y el apellido.
-    public String fullName() {
-        return getFirstName() + " " + getLastName();
+    // Método para obtener una lista de préstamos asociados al cliente.
+    @JsonIgnore
+    public List<Loan> getLoans() {
+        return clientLoans.stream().map(loans -> loans.getLoan()).collect(toList());
     }
 
-    // Método toString para representar el objeto Cliente como una cadena de texto.
+    // Método toString para representar el objeto como una cadena de texto.
     @Override
     public String toString() {
         return "Client{" +
-                "ID=" + id +
+                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }
 }
-
-
 
 
 //En resumen, la clase Client representa un cliente con atributos como el primer nombre,

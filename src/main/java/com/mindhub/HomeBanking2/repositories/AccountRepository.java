@@ -7,16 +7,22 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Set;
 
+// Esta interfaz define un repositorio para la entidad Account, proporcionando operaciones CRUD estándar.
+// La anotación @RepositoryRestResource indica que este repositorio se expondrá como un servicio REST.
+
 @RepositoryRestResource
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    boolean existsByNumber(String number);
+
+    // Método que encuentra una cuenta por su número.
     Account findByNumber(String number);
 
-    Set<Account> findByClient(Client client);
-    Set<Account> findByClientAndIsDeletedFalse(Client client);
-    int countByClientAndIsDeleted (Client client, boolean isDeleted);
-    boolean existsByIdAndBalanceGreaterThanEqual(Long id, Double balance);
+    // Método que verifica si existe una cuenta con el número proporcionado.
+    Boolean existsByNumber(String number);
+
+    // Método que verifica si existe al menos una cuenta con el estado activo especificado.
+    boolean existsByActive(boolean active);
 }
+
 
 
 //Esta interfaz extiende JpaRepository<Account, Long>, lo que significa que hereda las operaciones CRUD

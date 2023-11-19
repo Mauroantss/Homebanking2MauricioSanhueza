@@ -6,20 +6,21 @@ import com.mindhub.HomeBanking2.models.Loan;
 import java.util.List;
 import java.util.Set;
 
+// Esta interfaz define el servicio para interactuar con la información de préstamos en el sistema.
+
 public interface LoanService {
-    // Método para obtener todos los préstamos.
-    List<Loan> getAllLoans();
 
-    // Método para obtener todos los préstamos en formato DTO.
-    Set<LoanDTO> getAllLoansDTO();
+    // Obtiene una lista de todos los préstamos en el sistema.
+    List<Loan> findAllLoans();
 
-    // Método para encontrar un préstamo por su ID.
-    Loan getLoanById(Long id);
+    // Busca un préstamo por su identificador único.
+    Loan findLoanById(Long id);
 
-    // Método para verificar si un préstamo existe por su ID.
-    boolean existsLoanById(Long id);
-
-    // Método para guardar un préstamo.
+    // Guarda la información de un préstamo en el sistema.
     void saveLoan(Loan loan);
+
+    // Verifica si ya existe un préstamo con el nombre proporcionado.
+    boolean existsByName(String name);
 }
+
 

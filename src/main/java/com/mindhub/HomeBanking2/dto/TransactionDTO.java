@@ -5,50 +5,63 @@ import com.mindhub.HomeBanking2.models.TransactionType;
 
 import java.time.LocalDateTime;
 
+// Estoy creando una clase Java llamada TransactionDTO para representar una transacción como transferencia de datos (DTO).
+
 public class TransactionDTO {
-    private Long ID; // Almacena el identificador único de la transacción.
-    private TransactionType type; // Almacena el tipo de transacción (por ejemplo, débito o crédito).
-    private double amount; // Almacena el monto de la transacción.
-    private LocalDateTime date; // Almacena la fecha y hora de la transacción.
-    private String description; // Almacena una descripción de la transacción.
-    private Double balanceAfterTransaction; // Almacena el saldo después de la transacción.
+    private Long id;  // Identificador único de la transacción.
+    private TransactionType type;  // Tipo de transacción (DEBIT o CREDIT).
+    private double amount;  // Monto de la transacción.
+    private String description;  // Descripción de la transacción.
+    private LocalDateTime date;  // Fecha y hora de la transacción.
+    private double currentBalance;  // Saldo actual después de la transacción.
+    private boolean active;  // Estado de la transacción (activa o inactiva).
 
-    // Constructor que toma una instancia de la clase Transaction y utiliza sus datos para inicializar los campos de esta clase TransactionDTO.
-    public TransactionDTO(Transaction transaction){
-        ID = transaction.getID(); // Obtengo el ID de la transacción desde la instancia de Transaction proporcionada.
-        type = transaction.getType(); // Obtengo el tipo de transacción desde la instancia de Transaction.
-        amount = transaction.getAmount(); // Obtengo el monto de la transacción desde la instancia de Transaction.
-        date = transaction.getDate(); // Obtengo la fecha y hora de la transacción desde la instancia de Transaction.
-        description = transaction.getDescription(); // Obtengo la descripción de la transacción desde la instancia de Transaction.
-        balanceAfterTransaction = transaction.getBalanceAfterTransaction(); // Obtengo el saldo después de la transacción desde la instancia de Transaction.
+    // Constructor vacío por defecto.
+    public TransactionDTO() {
     }
 
-    // Métodos "get" para acceder a los valores de los campos.
-
-    public Double getBalanceAfterTransaction() {
-        return balanceAfterTransaction; // Devuelve el saldo después de la transacción.
+    // Constructor que recibe un objeto Transaction y mapea sus propiedades a las propiedades de TransactionDTO.
+    public TransactionDTO(Transaction transaction) {
+        this.id = transaction.getId();  // Asigno el ID de la transacción.
+        this.type = transaction.getType();  // Asigno el tipo de transacción.
+        this.amount = transaction.getAmount();  // Asigno el monto de la transacción.
+        this.description = transaction.getDescription();  // Asigno la descripción de la transacción.
+        this.date = transaction.getDate();  // Asigno la fecha y hora de la transacción.
+        this.currentBalance = transaction.getCurrentBalance();  // Asigno el saldo actual después de la transacción.
+        this.active = transaction.getActive();  // Asigno el estado de la transacción.
     }
 
-    public Long getID() {
-        return ID; // Devuelve el ID de la transacción.
+    // Métodos getter para acceder a las propiedades de la transacción.
+
+    public Long getId() {
+        return id;
     }
 
     public TransactionType getType() {
-        return type; // Devuelve el tipo de transacción.
+        return type;
     }
 
     public double getAmount() {
-        return amount; // Devuelve el monto de la transacción.
-    }
-
-    public LocalDateTime getDate() {
-        return date; // Devuelve la fecha y hora de la transacción.
+        return amount;
     }
 
     public String getDescription() {
-        return description; // Devuelve la descripción de la transacción.
+        return description;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public double getCurrentBalance() {
+        return currentBalance;
+    }
+
+    public boolean getActive() {
+        return active;
     }
 }
+
 
 
 

@@ -13,40 +13,53 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration // Indica que esta será la configuracion que tiene que usar la app antes de iniciar.
+// Estoy configurando una clase llamada WebAuthentication que extiende GlobalAuthenticationConfigurerAdapter.
+@Configuration
 public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
-    @Autowired // Permite la inyección de ClientRepository en esta clase.
+
+    // Estoy inyectando la dependencia de ClientRepository en esta clase.
+    @Autowired
     ClientRepository clientRepository;
 
-    @Override // Indica que este método sobrescribe el método de una clase padre.
-
+    // Estoy anulando el método init de GlobalAuthenticationConfigurerAdapter para personalizar la configuración de autenticación.
+    @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
-        // Configuración del servicio de detalles de usuario para autenticación.
 
-        auth.userDetailsService(inputName -> {
-            // Busca un cliente por email y configura los roles según el tipo de usuario.
-            Client client = clientRepository.findByEmail(inputName);
+        // Estoy configurando un userDetailsService que buscará clientes por su dirección de correo electrónico.
+        auth.userDetailsService(inputEmail -> {
+
+            // Estoy recuperando un objeto Client de la base de datos usando el ClientRepository.
+            Client client = clientRepository.findByEmail(inputEmail);
+
+            // Estoy comprobando si el cliente existe.
             if (client != null) {
-                if (client.getAdmin()) {
-                    // Si es administrador, asigna el rol ADMIN.
+
+                // Estoy verificando si el correo electrónico del cliente contiene "homebanking".
+                if (client.getEmail().contains("homebanking")) {
+
+                    // Estoy devolviendo un objeto User con roles ADMIN si el correo electrónico contiene "homebanking".
                     return new User(client.getEmail(), client.getPassword(),
-                            AuthorityUtils.createAuthorityList("ADMIN"));
+                            AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN"));
+
                 } else {
-                    // Si no es administrador, asigna el rol CLIENT.
+
+                    // Estoy devolviendo un objeto User con el rol CLIENT si el correo electrónico no contiene "homebanking".
                     return new User(client.getEmail(), client.getPassword(),
                             AuthorityUtils.createAuthorityList("CLIENT"));
                 }
             } else {
-                // Si el usuario no se encuentra, lanza una excepción.
-                throw new UsernameNotFoundException("Unknown user: " + inputName);
+
+                // Estoy lanzando una excepción si no se encuentra el cliente.
+                throw new UsernameNotFoundException("Unknown client: " + inputEmail);
             }
         });
     }
 
-    @Bean // Declara que un método produce un bean que será gestionado por el contexto de Spring.
+    // Estoy configurando un bean para proporcionar un codificador de contraseñas.
+    @Bean
     public PasswordEncoder passwordEncoder() {
-        // Provee un codificador de contraseña para la seguridad de la aplicación.
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
+
 

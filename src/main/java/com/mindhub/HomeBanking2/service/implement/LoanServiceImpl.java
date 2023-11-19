@@ -10,43 +10,38 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-@Service // Anotación que indica que esta clase es un componente de servicio gestionado por Spring.
+// Esta clase implementa la interfaz LoanService y proporciona la lógica de negocio para las operaciones relacionadas con préstamos.
+
+@Service
 public class LoanServiceImpl implements LoanService {
 
-    @Autowired // Inyección de dependencia de la interfaz LoanRepository.
+    // Se utiliza la inyección de dependencias para acceder al repositorio de préstamos.
+    @Autowired
     private LoanRepository loanRepository;
 
-    // Implementación de métodos definidos en la interfaz LoanService.
-
-    // Método para obtener todos los préstamos.
     @Override
-    public List<Loan> getAllLoans() {
+    public List<Loan> findAllLoans() {
+        // Retorna todos los préstamos almacenados en el repositorio.
         return loanRepository.findAll();
     }
 
-    // Método para obtener todos los préstamos como objetos DTO.
     @Override
-    public Set<LoanDTO> getAllLoansDTO() {
-        // Mapea la lista de préstamos a un conjunto de LoanDTO utilizando la función de mapeo.
-        return getAllLoans().stream().map(loan -> new LoanDTO(loan)).collect(Collectors.toSet());
-    }
-
-    // Método para encontrar un préstamo por su ID.
-    @Override
-    public Loan getLoanById(Long id) {
+    public Loan findLoanById(Long id) {
+        // Retorna el préstamo con el ID proporcionado, o nulo si no se encuentra.
         return loanRepository.findById(id).orElse(null);
     }
 
-    // Método para verificar si existe un préstamo por su ID.
-    @Override
-    public boolean existsLoanById(Long id) {
-        return loanRepository.existsById(id);
-    }
-
-    // Método para guardar un préstamo en el repositorio.
     @Override
     public void saveLoan(Loan loan) {
+        // Guarda un préstamo en el repositorio.
         loanRepository.save(loan);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        // Verifica si existe un préstamo con el nombre proporcionado.
+        return loanRepository.existsByName(name);
+    }
 }
+
 

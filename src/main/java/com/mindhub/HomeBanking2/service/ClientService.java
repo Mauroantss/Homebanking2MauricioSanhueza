@@ -5,23 +5,24 @@ import com.mindhub.HomeBanking2.models.Client;
 
 import java.util.List;
 
+// Esta interfaz define el servicio para interactuar con la información de clientes en el sistema.
+
 public interface ClientService {
-    // Método para obtener todos los clientes.
-    List<Client> getAllClients();
 
-    // Método para obtener todos los clientes en formato DTO.
-    List<ClientDTO> getAllClientsDTO();
+    // Obtiene una lista de todos los clientes en el sistema.
+    List<Client> findAllClients();
 
-    // Método para encontrar un cliente por su ID.
+    // Busca un cliente por su identificador único.
     Client findClientById(Long id);
 
-    // Método para encontrar un cliente en formato DTO por su ID.
-    ClientDTO findClientDTOById(Long id);
-
-    // Método para encontrar un cliente por su dirección de correo electrónico.
+    // Busca un cliente por su dirección de correo electrónico.
     Client findClientByEmail(String email);
 
-    // Método para guardar un cliente.
+    // Guarda la información de un cliente en el sistema.
     void saveClient(Client client);
+
+    // Verifica si ya existe un cliente con la dirección de correo electrónico proporcionada.
+    boolean existsClientByEmail(String email);
 }
+
 

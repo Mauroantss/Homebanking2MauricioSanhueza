@@ -6,58 +6,54 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity // Anotación que indica que esta clase es una entidad JPA.
+// Esta clase representa la entidad "Card" que se mapea a una tabla en la base de datos.
+
+@Entity
 public class Card {
-    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
-    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
-    private Long ID; // Campo que almacena el identificador único de la tarjeta.
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private Long id; // Identificador único de la tarjeta.
 
-    private String cardHolder; // Campo que almacena el nombre del titular de la tarjeta.
-    private CardType cardType; // Campo que almacena el tipo de tarjeta (por ejemplo, débito o crédito).
-    private CardColor cardColor; // Campo que almacena el color de la tarjeta.
-    private String number; // Campo que almacena el número completo de la tarjeta.
-    private String cvv; // Campo que almacena el código de seguridad de la tarjeta.
-    private LocalDate thruDate; // Campo que almacena la fecha de vencimiento de la tarjeta.
-    private LocalDate fromDate; // Campo que almacena la fecha de emisión de la tarjeta.
+    private String cardHolder; // Nombre del titular de la tarjeta.
 
-    // Campo que almacena información sobre si la tarjeta ha sido eliminada o no.
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
+    private CardType type; // Tipo de tarjeta (enumeración).
 
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
+    private CardColor color; // Color de la tarjeta (enumeración).
 
-    private Boolean isDeleted = false;
+    private String number; // Número único de la tarjeta.
 
+    private int cvv; // Código de seguridad de la tarjeta.
 
-    // Constructor vacío por defecto.
+    private LocalDate thruDate; // Fecha de vencimiento de la tarjeta.
+
+    private LocalDate fromDate; // Fecha de emisión de la tarjeta.
+
+    private Boolean active; // Estado de actividad de la tarjeta.
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Client client; // Relación many-to-one con la entidad Client.
+
     public Card() {
     }
 
-    // Constructor que recibe datos para inicializar una tarjeta.
-    public Card(String cardHolder, CardType cardType, CardColor cardColor, String number, String cvv, LocalDate thruDate, LocalDate fromDate) {
+    // Constructor para crear una instancia de la tarjeta con información específica.
+    public Card(String cardHolder, CardType type, CardColor color, String number, int cvv, LocalDate thruDate, LocalDate fromDate, Boolean active) {
         this.cardHolder = cardHolder;
-        this.cardType = cardType;
-        this.cardColor = cardColor;
+        this.type = type;
+        this.color = color;
         this.number = number;
         this.cvv = cvv;
         this.thruDate = thruDate;
         this.fromDate = fromDate;
+        this.active = active;
     }
+
+    // Métodos getter y setter para acceder y modificar los atributos de la tarjeta.
 
     public Long getId() {
-        return ID;
+        return id;
     }
-
-    // Relación Many-to-One entre Card y Client, indicando que muchas tarjetas pueden pertenecer a un cliente.
-    @ManyToOne
-    @JoinColumn(name = "client_id") // Columna que se utilizará como clave foránea en la tabla.
-    public Client client; // Campo que almacena la referencia al cliente propietario de la tarjeta.
-
-    // Métodos "get" y "set" para acceder y modificar los valores de los campos de la tarjeta.
 
     public String getCardHolder() {
         return cardHolder;
@@ -67,20 +63,20 @@ public class Card {
         this.cardHolder = cardHolder;
     }
 
-    public CardType getCardType() {
-        return cardType;
+    public CardType getType() {
+        return type;
     }
 
-    public void setCardType(CardType cardType) {
-        this.cardType = cardType;
+    public void setType(CardType type) {
+        this.type = type;
     }
 
-    public CardColor getCardColor() {
-        return cardColor;
+    public CardColor getColor() {
+        return color;
     }
 
-    public void setCardColor(CardColor cardColor) {
-        this.cardColor = cardColor;
+    public void setColor(CardColor color) {
+        this.color = color;
     }
 
     public String getNumber() {
@@ -91,11 +87,11 @@ public class Card {
         this.number = number;
     }
 
-    public String getCvv() {
+    public int getCvv() {
         return cvv;
     }
 
-    public void setCvv(String cvv) {
+    public void setCvv(int cvv) {
         this.cvv = cvv;
     }
 
@@ -115,6 +111,14 @@ public class Card {
         this.fromDate = fromDate;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public Client getClient() {
         return client;
     }
@@ -122,7 +126,4 @@ public class Card {
     public void setClient(Client client) {
         this.client = client;
     }
-
-    }
-
-
+}

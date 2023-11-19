@@ -5,11 +5,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 
-@RepositoryRestResource // genericos
+// Esta interfaz define un repositorio para la entidad Client, proporcionando operaciones CRUD estándar.
+// La anotación @RepositoryRestResource indica que este repositorio se expondrá como un servicio REST.
+
+@RepositoryRestResource
 public interface ClientRepository extends JpaRepository<Client, Long> {
+
+    // Método que encuentra un cliente por su dirección de correo electrónico.
     Client findByEmail(String email);
-    Boolean existsByEmail(String email);
+
+    // Método que verifica si existe un cliente con la dirección de correo electrónico proporcionada.
+    boolean existsClientByEmail(String email);
+
+    // Método que verifica si existe un cliente con el ID proporcionado.
+    boolean existsClientById(Long id);
 }
+
 
     //La interfaz creada hereda con "extends" los metodos de JpaRepository, entre los diamantes tengo que
     // poner la clase y el tipo de dato del id

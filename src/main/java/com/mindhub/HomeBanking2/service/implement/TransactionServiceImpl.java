@@ -6,18 +6,20 @@ import com.mindhub.HomeBanking2.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service // Anotación que indica que esta clase es un componente de servicio gestionado por Spring.
+// Esta clase implementa la interfaz TransactionService y proporciona la lógica de negocio para las operaciones relacionadas con transacciones.
+
+@Service
 public class TransactionServiceImpl implements TransactionService {
 
-    @Autowired // Inyección de dependencia de la interfaz TransactionRepository.
+    // Se utiliza la inyección de dependencias para acceder al repositorio de transacciones.
+    @Autowired
     private TransactionRepository transactionRepository;
 
-    // Implementación del método definido en la interfaz TransactionService.
-
-    // Método para guardar una transacción en el repositorio.
     @Override
     public void saveTransaction(Transaction transaction) {
+        // Guarda una transacción en el repositorio.
         transactionRepository.save(transaction);
     }
 }
+
 

@@ -3,7 +3,7 @@ package com.mindhub.HomeBanking2.controllers;
 import com.mindhub.HomeBanking2.dto.LoanApplicationDTO;
 import com.mindhub.HomeBanking2.dto.LoanDTO;
 import com.mindhub.HomeBanking2.models.*;
-import com.mindhub.HomeBanking2.repositories.*;
+
 import com.mindhub.HomeBanking2.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,218 +12,158 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
-import java.util.Set;
+
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Set;
 
-import static com.mindhub.HomeBanking2.utils.TransactionUtils.dateTime;
+// Estoy definiendo un controlador REST para gestionar operaciones relacionadas con préstamos.
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping ("/api")
 public class LoanController {
 
-    @Autowired
-    private ClientService clientService;
-
+    // Estoy inyectando las dependencias necesarias.
     @Autowired
     private LoanService loanService;
-
+    @Autowired
+    private ClientService clientService;
     @Autowired
     private AccountService accountService;
-
     @Autowired
     private ClientLoanService clientLoanService;
-
     @Autowired
     private TransactionService transactionService;
 
-    // Manejar solicitudes GET a "/api/loans"
+    // Estoy manejando la solicitud GET para obtener todos los préstamos del cliente autenticado.
     @GetMapping("/loans")
-    public Set<LoanDTO> getLoans() {
-        // Obtener una lista de DTOs de préstamos y devolverla
-        return loanService.getAllLoansDTO();
+    public ResponseEntity<List<LoanDTO>> getAllLoans(Authentication authentication) {
+        Client client = clientService.findClientByEmail(authentication.getName());
+
+        // Verifico si el cliente existe.
+        if (client == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } else {
+            List<LoanDTO> loans = loanService.findAllLoans().stream()
+                    .map(loan -> new LoanDTO(loan)).collect(Collectors.toList());
+            return ResponseEntity.ok(loans);
+        }
     }
 
-    // Manejar solicitudes POST a "/api/loans"
-    // Este método también es transaccional y se utiliza para solicitar nuevos préstamos
+    // Estoy manejando la solicitud POST para solicitar un nuevo préstamo.
+    @Transactional
     @PostMapping("/loans")
-    @Transactional
-    public ResponseEntity<String> newLoan(@RequestBody LoanApplicationDTO loanApplication, Authentication authentication) {
-        // Obtener el cliente autenticado
+    public ResponseEntity<Object> applyForLoan (Authentication authentication, @RequestBody
+    LoanApplicationDTO loanApplicationDTO) {
+
+        // Obtengo el cliente autenticado.
         Client client = clientService.findClientByEmail(authentication.getName());
-        // Obtener el préstamo basado en la solicitud
-        Loan loan = loanService.getLoanById(loanApplication.getLoanId());
 
-        // Comprobar si el campo 'TO' está en blanco
-        if (loanApplication.getToAccount().isBlank()) {
-            return new ResponseEntity<>("Please provide a 'TO' account", HttpStatus.BAD_REQUEST);
+        // Obtengo el préstamo, la cuenta y realizo las validaciones necesarias.
+        Loan loan = loanService.findLoanById(loanApplicationDTO.getLoanId());
+        Account account = accountService.findAccountByNumber(loanApplicationDTO.getDestinationAccount());
+
+        // Validaciones para los campos del formulario de solicitud de préstamo.
+        if (loanApplicationDTO.getLoanId() == 0) {
+            return new ResponseEntity<>("The type of loan is required", HttpStatus.FORBIDDEN);
+        }
+        if (loanApplicationDTO.getAmount() == 0) {
+            return new ResponseEntity<>("The amount of loan is required", HttpStatus.FORBIDDEN);
+        }
+        if (loanApplicationDTO.getAmount() <= 0){
+            return new ResponseEntity<>("The amount cannot be zero or negative",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (loanApplicationDTO.getPayments() == 0) {
+            return new ResponseEntity<>("The number of payments is required", HttpStatus.FORBIDDEN);
+        }
+        if (loanApplicationDTO.getDestinationAccount().isBlank()) {
+            return new ResponseEntity<>("The destination account is required", HttpStatus.FORBIDDEN);
+        }
+        if(loan == null){
+            return new ResponseEntity<>("The loan doesn´t exist", HttpStatus.FORBIDDEN);
+        }
+        if (loanApplicationDTO.getAmount() > loan.getMaxAmount()){
+            return new ResponseEntity<>("The requested amount exceeds the maximum loan amount", HttpStatus.FORBIDDEN);
+        }
+        if (!loan.getPayments().contains(loanApplicationDTO.getPayments())){
+            return new ResponseEntity<>("The amount of payments is incorrect", HttpStatus.FORBIDDEN);
+        }
+        if (account == null){
+            return new ResponseEntity<>("The destination account doesn´t exist", HttpStatus.FORBIDDEN);
+        }
+        if (!client.getAccounts().contains(account)){
+            return new ResponseEntity<>("The destination account doesn´t belong to the authenticated client", HttpStatus.FORBIDDEN);
+        }
+        if (loan.getClients().contains(client)){
+            return new ResponseEntity<>("You have already applied for this loan", HttpStatus.FORBIDDEN);
         }
 
-        // Comprobar si el monto es menor o igual a cero
-        if (loanApplication.getAmount() <= 0) {
-            return new ResponseEntity<>("Amount must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
+        // Cálculo del interés y creación del registro del préstamo para el cliente.
+        double interest = loan.getInterestPercentage();
+        ClientLoan clientLoan = new ClientLoan(loanApplicationDTO.getAmount() + (loanApplicationDTO.getAmount() * interest),
+                loanApplicationDTO.getPayments());
 
-        // Comprobar si el monto de los pagos es menor o igual a cero
-        if (loanApplication.getPayments() <= 0) {
-            return new ResponseEntity<>("Payment amount must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
+        client.addClientLoan(clientLoan);
+        loan.addClientLoan(clientLoan);
+        clientLoanService.saveClientLoan(clientLoan);
 
-        // Verificar si el préstamo existe
-        Long idLoan = loanApplication.getLoanId();
-        if (!loanService.existsLoanById(idLoan)) {
-            return new ResponseEntity<>("This type of loan does not exist", HttpStatus.BAD_REQUEST);
-        }
+        // Actualización del saldo de la cuenta y registro de la transacción.
+        double currentBalanceAccountCredit = account.getBalance() + loanApplicationDTO.getAmount();
 
-        // Comprobar si el monto excede los límites del préstamo
-        if (loanApplication.getAmount() > loan.getMaxAmount()) {
-            return new ResponseEntity<>("Amount exceeds the maximum loan limit", HttpStatus.BAD_REQUEST);
-        }
+        Transaction transactionCredit = new Transaction(TransactionType.CREDIT,
+                loanApplicationDTO.getAmount(), loan.getName() + " Loan approved",
+                LocalDateTime.now() , currentBalanceAccountCredit,true);
 
-        // Comprobar si el plan de pagos es válido para el préstamo
-        if (!loan.getPayments().contains(loanApplication.getPayments())) {
-            return new ResponseEntity<>("The installment payment plan is not available", HttpStatus.BAD_REQUEST);
-        }
+        transactionService.saveTransaction(transactionCredit);
+        account.addTransaction(transactionCredit);
+        account.setBalance(currentBalanceAccountCredit);
+        accountService.saveAccount(account);
 
-        // Comprobar si la cuenta existe
-        if (!accountService.existsAccountByNumber(loanApplication.getToAccount())) {
-            return new ResponseEntity<>("The account does not exist", HttpStatus.BAD_REQUEST);
-        }
-
-        // Obtener la cuenta de destino
-        Account toAccount = accountService.findAccountByNumber(loanApplication.getToAccount());
-
-        // Comprobar si la cuenta pertenece al cliente autenticado
-        if (!client.getAccounts().contains(toAccount)) {
-            return new ResponseEntity<>("The account does not belong to the client", HttpStatus.BAD_REQUEST);
-        }
-
-        // Calcular un cargo adicional del 20% al monto del préstamo
-        double add20 = loanApplication.getAmount() * (loan.getInterestRate() / 12);
-
-        // Crear una transacción de crédito
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, loanApplication.getAmount(), toAccount.getBalance() + loanApplication.getAmount(), dateTime(), loan.getName() + " Loan approved");
-        toAccount.addTransaction(creditTransaction);
-        transactionService.saveTransaction(creditTransaction);
-
-        // Crear un nuevo préstamo del cliente
-        ClientLoan newLoan = new ClientLoan(add20, loanApplication.getPayments(), false);
-        client.addClientLoan(newLoan);
-        loan.addClientLoan(newLoan);
-
-        // Guardar el nuevo préstamo en la base de datos
-        clientLoanService.saveClientLoan(newLoan);
-
-        // Actualizar el saldo de la cuenta de destino
-        toAccount.setBalance(loanApplication.getAmount() + toAccount.getBalance());
-        accountService.saveAccount(toAccount);
-
-        // Devolver una respuesta HTTP indicando que el préstamo ha sido aprobado
-        return new ResponseEntity<>("Loan approved successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    // Manejar solicitudes POST a "/api/loans/create"
-    // Este método también es transaccional y se utiliza para crear nuevos tipos de préstamos
-    @PostMapping("/loans/create")
-    @Transactional
-    public ResponseEntity<String> newAdminLoan(@RequestParam String loanType, @RequestParam List<Integer> payments, @RequestParam double maxAmount, @RequestParam double interestRate, Authentication authentication) {
-        // Obtener el cliente autenticado
+    // Estoy manejando la solicitud POST para que un administrador cree un nuevo tipo de préstamo.
+    @PostMapping("/admin/loans")
+    public ResponseEntity<Object> createNewLoanType (Authentication authentication,
+                                                     @RequestParam String name , @RequestParam Double maxAmount ,
+                                                     @RequestParam List<Integer> payments , @RequestParam Double interestPercentage) {
+        // Obtengo el cliente autenticado.
         Client client = clientService.findClientByEmail(authentication.getName());
 
-        // Comprobar si el tipo de préstamo está en blanco
-        if (loanType.isBlank()) {
-            return new ResponseEntity<>("Please provide the loan type", HttpStatus.BAD_REQUEST);
+        // Validaciones para los campos del formulario de creación de un nuevo tipo de préstamo.
+        if(name.isEmpty() || name.isBlank()){
+            return new ResponseEntity<>("The name is required", HttpStatus.FORBIDDEN);
+        }
+        if(maxAmount == null){
+            return new ResponseEntity<>("The maximum amount is required", HttpStatus.FORBIDDEN);
+        }
+        if(payments.isEmpty()){
+            return new ResponseEntity<>("Payments are required", HttpStatus.FORBIDDEN);
+        }
+        if(interestPercentage == null){
+            return new ResponseEntity<>("The interest percentage is required", HttpStatus.FORBIDDEN);
         }
 
-        // Comprobar si la lista de pagos está vacía
-        if (payments.isEmpty()) {
-            return new ResponseEntity<>("Payments must not be empty", HttpStatus.BAD_REQUEST);
+        // Verifico si el tipo de préstamo ya existe.
+        if(loanService.existsByName(name)){
+            return new ResponseEntity<>("This loan already exists", HttpStatus.FORBIDDEN);
+        }
+        if (maxAmount <=0){
+            return new ResponseEntity<>("The maximum amount cannot be less than or equal to zero", HttpStatus.FORBIDDEN);
         }
 
-        // Comprobar si el monto máximo es menor o igual a cero
-        if (maxAmount <= 0) {
-            return new ResponseEntity<>("Max Amount must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
-
-        // Comprobar si la tasa de interés es menor o igual a cero
-        if (interestRate <= 0) {
-            return new ResponseEntity<>("Interest Rate must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
-
-        // Crear un nuevo tipo de préstamo
-        Loan newLoan = new Loan(loanType, maxAmount, interestRate, payments);
+        // Creo y guardo el nuevo tipo de préstamo.
+        Loan newLoan = new Loan(name,maxAmount,payments,interestPercentage);
         loanService.saveLoan(newLoan);
 
-        // Devolver una respuesta HTTP indicando que el nuevo préstamo ha sido creado
-        return new ResponseEntity<>("New Loan Created Successfully", HttpStatus.CREATED);
-    }
-
-    // Manejar solicitudes POST a "/api/loans/payments"
-    // Este método también es transaccional y se utiliza para realizar pagos de préstamos
-    @PostMapping("/loans/payments")
-    @Transactional
-    public ResponseEntity<String> payLoan(@RequestParam long clientLoanId, long accountId, double amount, int payments, String description, Authentication authentication) {
-        // Obtener el préstamo del cliente y la cuenta relacionada
-        ClientLoan clientLoan = clientLoanService.getClientLoanById(clientLoanId);
-        Account account = accountService.getAccountById(accountId);
-
-        // Comprobar si el préstamo existe
-        if (!clientLoanService.existsById(clientLoanId)) {
-            return new ResponseEntity<>("Loan does not exist", HttpStatus.BAD_REQUEST);
-        }
-
-        // Comprobar si la cuenta existe
-        if (!accountService.existsAccountById(accountId)) {
-            return new ResponseEntity<>("Account does not exist", HttpStatus.BAD_REQUEST);
-        }
-
-        // Comprobar si el saldo de la cuenta es insuficiente para el pago
-        if (accountService.getBalanceByAccountId(accountId) < amount) {
-            return new ResponseEntity<>("Insufficient balance", HttpStatus.BAD_REQUEST);
-        }
-
-        // Comprobar si el número de pagos es válido para el préstamo
-        if (amount == clientLoan.getAmount() && payments > 0) {
-            // Marcar el préstamo como pagado si se paga el monto total
-            clientLoanService.paidLoan(clientLoanId);
-        }
-
-        // Actualizar el saldo de la cuenta
-        double newAccountBalance = account.getBalance() - amount;
-        account.setBalance(newAccountBalance);
-
-        // Actualizar el saldo pendiente del préstamo y los pagos restantes
-        double newLoanBalance = clientLoan.getAmount() - amount;
-        clientLoan.setAmount(newLoanBalance);
-
-        int newPayments = clientLoan.getPayments() - payments;
-        clientLoan.setPayments(newPayments);
-
-        // Crear una transacción de débito
-        Transaction transaction = new Transaction(TransactionType.DEBIT, amount, account.getBalance() - amount, dateTime(), description);
-
-        // Guardar los cambios en la base de datos
-        accountService.saveAccount(account);
-        clientLoanService.saveClientLoan(clientLoan);
-        account.addTransaction(transaction);
-        transactionService.saveTransaction(transaction);
-
-        // Devolver una respuesta HTTP indicando que el pago se realizó con éxito
-        return new ResponseEntity<>("Payment Successful", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
+
 
 

@@ -4,42 +4,45 @@ import com.mindhub.HomeBanking2.models.Loan;
 
 import java.util.List;
 
+// Estoy creando una clase Java llamada LoanDTO para representar un tipo de préstamo como transferencia de datos (DTO).
+
 public class LoanDTO {
-    private Long id; // Almacena el identificador único del préstamo.
-    private String name; // Almacena el nombre del préstamo.
-    private Double maxAmount; // Almacena el monto máximo del préstamo.
-    private List<Integer> payments; // Almacena la lista de pagos asociados al préstamo.
-    private Double interestRate; // Almacena la tasa de interés del préstamo.
+    private Long id;  // Identificador único del tipo de préstamo.
+    private String name;  // Nombre del tipo de préstamo.
+    private Double maxAmount;  // Monto máximo permitido para el préstamo.
+    private List<Integer> payments;  // Lista de números de pagos permitidos para el préstamo.
+    private Double interestPercentage;  // Porcentaje de interés asociado al préstamo.
 
-    // Constructor que toma una instancia de la clase Loan y utiliza sus datos para inicializar los campos de esta clase LoanDTO.
+    // Constructor que recibe un objeto Loan y mapea sus propiedades a las propiedades de LoanDTO.
     public LoanDTO(Loan loan) {
-        this.id = loan.getID(); // Obtengo el ID del préstamo desde la instancia de Loan proporcionada.
-        this.name = loan.getName(); // Obtengo el nombre del préstamo desde la instancia de Loan.
-        this.maxAmount = loan.getMaxAmount(); // Obtengo el monto máximo del préstamo desde la instancia de Loan.
-        this.interestRate = loan.getInterestRate(); // Obtengo la tasa de interés del préstamo desde la instancia de Loan.
-        this.payments = loan.getPayments(); // Obtengo la lista de pagos desde la instancia de Loan.
+        this.id = loan.getId();  // Asigno el ID del tipo de préstamo.
+        this.name = loan.getName();  // Asigno el nombre del tipo de préstamo.
+        this.maxAmount = loan.getMaxAmount();  // Asigno el monto máximo permitido para el préstamo.
+        this.payments =  loan.getPayments();  // Asigno la lista de números de pagos permitidos para el préstamo.
+        this.interestPercentage = loan.getInterestPercentage();  // Asigno el porcentaje de interés asociado al préstamo.
     }
 
-    // Métodos "get" para acceder a los valores de los campos.
-
-    public Double getInterestRate() {
-        return interestRate; // Devuelve la tasa de interés del préstamo.
-    }
+    // Métodos getter para acceder a las propiedades del tipo de préstamo.
 
     public Long getId() {
-        return id; // Devuelve el ID del préstamo.
+        return id;
     }
 
     public String getName() {
-        return name; // Devuelve el nombre del préstamo.
+        return name;
     }
 
     public Double getMaxAmount() {
-        return maxAmount; // Devuelve el monto máximo del préstamo.
+        return maxAmount;
     }
 
     public List<Integer> getPayments() {
-        return payments; // Devuelve la lista de pagos asociados al préstamo.
+        return payments;
+    }
+
+    public Double getInterestPercentage() {
+        return interestPercentage;
     }
 }
+
 

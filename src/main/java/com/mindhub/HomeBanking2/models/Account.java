@@ -7,53 +7,41 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity // Anotación que indica que esta clase es una entidad JPA.
+// Estoy creando una clase Java llamada Account que representa una cuenta en el sistema.
+
+@Entity  // Indica que esta clase es una entidad JPA y se mapea a una tabla en la base de datos.
 public class Account {
+    @Id  // Indica que el atributo es la clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")  // Genera automáticamente valores para la clave primaria.
+    @GenericGenerator(name = "native", strategy = "native")  // Estrategia de generación automática.
+    private long id;  // Identificador único de la cuenta.
 
-    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
-    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
-    private long id; // Campo que almacena el identificador único de la cuenta.
+    private String number;  // Número único de la cuenta.
+    private LocalDate creationDate;  // Fecha de creación de la cuenta.
+    private double balance;  // Saldo actual de la cuenta.
+    private boolean active;  // Estado de la cuenta (activa o inactiva).
+    private AccountType accountType;  // Tipo de cuenta.
 
-    private String number; // Campo que almacena el número de cuenta.
-    private LocalDate creationDate; // Campo que almacena la fecha de creación de la cuenta.
-    private double balance; // Campo que almacena el saldo de la cuenta.
+    @ManyToOne(fetch = FetchType.EAGER)  // Relación muchos a uno con la entidad Client, se carga de manera ansiosa (EAGER).
+    private Client client;  // Cliente al que pertenece la cuenta.
 
-    private AccountType accountType; // Campo que almacena el tipo de cuenta.
-
-    // Campo que almacena información sobre si la cuenta ha sido eliminada o no.
-    private Boolean isDeleted = false;
-
-    // Relación Many-to-One entre Account y Client, indicando que muchas cuentas pueden pertenecer a un cliente.
-    @ManyToOne
-    @JoinColumn(name = "Client_Id") // Columna que se utilizará como clave foránea en la tabla.
-    private Client client; // Campo que almacena la referencia al cliente propietario de la cuenta.
-
-    // Relación One-to-Many entre Account y Transaction, indicando que una cuenta puede tener muchas transacciones.
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER) // Se mapea con el campo "account" en la clase Transaction.
-    private Set<Transaction> transactions = new HashSet<>(); // Conjunto de transacciones asociadas a la cuenta.
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)  // Relación uno a muchos con la entidad Transaction, se carga de manera ansiosa (EAGER).
+    private Set<Transaction> transactions = new HashSet<>();  // Conjunto de transacciones asociadas a la cuenta.
 
     // Constructor vacío por defecto.
     public Account() {
     }
 
-    // Constructor que recibe datos para inicializar una cuenta.
-    public Account(String number, LocalDate creationDate, double balance, AccountType accountType) {
+    // Constructor que inicializa algunos atributos de la cuenta.
+    public Account(String number, LocalDate creationDate, double balance, boolean active, AccountType accountType) {
         this.number = number;
         this.creationDate = creationDate;
         this.balance = balance;
+        this.active = active;
         this.accountType = accountType;
     }
 
-    // Métodos "get" y "set" para acceder y modificar los valores de los campos de la cuenta.
-
-    public AccountType getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
-    }
+    // Métodos getter y setter para acceder y modificar los atributos de la cuenta.
 
     public long getId() {
         return id;
@@ -83,6 +71,22 @@ public class Account {
         this.balance = balance;
     }
 
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
+
     public Client getClient() {
         return client;
     }
@@ -95,19 +99,25 @@ public class Account {
         return transactions;
     }
 
-    // Método para agregar una transacción a la cuenta y establecer la relación bidireccional.
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    // Método para agregar una transacción a la cuenta.
     public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);
-        this.transactions.add(transaction);
+        transactions.add(transaction);
     }
 
-    // Métodos "get" y "set" para el campo "isDeleted".
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
+    // Método toString para representar la información de la cuenta en formato de cadena.
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", creationDate=" + creationDate +
+                ", balance=" + balance +
+                '}';
     }
 }
 

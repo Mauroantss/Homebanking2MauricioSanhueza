@@ -10,49 +10,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service // Anotación que indica que esta clase es un componente de servicio gestionado por Spring.
+// Esta clase implementa la interfaz ClientLoanService y proporciona la lógica de negocio para las operaciones relacionadas con préstamos de clientes.
+
+@Service
 public class ClientLoanServiceImpl implements ClientLoanService {
 
-    @Autowired // Inyección de dependencia de la interfaz ClientLoanRepository.
+    // Se utiliza la inyección de dependencias para acceder al repositorio de préstamos de clientes.
+    @Autowired
     private ClientLoanRepository clientLoanRepository;
 
-    // Implementación de métodos definidos en la interfaz ClientLoanService.
-
-    // Método para guardar un ClientLoan en el repositorio.
     @Override
     public void saveClientLoan(ClientLoan clientLoan) {
+        // Guarda un préstamo de cliente en el repositorio.
         clientLoanRepository.save(clientLoan);
     }
-
-    // Método para obtener todos los ClientLoans asociados a un cliente.
-    @Override
-    public List<ClientLoan> getAllClientLoans(Client client) {
-        return clientLoanRepository.findByClient(client);
-    }
-
-    // Método para obtener un ClientLoan específico de un cliente y un préstamo dado.
-    @Override
-    public ClientLoan getClientLoan(Client client, Loan loan) {
-        return clientLoanRepository.findByClientAndLoan(client, loan);
-    }
-
-    // Método para verificar si existe un ClientLoan por su ID.
-    @Override
-    public boolean existsById(Long id) {
-        return clientLoanRepository.existsById(id);
-    }
-
-    // Método para obtener un ClientLoan por su ID.
-    @Override
-    public ClientLoan getClientLoanById(Long id) {
-        return clientLoanRepository.findById(id).orElse(null);
-    }
-
-    // Método para marcar un ClientLoan como pagado.
-    @Override
-    public void paidLoan(long id) {
-        ClientLoan clientLoan = clientLoanRepository.findById(id).orElse(null);
-        clientLoan.setPaid(true);
-        saveClientLoan(clientLoan);
-    }
 }
+

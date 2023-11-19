@@ -2,44 +2,48 @@ package com.mindhub.HomeBanking2.dto;
 
 import com.mindhub.HomeBanking2.models.ClientLoan;
 
+// Estoy creando una clase Java llamada ClientLoanDTO para representar una transferencia de datos (DTO) de una entidad ClientLoan.
+
 public class ClientLoanDTO {
-    private Long ID; // Almaceno el identificador único del préstamo del cliente.
+    private Long id;  // Identificador único del préstamo asociado al cliente.
+    private Long loanId;  // Identificador único del tipo de préstamo.
+    private String loanName;  // Nombre del tipo de préstamo.
+    private double loanAmount;  // Monto del préstamo asociado al cliente.
+    private int loanPayments;  // Número de pagos del préstamo asociado al cliente.
 
-    private Long loanId; // Almaceno el identificador único del préstamo en sí.
-    private String loanName; // Almaceno el nombre del préstamo.
-    private double amount; // Almaceno el monto del préstamo.
-
-    private int payments; // Almaceno la cantidad de pagos asociados al préstamo.
-
-    // Constructor que toma una instancia de la clase ClientLoan y utiliza sus datos para inicializar los campos de esta clase ClientLoanDTO.
-    public ClientLoanDTO(ClientLoan clientLoan) {
-        ID = clientLoan.getId(); // Obtengo el ID del préstamo del cliente a partir de la instancia de ClientLoan proporcionada.
-        loanId = clientLoan.getLoan().getID(); // Obtengo el ID del préstamo en sí desde la instancia de ClientLoan.
-        loanName = clientLoan.getLoan().getName(); // Obtengo el nombre del préstamo desde la instancia de ClientLoan.
-        amount = clientLoan.getAmount(); // Obtengo el monto del préstamo desde la instancia de ClientLoan.
-        payments = clientLoan.getPayments(); // Obtengo la cantidad de pagos desde la instancia de ClientLoan.
+    // Constructor vacío por defecto.
+    public ClientLoanDTO() {
     }
 
-    // Métodos "get" para acceder a los valores de los campos.
+    // Constructor que recibe un objeto ClientLoan y mapea sus propiedades a las propiedades de ClientLoanDTO.
+    public ClientLoanDTO(ClientLoan clientLoan) {
+        this.id = clientLoan.getId();  // Asigno el ID del préstamo asociado al cliente.
+        this.loanId = clientLoan.getLoan().getId();  // Asigno el ID del tipo de préstamo.
+        this.loanName = clientLoan.getLoan().getName();  // Asigno el nombre del tipo de préstamo.
+        this.loanAmount = clientLoan.getAmount();  // Asigno el monto del préstamo asociado al cliente.
+        this.loanPayments = clientLoan.getPayments();  // Asigno el número de pagos del préstamo asociado al cliente.
+    }
 
-    public Long getID() {
-        return ID; // Devuelvo el ID del préstamo del cliente.
+    // Métodos getter para acceder a las propiedades del préstamo asociado al cliente.
+
+    public Long getId() {
+        return id;
     }
 
     public Long getLoanId() {
-        return loanId; // Devuelvo el ID del préstamo en sí.
+        return loanId;
     }
 
     public String getLoanName() {
-        return loanName; // Devuelvo el nombre del préstamo.
+        return loanName;
     }
 
-    public double getAmount() {
-        return amount; // Devuelvo el monto del préstamo.
+    public double getLoanAmount() {
+        return loanAmount;
     }
 
-    public int getPayments() {
-        return payments; // Devuelvo la cantidad de pagos asociados al préstamo.
+    public int getLoanPayments() {
+        return loanPayments;
     }
 }
 

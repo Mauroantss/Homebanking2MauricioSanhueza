@@ -7,36 +7,30 @@ import com.mindhub.HomeBanking2.models.Client;
 import java.util.List;
 import java.util.Set;
 
+// Esta interfaz define los servicios que pueden realizarse en relación con las cuentas.
+
 public interface AccountService {
-    // Métodos para obtener información de cuentas y sus DTO.
-    List<Account> getAllAccounts();
-    List<AccountDTO> getAllAccountsDTO();
 
-    // Métodos para obtener cuentas por cliente y por ID.
-    Set<Account> getAllAccountsByClient(Client client);
-    Account getAccountById(Long id);
+    // Recupera una lista de todas las cuentas.
+    List<Account> findAllAccounts();
 
-    // Método para obtener el saldo de una cuenta por su ID.
-    double getBalanceByAccountId(Long id);
-
-    // Métodos para obtener DTO de cuentas por su ID y por cliente.
-    AccountDTO getAccountDTOById(Long id);
-    Set<AccountDTO> getAllAccountsDTOByClient(Client client);
-
-    // Métodos para buscar cuentas por número e ID, y verificar su existencia.
-    Account findAccountByNumber(String number);
+    // Encuentra una cuenta por su identificador único.
     Account findAccountById(Long id);
+
+    // Guarda una cuenta en el sistema.
+    void saveAccount(Account account);
+
+    // Verifica si una cuenta con el número especificado ya existe.
     boolean existsAccountByNumber(String number);
 
-    // Métodos para guardar cuentas, verificar su existencia por ID y marcar una cuenta como eliminada.
-    void saveAccount(Account account);
-    boolean existsAccountById(Long id);
-    void deletedAccount(long id);
+    // Encuentra una cuenta por su número único.
+    Account findAccountByNumber(String number);
 
-    // Método para contar cuentas de un cliente que no están marcadas como eliminadas.
-    int countByClientAndIsDeleted (Client client);
+    // Encuentra una cuenta por su identificador único.
+    Account findById(Long id);
 
-    // Método para verificar si existe una cuenta por su ID y si su saldo es mayor o igual a un valor dado.
-    boolean existsByIdAndBalanceGreaterThanEqual(Long id, Double balance);
+    // Verifica si existen cuentas activas en el sistema.
+    boolean existsByActive(boolean active);
 }
+
 

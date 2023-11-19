@@ -7,6 +7,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource
 public interface LoanRepository extends JpaRepository<Loan, Long> {
 
+    // Método que encuentra un préstamo por su ID.
+    Loan findById(long id);
+
+    // Método que verifica si existe un préstamo con el nombre proporcionado.
+    boolean existsByName(String name);
 }
 
 //Esta interfaz extiende JpaRepository<Loan, Long>,

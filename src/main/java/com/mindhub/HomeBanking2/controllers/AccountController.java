@@ -1,14 +1,13 @@
 package com.mindhub.HomeBanking2.controllers;
 
 import com.mindhub.HomeBanking2.dto.AccountDTO;
+import com.mindhub.HomeBanking2.dto.ClientDTO;
 import com.mindhub.HomeBanking2.models.Account;
 import com.mindhub.HomeBanking2.models.AccountType;
-import com.mindhub.HomeBanking2.models.CardType;
 import com.mindhub.HomeBanking2.models.Client;
-import com.mindhub.HomeBanking2.repositories.AccountRepository;
-import com.mindhub.HomeBanking2.repositories.ClientRepository;
 import com.mindhub.HomeBanking2.service.AccountService;
 import com.mindhub.HomeBanking2.service.ClientService;
+import com.mindhub.HomeBanking2.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,91 +16,134 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static com.mindhub.HomeBanking2.utils.AccountUtils.generateAccountNumber;
-import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
 
-@RestController // Indico que esta clase es un controlador REST, y sus métodos devuelven datos en formato JSON o XML.
-@RequestMapping("/api") // Asocio todas las rutas de este controlador a la ruta base '/api'.
+// Estoy definiendo un controlador REST para gestionar operaciones relacionadas con cuentas bancarias.
+
+@RestController
+@RequestMapping("/api")
 public class AccountController {
 
-    @Autowired // Inyecto automáticamente el servicio de cuentas.
+    // Estoy inyectando las dependencias necesarias.
+    @Autowired
     private AccountService accountService;
-
-    @Autowired // Inyecto automáticamente el servicio de clientes.
+    @Autowired
     private ClientService clientService;
 
-    @GetMapping("/accounts") // Asocio una solicitud GET a '/api/accounts'.
+    // Estoy manejando la solicitud GET para obtener todas las cuentas.
+    @GetMapping("/accounts")
     public List<AccountDTO> getAllAccounts() {
-        // Devuelvo una lista de todas las cuentas en formato DTO.
-        return accountService.getAllAccountsDTO();
+        List<AccountDTO> accounts = accountService.findAllAccounts().stream()
+                .map(account -> new AccountDTO(account)).collect(Collectors.toList());
+        return accounts;
     }
 
-    @GetMapping("/accounts/{id}") // Asocio una solicitud GET a '/api/accounts/{id}'.
-    public AccountDTO getAccountById(@PathVariable Long id) {
-        // Toma el valor del id de la URL y lo usa para buscar la cuenta correspondiente.
-        return accountService.getAccountDTOById(id);
-    }
-
-    @GetMapping("/clients/current/accounts") // Asocio una solicitud GET a '/api/clients/current/accounts'.
-    public Set<AccountDTO> getAccountClientCurrent(Authentication authentication) {
-        // Devuelvo las cuentas del cliente actual autenticado.
-        return accountService.getAllAccountsDTOByClient(clientService.findClientByEmail(authentication.getName()));
-    }
-
-    @PostMapping("/clients/current/accounts") // Asocio una solicitud POST a '/api/clients/current/accounts'.
-    public ResponseEntity<String> newAccount(@RequestParam String accountType, Authentication authentication) {
-        // Creo una nueva cuenta para el cliente autenticado.
-
-        // Encapsulo el cliente basado en su autenticación.
+    // Estoy manejando la solicitud GET para obtener una cuenta específica por su ID.
+    @GetMapping("/accounts/{id}")
+    public ResponseEntity<Object> getAccount(Authentication authentication, @PathVariable Long id) {
         Client client = clientService.findClientByEmail(authentication.getName());
+        Set<Long> accountsId = client.getAccounts().stream().map(account -> account.getId()).collect(Collectors.toSet());
+        Account account = accountService.findAccountById(id);
 
-        // Verifico que el cliente no tenga más de 3 cuentas.
-        if (accountService.countByClientAndIsDeleted(client) >= 3) {
-            return new ResponseEntity<>("You have reached the maximum number of accounts allowed. No more accounts can be created.", HttpStatus.FORBIDDEN);
+        // Verifico si la cuenta pertenece al cliente autenticado.
+        if (!accountsId.contains(id)) {
+            return new ResponseEntity<>("the account does not belong to the authenticated client",
+                    HttpStatus.FORBIDDEN);
         }
-        // Verifico que el tipo de cuenta sea válido.
-        if (!("SAVINGS".equals(accountType) || "CHECKINGS".equals(accountType))) {
-            return new ResponseEntity<>("Please select a valid account type.", HttpStatus.FORBIDDEN);
-        }
-        // Genero un número de cuenta aleatorio y único.
-        String accountNumberString;
-        do {
-            accountNumberString = generateAccountNumber();
-        } while (accountService.existsAccountByNumber(accountNumberString));
-
-        // Creo la cuenta nueva y la asocio al cliente.
-        Account account = new Account(accountNumberString, LocalDate.now(), 1000, AccountType.valueOf(accountType));
-        client.addAccount(account);
-
-        // Guardo el cliente y la cuenta y devuelvo una respuesta de creación exitosa.
-        clientService.saveClient(client);
-        accountService.saveAccount(account);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PostMapping("/clients/current/accounts/delete") // Asocio una solicitud POST a '/api/clients/current/accounts/delete'.
-    public ResponseEntity<String> deletedAccount(@RequestParam Long id) {
-        // Manejo la eliminación de una cuenta.
 
         // Verifico si la cuenta existe.
-        if (!accountService.existsAccountById(id)) {
-            return new ResponseEntity<>("The requested account does not exist. Please check the account ID.", HttpStatus.FORBIDDEN);
+        if (account == null) {
+            return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(new AccountDTO(account), HttpStatus.OK);
         }
-
-        // Verifico que el saldo de la cuenta sea menor a 1.
-        if(accountService.existsByIdAndBalanceGreaterThanEqual(id,1.0)){
-            return new ResponseEntity<>("The account cannot be deleted as its balance is not zero. Please ensure the balance is zero before deletion.", HttpStatus.FORBIDDEN);
-        }
-        // Procedo a eliminar la cuenta.
-        accountService.deletedAccount(id);
-        return new ResponseEntity<>("The account and its transactions have been successfully deleted.", HttpStatus.OK);
-
     }
 
-    // Aquí se incluirían métodos adicionales, como 'generateAccountNumber', etc., según sea necesario.
+    // Estoy manejando la solicitud GET para obtener todas las cuentas del cliente autenticado.
+    @GetMapping("/clients/current/accounts")
+    public Set<AccountDTO> getAll(Authentication authentication) {
+        ClientDTO client = new ClientDTO(clientService.findClientByEmail(authentication.getName()));
+        Set<AccountDTO> accounts = client.getAccounts();
+        return accounts;
+    }
+
+    // Estoy manejando la solicitud POST para crear una nueva cuenta para el cliente autenticado.
+    @PostMapping("/clients/current/accounts")
+    public ResponseEntity<Object> createAccount(Authentication authentication, @RequestParam AccountType accountType) {
+        Client client = clientService.findClientByEmail(authentication.getName());
+
+        // Verifico si el cliente existe.
+        if (!clientService.existsClientByEmail(authentication.getName())) {
+            return new ResponseEntity<>("The client was not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Verifico si ya existe una cuenta activa para este cliente.
+        if (!accountService.existsByActive(true)) {
+            return new ResponseEntity<>("This account is already active", HttpStatus.FORBIDDEN);
+        }
+
+        // Verifico si el cliente ha alcanzado el límite de cuentas creadas.
+        List<Account> accountsActive = client.getAccounts().stream().filter(account -> account.getActive()).collect(Collectors.toList());
+        if (accountsActive.size() > 3) {
+            return new ResponseEntity<>("You have reached the limit of created accounts", HttpStatus.FORBIDDEN);
+        }
+
+        // Genero un número de cuenta único.
+        String accountNumber = checkAccountNumber();
+
+        // Creo la nueva cuenta y la guardo en la base de datos.
+        boolean active = true;
+        Account account = new Account(accountNumber, LocalDate.now(), 0, active, accountType);
+        accountService.saveAccount(account);
+        client.addAccount(account);
+        clientService.saveClient(client);
+
+        return new ResponseEntity<>("Account created successfully", HttpStatus.CREATED);
+    }
+
+    // Estoy manejando la solicitud PUT para desactivar una cuenta del cliente autenticado.
+    @PutMapping("/clients/current/accounts")
+    public ResponseEntity<Object> deleteAccount(Authentication authentication, @RequestParam Long id) {
+        Client client = clientService.findClientByEmail(authentication.getName());
+        Account account = accountService.findById(id);
+
+        // Verifico si la cuenta existe.
+        if (account == null) {
+            return new ResponseEntity<>("The account doesn't exist", HttpStatus.FORBIDDEN);
+        }
+
+        // Verifico si el saldo de la cuenta es cero.
+        if (account.getBalance() != 0) {
+            return new ResponseEntity<>("You cannot delete an account with a balance greater than zero",
+                    HttpStatus.FORBIDDEN);
+        }
+
+        // Verifico si la cuenta está activa.
+        if (!account.getActive()) {
+            return new ResponseEntity<>("The account is inactive", HttpStatus.FORBIDDEN);
+        }
+
+        // Verifico si la cuenta pertenece al cliente autenticado.
+        if (!account.getClient().equals(client)) {
+            return new ResponseEntity<>("The account doesn't belong to the authenticated client", HttpStatus.FORBIDDEN);
+        }
+
+        // Desactivo la cuenta y sus transacciones asociadas.
+        account.setActive(false);
+        account.getTransactions().forEach(transaction -> transaction.setActive(false));
+        accountService.saveAccount(account);
+
+        return new ResponseEntity<>("Account deleted successfully", HttpStatus.CREATED);
+    }
+
+    // Método privado para generar un número de cuenta único.
+    public String checkAccountNumber() {
+        String numberGenerated;
+        do {
+            numberGenerated = AccountUtils.generateNumber();
+        } while (accountService.existsAccountByNumber(numberGenerated));
+        return numberGenerated;
+    }
 }

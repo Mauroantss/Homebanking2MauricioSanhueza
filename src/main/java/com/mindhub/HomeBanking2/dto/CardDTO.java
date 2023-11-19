@@ -7,60 +7,72 @@ import com.mindhub.HomeBanking2.models.TransactionType;
 
 import java.time.LocalDate;
 
+// Estoy creando una clase Java llamada CardDTO para representar una transferencia de datos (DTO) de una entidad Card.
+
 public class CardDTO {
-    private long id; // Almaceno el identificador único de la tarjeta.
+    private Long id;  // Identificador único de la tarjeta.
+    private String cardHolder;  // Titular de la tarjeta.
+    private CardType type;  // Tipo de tarjeta.
+    private CardColor color;  // Color de la tarjeta.
+    private String number;  // Número de la tarjeta.
+    private int cvv;  // Código de verificación de la tarjeta.
+    private LocalDate thruDate;  // Fecha de vencimiento de la tarjeta.
+    private LocalDate fromDate;  // Fecha de emisión de la tarjeta.
+    private Boolean active;  // Estado activo o inactivo de la tarjeta.
+    private Boolean expired;  // Estado de expiración de la tarjeta.
 
-    private String cardHolder; // Guardo el nombre del titular de la tarjeta.
-    private CardType cardType; // Mantengo el tipo de tarjeta (presumiblemente una enumeración llamada CardType).
-    private CardColor cardColor; // Mantengo el color de la tarjeta (presumiblemente una enumeración llamada CardColor).
-    private String number; // Almaceno el número de la tarjeta.
-    private String cvv; // Guardo el código CVV de la tarjeta.
-    private LocalDate thruDate; // Registro la fecha de vencimiento de la tarjeta.
-    private LocalDate fromDate; // Registro la fecha de inicio de la validez de la tarjeta.
-
-    // Constructor que toma una instancia de la clase Card y utiliza sus datos para inicializar los campos de esta clase CardDTO.
-    public CardDTO(Card card) {
-        id = card.getId(); // Obtengo el ID de la tarjeta a partir de la instancia de Card proporcionada.
-        cardHolder = card.getCardHolder(); // Obtengo el nombre del titular de la tarjeta.
-        cardType = card.getCardType(); // Obtengo el tipo de tarjeta desde la instancia de Card.
-        cardColor = card.getCardColor(); // Obtengo el color de la tarjeta desde la instancia de Card.
-        number = card.getNumber(); // Obtengo el número de la tarjeta.
-        cvv = card.getCvv(); // Obtengo el código CVV de la tarjeta.
-        thruDate = card.getThruDate(); // Obtengo la fecha de vencimiento de la tarjeta.
-        fromDate = card.getFromDate(); // Obtengo la fecha de inicio de la validez de la tarjeta.
+    // Constructor que recibe un objeto Card y mapea sus propiedades a las propiedades de CardDTO.
+    public CardDTO (Card card){
+        this.id = card.getId();  // Asigno el ID de la tarjeta.
+        this.cardHolder = card.getCardHolder();  // Asigno el titular de la tarjeta.
+        this.type = card.getType();  // Asigno el tipo de tarjeta.
+        this.color = card.getColor();  // Asigno el color de la tarjeta.
+        this.number = card.getNumber();  // Asigno el número de la tarjeta.
+        this.cvv = card.getCvv();  // Asigno el código de verificación de la tarjeta.
+        this.thruDate = card.getThruDate();  // Asigno la fecha de vencimiento de la tarjeta.
+        this.fromDate = card.getFromDate();  // Asigno la fecha de emisión de la tarjeta.
+        this.active = card.getActive();  // Asigno el estado activo o inactivo de la tarjeta.
     }
 
-    // Métodos "get" para acceder a los valores de los campos.
+    // Métodos getter para acceder a las propiedades de la tarjeta.
 
-    public long getId() {
-        return id; // Devuelvo el ID de la tarjeta.
+    public Long getId() {
+        return id;
     }
 
     public String getCardHolder() {
-        return cardHolder; // Devuelvo el nombre del titular de la tarjeta.
+        return cardHolder;
     }
 
-    public CardType getCardType() {
-        return cardType; // Devuelvo el tipo de tarjeta.
+    public CardType getType() {
+        return type;
     }
 
-    public CardColor getCardColor() {
-        return cardColor; // Devuelvo el color de la tarjeta.
+    public CardColor getColor() {
+        return color;
     }
 
     public String getNumber() {
-        return number; // Devuelvo el número de la tarjeta.
+        return number;
     }
 
-    public String getCvv() {
-        return cvv; // Devuelvo el código CVV de la tarjeta.
+    public int getCvv() {
+        return cvv;
     }
 
     public LocalDate getThruDate() {
-        return thruDate; // Devuelvo la fecha de vencimiento de la tarjeta.
+        return thruDate;
     }
 
     public LocalDate getFromDate() {
-        return fromDate; // Devuelvo la fecha de inicio de la validez de la tarjeta.
+        return fromDate;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public Boolean getExpired() {
+        return expired;
     }
 }

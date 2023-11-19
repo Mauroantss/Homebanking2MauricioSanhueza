@@ -5,70 +5,83 @@ import com.mindhub.HomeBanking2.models.Client;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+// Estoy creando una clase Java llamada ClientDTO para representar una transferencia de datos (DTO) de una entidad Client.
+
 public class ClientDTO {
-    private long ID; // Almaceno el identificador único del cliente.
+    private Long id;  // Identificador único del cliente.
+    private String firstName;  // Primer nombre del cliente.
+    private String lastName;  // Apellido del cliente.
+    private String email;  // Correo electrónico del cliente.
+    private Set<AccountDTO> accounts;  // Conjunto de cuentas asociadas al cliente, representadas como objetos AccountDTO.
+    private Set<ClientLoanDTO> loans;  // Conjunto de préstamos asociados al cliente, representados como objetos ClientLoanDTO.
+    private Set<CardDTO> cards;  // Conjunto de tarjetas asociadas al cliente, representadas como objetos CardDTO.
 
-    private String firstName, lastName, email; // Guardo el nombre, apellido y correo electrónico del cliente.
-    private Set<AccountDTO> accounts; // Mantengo un conjunto de objetos AccountDTO que representan las cuentas asociadas al cliente.
-    private Set<ClientLoanDTO> loans; // Mantengo un conjunto de objetos ClientLoanDTO que representan los préstamos asociados al cliente.
-    private Set<CardDTO> cards; // Mantengo un conjunto de objetos CardDTO que representan las tarjetas asociadas al cliente.
-
-    // Constructor que toma una instancia de la clase Client y utiliza sus datos para inicializar los campos de esta clase ClientDTO.
-    public ClientDTO(Client client) {
-        ID = client.getId(); // Obtengo el ID del cliente a partir de la instancia de Client proporcionada.
-        firstName = client.getFirstName(); // Obtengo el primer nombre del cliente.
-        lastName = client.getLastName(); // Obtengo el apellido del cliente.
-        email = client.getEmail(); // Obtengo el correo electrónico del cliente.
-
-        // Filtrar y mapear las cuentas del cliente a objetos AccountDTO y almacenarlos en el conjunto accounts.
-        accounts = client.getAccounts().stream()
-                .filter(account -> !account.getDeleted()) // Filtrar cuentas no eliminadas.
-                .map(account -> new AccountDTO(account)) // Mapear cuentas a objetos AccountDTO.
-                .collect(Collectors.toSet()); // Almacenar los objetos AccountDTO en un conjunto.
-
-        // Filtrar y mapear los préstamos del cliente a objetos ClientLoanDTO y almacenarlos en el conjunto loans.
-        loans = client.getClientLoans().stream()
-                .filter(clientLoan -> !clientLoan.isPaid()) // Filtrar préstamos no pagados.
-                .map(loan -> new ClientLoanDTO(loan)) // Mapear préstamos a objetos ClientLoanDTO.
-                .collect(Collectors.toSet()); // Almacenar los objetos ClientLoanDTO en un conjunto.
-
-        // Filtrar y mapear las tarjetas del cliente a objetos CardDTO y almacenarlos en el conjunto cards.
-        cards = client.getCards().stream()
-                .filter(card -> !card.getDeleted()) // Filtrar tarjetas no eliminadas.
-                .map(CardDTO::new) // Mapear tarjetas a objetos CardDTO.
-                .collect(Collectors.toSet()); // Almacenar los objetos CardDTO en un conjunto.
+    // Constructor vacío por defecto.
+    public ClientDTO() {
     }
 
-    // Métodos "get" para acceder a los valores de los campos.
+    // Constructor que recibe un objeto Client y mapea sus propiedades a las propiedades de ClientDTO.
+    public ClientDTO(Client client) {
+        this.id = client.getId();  // Asigno el ID del cliente.
+        this.firstName = client.getFirstName();  // Asigno el primer nombre del cliente.
+        this.lastName = client.getLastName();  // Asigno el apellido del cliente.
+        this.email = client.getEmail();  // Asigno el correo electrónico del cliente.
 
-    public long getID() {
-        return ID; // Devuelvo el ID del cliente.
+        // Mapeo las cuentas activas del cliente a objetos AccountDTO y las almaceno en el conjunto accounts.
+        this.accounts = client
+                .getAccounts()
+                .stream()
+                .filter(account -> account.getActive())
+                .map(account -> new AccountDTO(account))
+                .collect(Collectors.toSet());
+
+        // Mapeo los préstamos del cliente a objetos ClientLoanDTO y los almaceno en el conjunto loans.
+        this.loans = client
+                .getClientLoans()
+                .stream()
+                .map(loan -> new ClientLoanDTO(loan))
+                .collect(Collectors.toSet());
+
+        // Mapeo las tarjetas activas del cliente a objetos CardDTO y las almaceno en el conjunto cards.
+        this.cards = client
+                .getCards()
+                .stream()
+                .filter(card -> card.getActive())
+                .map(card -> new CardDTO(card))
+                .collect(Collectors.toSet());
+    }
+
+    // Métodos getter para acceder a las propiedades del cliente.
+
+    public Long getId() {
+        return id;
     }
 
     public String getFirstName() {
-        return firstName; // Devuelvo el primer nombre del cliente.
+        return firstName;
     }
 
     public String getLastName() {
-        return lastName; // Devuelvo el apellido del cliente.
+        return lastName;
     }
 
     public String getEmail() {
-        return email; // Devuelvo el correo electrónico del cliente.
+        return email;
     }
 
     public Set<AccountDTO> getAccounts() {
-        return accounts; // Devuelvo el conjunto de objetos AccountDTO representando las cuentas asociadas al cliente.
+        return accounts;
     }
 
     public Set<ClientLoanDTO> getLoans() {
-        return loans; // Devuelvo el conjunto de objetos ClientLoanDTO representando los préstamos asociados al cliente.
+        return loans;
     }
 
     public Set<CardDTO> getCards() {
-        return cards; // Devuelvo el conjunto de objetos CardDTO representando las tarjetas asociadas al cliente.
+        return cards;
     }
 }
+
 
 
 //En resumen, esta clase ClientDTO toma una instancia de la clase Client como parámetro en su constructor y

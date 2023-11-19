@@ -1,35 +1,42 @@
 package com.mindhub.HomeBanking2.dto;
 
-public class LoanApplicationDTO {
-    private Long loanId; // Almacena el identificador único del préstamo al que se solicita la aplicación.
-    private double amount; // Almacena el monto del préstamo solicitado.
-    private int payments; // Almacena la cantidad de pagos asociados al préstamo.
-    private String toAccount; // Almacena el número de cuenta de destino donde se transferirá el monto del préstamo.
+// Estoy creando una clase Java llamada LoanApplicationDTO para representar una solicitud de préstamo como transferencia de datos (DTO).
 
-    // Constructor que recibe los datos de solicitud de préstamo al ser instanciado.
-    public LoanApplicationDTO(Long loanId, double amount, int payments, String toAccount) {
-        this.loanId = loanId; // Asigna el ID del préstamo.
-        this.amount = amount; // Asigna el monto del préstamo.
-        this.payments = payments; // Asigna la cantidad de pagos.
-        this.toAccount = toAccount; // Asigna el número de cuenta de destino.
+public class LoanApplicationDTO {
+    private long loanId;  // Identificador único del tipo de préstamo solicitado.
+    private double amount;  // Monto solicitado en la solicitud de préstamo.
+    private int payments;  // Número de pagos solicitados en la solicitud de préstamo.
+    private String destinationAccount;  // Número de cuenta de destino en la solicitud de préstamo.
+
+    // Constructor vacío por defecto.
+    public LoanApplicationDTO() {
     }
 
-    // Métodos "get" para acceder a los valores de los campos.
+    // Constructor que recibe parámetros para inicializar las propiedades de la solicitud de préstamo.
+    public LoanApplicationDTO(long loanId, double amount, int payments, String destinationAccount) {
+        this.loanId = loanId;  // Asigno el ID del tipo de préstamo.
+        this.amount = amount;  // Asigno el monto solicitado.
+        this.payments = payments;  // Asigno el número de pagos solicitados.
+        this.destinationAccount = destinationAccount;  // Asigno el número de cuenta de destino.
+    }
 
-    public Long getLoanId() {
-        return loanId; // Devuelve el ID del préstamo.
+    // Métodos getter para acceder a las propiedades de la solicitud de préstamo.
+
+    public long getLoanId() {
+        return loanId;
     }
 
     public double getAmount() {
-        return amount; // Devuelve el monto del préstamo.
+        return amount;
     }
 
     public int getPayments() {
-        return payments; // Devuelve la cantidad de pagos asociados al préstamo.
+        return payments;
     }
 
-    public String getToAccount() {
-        return toAccount; // Devuelve el número de cuenta de destino.
+    public String getDestinationAccount() {
+        return destinationAccount;
     }
 }
+
 

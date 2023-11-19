@@ -4,11 +4,11 @@ import com.mindhub.HomeBanking2.dto.ClientDTO;
 import com.mindhub.HomeBanking2.models.Account;
 import com.mindhub.HomeBanking2.models.AccountType;
 import com.mindhub.HomeBanking2.models.Client;
-import com.mindhub.HomeBanking2.repositories.AccountRepository;
-import com.mindhub.HomeBanking2.repositories.ClientRepository;
+
 import com.mindhub.HomeBanking2.service.AccountService;
 import com.mindhub.HomeBanking2.service.ClientService;
-import net.bytebuddy.asm.Advice;
+import com.mindhub.HomeBanking2.utils.AccountUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,87 +17,99 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@RestController // Indico que esta clase es un controlador REST. Manejará peticiones HTTP.
-@RequestMapping("/api/clients") // Especifico que todas las peticiones a este controlador empiezan con '/api/clients'.
+import java.util.List;
+
+import java.util.stream.Collectors;
+
+
+// Estoy definiendo un controlador REST para gestionar operaciones relacionadas con clientes.
+
+@RestController
+@RequestMapping("/api")
 public class ClientController {
 
-    @Autowired // Inyecto el servicio de clientes para su uso en este controlador.
+    // Estoy inyectando las dependencias necesarias.
+    @Autowired
     private ClientService clientService;
-
-    @Autowired // Inyecto el servicio de cuentas.
+    @Autowired
     private AccountService accountService;
-
-    @Autowired // Inyecto el codificador de contraseñas.
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Método para generar un número aleatorio dentro de un rango.
-    private int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
+    // Estoy manejando la solicitud GET para obtener todos los clientes.
+    @GetMapping("/clients")
+    public List<ClientDTO> getAllClients() {
+        List<ClientDTO> clients = clientService.findAllClients().stream()
+                .map(client -> new ClientDTO(client)).collect(Collectors.toList());
+        return clients;
     }
 
-    @GetMapping // Método que maneja las peticiones GET a la ruta '/api/clients'.
-    public List<ClientDTO> getAllClients() { // Devuelve una lista de todos los clientes en formato DTO.
-        return clientService.getAllClientsDTO();
+    // Estoy manejando la solicitud GET para obtener un cliente específico por su ID.
+    @GetMapping("/clients/{id}")
+    public ClientDTO getClient(@PathVariable Long id) {
+        ClientDTO client = new ClientDTO(clientService.findClientById(id));
+        return client;
     }
 
-    @GetMapping("/{id}") // Maneja las peticiones GET a '/api/clients/{id}'.
-    public ClientDTO getClientById(@PathVariable Long id) { // Usa el ID de la URL para encontrar el cliente.
-        return clientService.findClientDTOById(id);
+    // Estoy manejando la solicitud GET para obtener el cliente autenticado.
+    @GetMapping("/clients/current")
+    public ClientDTO getAll(Authentication authentication) {
+        return new ClientDTO(clientService.findClientByEmail(authentication.getName()));
     }
 
-    @PostMapping // Maneja las solicitudes POST a '/api/clients'.
-    public ResponseEntity<String> newClient(
-            @RequestParam String firstName, @RequestParam String lastName, @RequestParam String email, @RequestParam String password) {
+    // Estoy manejando la solicitud POST para registrar un nuevo cliente.
+    @PostMapping("/clients")
+    public ResponseEntity<Object> register(
+            @RequestParam String firstName, @RequestParam String lastName,
+            @RequestParam String email, @RequestParam String password) {
 
-        // Verifico que los campos obligatorios no estén en blanco.
-        if (firstName.isBlank()) {
-            return new ResponseEntity<>("Type your first name", HttpStatus.FORBIDDEN);
-        }
-        if (lastName.isBlank()) {
-            return new ResponseEntity<>("Type your last name", HttpStatus.FORBIDDEN);
-        }
-        if (email.isBlank()) {
-            return new ResponseEntity<>("Type your email", HttpStatus.FORBIDDEN);
-        }
-        if (password.isBlank()) {
-            return new ResponseEntity<>("Type your password", HttpStatus.FORBIDDEN);
+        // Verifico si se proporcionan todos los campos obligatorios.
+        if (firstName.isBlank() || firstName.isEmpty()) {
+            return new ResponseEntity<>("You must enter your name", HttpStatus.FORBIDDEN);
         }
 
-        // Verifico si el email ya está en uso.
-        if (clientService.findClientByEmail(email) != null) {
+        if (lastName.isBlank() || lastName.isEmpty()) {
+            return new ResponseEntity<>("You must enter your last name", HttpStatus.FORBIDDEN);
+        }
+
+        if (email.isBlank() || email.isEmpty()) {
+            return new ResponseEntity<>("You must enter your email", HttpStatus.FORBIDDEN);
+        }
+
+        if (password.isBlank() || password.isEmpty()) {
+            return new ResponseEntity<>("You must enter your password", HttpStatus.FORBIDDEN);
+        }
+
+        // Verifico si el correo electrónico ya está en uso.
+        if (clientService.existsClientByEmail(email)) {
             return new ResponseEntity<>("Email already in use", HttpStatus.FORBIDDEN);
         }
 
         // Genero un número de cuenta único.
-        int accountNumber;
-        String accountNumberString;
-        do {
-            accountNumber = getRandomNumber(0, 99999999);
-            accountNumberString = String.valueOf(accountNumber);
-        } while (accountService.existsAccountByNumber(accountNumberString));
+        String accountNumber = checkAccountNumber();
 
-        // Creo el nuevo cliente y la cuenta asociada.
-        Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password), false);
-        Account account = new Account(accountNumberString, LocalDate.now(), 1000, AccountType.SAVINGS);
-        client.addAccount(account);
-        clientService.saveClient(client);
+        // Configuro el nuevo cliente y su cuenta asociada.
+        boolean active = true;
+        Client newClient = new Client(firstName, lastName, email, passwordEncoder.encode(password));
+        Account account = new Account(accountNumber, LocalDate.now(), 0, active, AccountType.SAVING);
         accountService.saveAccount(account);
+        newClient.addAccount(account);
+        clientService.saveClient(newClient);
 
-        return new ResponseEntity<>("Client created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/current") // Manejo solicitudes GET a '/api/clients/current'.
-    public ClientDTO getClientCurrent(Authentication authentication) {
-        // Devuelvo los detalles del cliente actual basándome en su autenticación.
-        return new ClientDTO(clientService.findClientByEmail(authentication.getName()));
+    // Método privado para generar un número de cuenta único.
+    public String checkAccountNumber() {
+        String numberGenerated;
+        do {
+            numberGenerated = AccountUtils.generateNumber();
+        } while (accountService.existsAccountByNumber(numberGenerated));
+        return numberGenerated;
     }
 }
+
 
 
 

@@ -1,37 +1,35 @@
 package com.mindhub.HomeBanking2.utils;
 
-import com.mindhub.HomeBanking2.repositories.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
+
+// La clase CardUtils proporciona utilidades relacionadas con las tarjetas.
+// Al ser una clase final con un constructor privado, no se puede instanciar ni heredar.
 
 public final class CardUtils {
-    // Método para generar un número de tarjeta de crédito aleatorio
-    public static String generateRandomCardNumber() {
-        StringBuilder cardNumber = new StringBuilder(); // Usamos StringBuilder para construir el número de tarjeta
 
-        for (int i = 0; i < 16; i++) { // Generamos 16 dígitos para el número de tarjeta
-            int digit = (int) (Math.random() * 10); // Generamos un dígito aleatorio entre 0 y 9
-            cardNumber.append(digit); // Agregamos el dígito al número de tarjeta
-
-            if ((i + 1) % 4 == 0 && i != 15) {
-                cardNumber.append("-"); // Agregamos un guión después de cada 4 dígitos (excepto al final)
-            }
-        }
-
-        return cardNumber.toString(); // Devolvemos el número de tarjeta como una cadena
+    // Constructor privado para evitar instanciación.
+    private CardUtils() {
     }
 
-    // Método para generar un número de CVV (Código de Seguridad) aleatorio
-    public static String generateRandomCvvNumber() {
-        StringBuilder cardCvvNumber = new StringBuilder(); // Usamos StringBuilder para construir el CVV
+    // Método estático que genera un número aleatorio dentro del rango especificado.
+    public static int generateRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
 
-        for (int i = 0; i < 3; i++) { // Generamos 3 dígitos para el CVV
-            int digit = (int) (Math.random() * 10); // Generamos un dígito aleatorio entre 0 y 9
-            cardCvvNumber.append(digit); // Agregamos el dígito al CVV
+    // Método estático que genera un número de tarjeta compuesto por cuatro bloques de cuatro dígitos cada uno.
+    public static String generateNumber() {
+        String number = "";
+        for (int i = 0; i < 3; i++) {
+            number += generateRandomNumber(1000, 9999) + " ";
         }
+        number += generateRandomNumber(1000, 9999);
+        return number;
+    }
 
-        return cardCvvNumber.toString(); // Devolvemos el CVV como una cadena
+    // Método estático que genera un número CVV de tres dígitos.
+    public static int generateCvv() {
+        return generateRandomNumber(100, 999);
     }
 }
+
 

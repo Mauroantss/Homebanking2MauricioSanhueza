@@ -5,95 +5,117 @@ import com.mindhub.HomeBanking2.models.Card;
 import com.mindhub.HomeBanking2.models.CardColor;
 import com.mindhub.HomeBanking2.models.CardType;
 import com.mindhub.HomeBanking2.models.Client;
-import com.mindhub.HomeBanking2.repositories.CardRepository;
-import com.mindhub.HomeBanking2.repositories.ClientRepository;
 import com.mindhub.HomeBanking2.service.CardService;
 import com.mindhub.HomeBanking2.service.ClientService;
+import com.mindhub.HomeBanking2.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Random;
 
-import static com.mindhub.HomeBanking2.utils.AccountUtils.getRandomNumber;
-import static com.mindhub.HomeBanking2.utils.CardUtils.*;
 
-@RestController // Indico que esta es una clase controladora para servicios REST.
-@RequestMapping("/api/clients") // Especifico que las rutas de este controlador comienzan con '/api/clients'.
+// Estoy definiendo un controlador REST para gestionar operaciones relacionadas con tarjetas bancarias.
+@RestController
+@RequestMapping("/api")
 public class CardController {
 
-    @Autowired // Inyecto automáticamente el servicio de clientes.
+    // Estoy inyectando las dependencias necesarias.
+    @Autowired
+    private CardService cardService;
+    @Autowired
     private ClientService clientService;
 
-    @Autowired // Inyecto automáticamente el servicio de tarjetas.
-    private CardService cardService;
-
-    // Método para generar un número de tarjeta de crédito aleatorio
-    // ... (Aquí iría el método generateRandomCardNumber y su comentario explicativo)
-
-    @PostMapping("/current/cards") // Asocio esta ruta y método para manejar solicitudes POST a '/api/clients/current/cards'.
-    public ResponseEntity<String> newCard(@RequestParam String cardType, @RequestParam String cardColor,
-                                          Authentication authentication) {
-
-        // Verifico si el tipo de tarjeta está vacío y retorno un mensaje de error.
-        if (cardType.isEmpty()) {
-            return new ResponseEntity<>("You must choose a card type.", HttpStatus.FORBIDDEN);
-        }
-
-        // Verifico si el color de la tarjeta está vacío y retorno un mensaje de error.
-        if (cardColor.isEmpty()) {
-            return new ResponseEntity<>("You must choose a card color.", HttpStatus.FORBIDDEN);
-        }
-
-        // Obtengo el cliente actual basado en su autenticación.
+    // Estoy manejando la solicitud POST para crear una nueva tarjeta para el cliente autenticado.
+    @PostMapping("/clients/current/cards")
+    public ResponseEntity<Object> createCard(Authentication authentication,
+                                             @RequestParam CardType type,
+                                             @RequestParam CardColor color) {
+        // Obtengo el cliente autenticado.
         Client client = clientService.findClientByEmail(authentication.getName());
 
-        // Cuento el número de tarjetas del tipo especificado que el cliente ya posee.
-        int numberOfCardType =
-                (int) client.getCards().stream().filter(card -> card.getCardType().equals(CardType.valueOf(cardType))).count();
-
-        // Verifico si el cliente ya tiene tres tarjetas del mismo tipo y retorno un mensaje de error.
-        if (numberOfCardType == 3) {
-            return new ResponseEntity<>("You cannot have more than three cards of the same type.", HttpStatus.FORBIDDEN);
+        // Verifico si el cliente existe.
+        if (client == null) {
+            return new ResponseEntity<>("The client was not found", HttpStatus.FORBIDDEN);
         }
 
-        // Genero un número de tarjeta único.
-        String cardNumber;
-        do {
-            cardNumber = generateRandomCardNumber();
-        } while (cardService.existsCardByNumber(cardNumber));
+        // Verifico si se proporciona el tipo de tarjeta.
+        if (type == null) {
+            return new ResponseEntity<>("Card type is required", HttpStatus.FORBIDDEN);
+        }
 
-        // Creo una nueva tarjeta y la asocio con el cliente.
-        Card card = new Card(client.fullName(), CardType.valueOf(cardType), CardColor.valueOf(cardColor), cardNumber, generateRandomCvvNumber(), LocalDate.now().plusYears(5), LocalDate.now());
-        client.addCard(card);
+        // Verifico si se proporciona el color de la tarjeta.
+        if (color == null) {
+            return new ResponseEntity<>("Card color is required", HttpStatus.FORBIDDEN);
+        }
 
-        // Guardo la tarjeta y el cliente en la base de datos.
-        cardService.saveCard(card);
+        // Verifico si el cliente ya tiene una tarjeta del mismo tipo y color activa.
+        if (cardService.existsCardByTypeAndColorAndClientAndActive(type, color, client, true)) {
+            return new ResponseEntity<>("You already have the same card", HttpStatus.FORBIDDEN);
+        }
+
+        // Genero detalles para la nueva tarjeta.
+        LocalDate fromDate = LocalDate.now();
+        LocalDate thruDate = fromDate.plusYears(5);
+        String cardNumber = checkCardNumber();
+        int cvv = CardUtils.generateCvv();
+        Boolean active = true;
+        Boolean expired = (thruDate.isBefore(LocalDate.now()));
+
+        // Creo la nueva tarjeta y la guardo en la base de datos.
+        Card newCard = new Card((client.getFirstName().toUpperCase() + " " + client.getLastName().toUpperCase()),
+                type, color, cardNumber, cvv, thruDate, fromDate, active);
+        cardService.saveCard(newCard);
+        client.addCard(newCard);
         clientService.saveClient(client);
 
-        // Devuelvo un mensaje de éxito.
         return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
     }
 
-    @PostMapping("/current/cards/delete") // Asocio esta ruta y método para manejar solicitudes POST a '/api/clients/current/cards/delete'.
-    public ResponseEntity<String> deletedCard(@RequestParam Long id, Authentication authentication) {
+    // Estoy manejando la solicitud PUT para desactivar una tarjeta del cliente autenticado.
+    @PutMapping("/clients/current/cards")
+    public ResponseEntity<Object> deleteCard(Authentication authentication, @RequestParam Long id) {
+        // Obtengo el cliente autenticado.
+        Client client = clientService.findClientByEmail(authentication.getName());
 
-        // Verifico si la tarjeta existe y retorno un mensaje de error si no es así.
-        if (!cardService.existsCardById(id)) {
-            return new ResponseEntity<>("Card does not exist.", HttpStatus.FORBIDDEN);
+        // Obtengo la tarjeta por su ID.
+        Card card = cardService.findById(id);
+
+        // Verifico si el cliente existe.
+        if (client == null) {
+            return new ResponseEntity<>("Client not found", HttpStatus.FORBIDDEN);
         }
 
-        // Procedo a eliminar la tarjeta.
-        cardService.deletedCard(id);
+        // Verifico si la tarjeta existe.
+        if (card == null) {
+            return new ResponseEntity<>("The card doesn't exist", HttpStatus.FORBIDDEN);
+        }
 
-        // Devuelvo un mensaje confirmando la eliminación de la tarjeta.
-        return new ResponseEntity<>("Card deleted successfully.", HttpStatus.OK);
+        // Verifico si la tarjeta está activa.
+        if (!card.getActive()) {
+            return new ResponseEntity<>("The card is inactive", HttpStatus.FORBIDDEN);
+        }
+
+        // Verifico si la tarjeta pertenece al cliente autenticado.
+        if (!card.getClient().equals(client)) {
+            return new ResponseEntity<>("The card doesn't belong to the authenticated client", HttpStatus.FORBIDDEN);
+        }
+
+        // Desactivo la tarjeta.
+        card.setActive(false);
+        cardService.saveCard(card);
+
+        return new ResponseEntity<>("Card deleted successfully", HttpStatus.CREATED);
     }
 
+    // Método privado para generar un número de tarjeta único.
+    public String checkCardNumber(){
+        String generatedNumber;
+        do {
+            generatedNumber = CardUtils.generateNumber();
+        } while(cardService.existsCardByNumber(generatedNumber));
+        return generatedNumber;
+    }
 }

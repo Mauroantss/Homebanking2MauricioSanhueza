@@ -25,15 +25,16 @@ class WebAuthorization {
                 // Defino rutas públicas a las que se puede acceder sin autenticación.
                 .antMatchers(
                         HttpMethod.POST,
-                        "/api/clients" // Permito el registro de clientes.
+                        "/api/clients", "/api/login" // Permito el registro de clientes.
                 ).permitAll()
                 .antMatchers(
                         "/web/index.html",
                         "/web/pages/login.html",
-                        "/web/register.html",
+                        "/web/pages/register.html",
                         "/web/css/**",
                         "/web/js/**",
-                        "/web/images/**"
+                        "/web/images/**",
+                        "/api/login"
                 ).permitAll()
                 // Defino rutas exclusivas para el administrador.
                 .antMatchers(
@@ -47,7 +48,13 @@ class WebAuthorization {
                 .antMatchers(HttpMethod.POST, "/api/loans/create").hasAuthority("ADMIN")
                 // Rutas que requieren autenticación.
                 .antMatchers(
-                        "/web/pages/**",
+                        "/web/pages/accounts.html",
+                        "/web/pages/account.html",
+                        "/web/pages/card.html",
+                        "/web/pages/create-card.html",
+                        "/web/pages/transfers.html",
+                        "/web/pages/loan-application.html",
+
                         "/api/clients/current/**"
                 ).authenticated()
                 // Restrinjo el acceso a /api/loans solo a usuarios autenticados.

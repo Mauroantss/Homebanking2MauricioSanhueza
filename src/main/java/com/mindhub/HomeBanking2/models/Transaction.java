@@ -5,64 +5,47 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity // Anotación que indica que esta clase es una entidad JPA.
+// Esta clase representa la entidad "Transaction" que se mapea a una tabla en la base de datos.
+
+@Entity
 public class Transaction {
-    // Propiedades de la entidad Transaction.
-    @Id // Anotación que especifica que este campo es la clave primaria de la entidad.
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native") // Generación automática del valor de la clave primaria.
-    @GenericGenerator(name = "native", strategy = "native") // Generador de valores para la clave primaria.
-    private Long id; // Campo que almacena el identificador único de la transacción.
 
-    private TransactionType type; // Campo que almacena el tipo de transacción (por ejemplo, débito o crédito).
-    private double amount; // Campo que almacena el monto de la transacción.
-    private LocalDateTime date; // Campo que almacena la fecha y hora de la transacción.
-    private String description; // Campo que almacena una descripción de la transacción.
-    private Double balanceAfterTransaction; // Campo que almacena el saldo después de la transacción.
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private Long id; // Identificador único de la transacción.
 
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
+    private TransactionType type; // Tipo de transacción (Débito o Crédito).
 
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
+    private double amount; // Monto de la transacción.
 
-    // Campo que indica si la transacción ha sido marcada como eliminada.
-    private Boolean isDeleted = false;
+    private String description; // Descripción de la transacción.
 
-    // Relación Many-to-One entre Transaction y Account.
-    @ManyToOne // Indica una relación Many-to-One con la entidad Account.
-    private Account account; // Campo que almacena la cuenta asociada a la transacción.
+    private LocalDateTime date; // Fecha y hora de la transacción.
 
-    // Constructores de la clase Transaction.
-    public Transaction(TransactionType debit, double amount, LocalDateTime localDateTime, String description) {
-        // Constructor vacío por defecto.
-    }
+    private double currentBalance; // Saldo actual después de la transacción.
+
+    private boolean active; // Estado de la transacción (activa o no).
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Account account; // Relación many-to-one con la entidad Account.
 
     public Transaction() {
-        // Constructor vacío por defecto.
     }
 
-    public Transaction(TransactionType type, Double amount, Double balanceAfterTransaction, LocalDateTime date, String description) {
-        // Constructor que recibe los datos necesarios para inicializar una transacción.
+    // Constructor para crear una instancia de Transaction con información específica.
+    public Transaction(TransactionType type, double amount, String description, LocalDateTime date, double currentBalance, boolean active) {
         this.type = type;
         this.amount = amount;
-        this.date = date;
         this.description = description;
-        this.balanceAfterTransaction = balanceAfterTransaction;
+        this.date = date;
+        this.currentBalance = currentBalance;
+        this.active = active;
     }
 
-    // Métodos "get" y "set" para acceder y modificar los valores de los campos de la transacción.
+    // Métodos getter y setter para acceder y modificar los atributos de la transacción.
 
-    public Double getBalanceAfterTransaction() {
-        return balanceAfterTransaction;
-    }
-
-    public void setBalanceAfterTransaction(Double balanceAfterTransaction) {
-        this.balanceAfterTransaction = balanceAfterTransaction;
-    }
-
-    public Long getID() {
+    public Long getId() {
         return id;
     }
 
@@ -82,20 +65,20 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Account getAccount() {
@@ -105,7 +88,36 @@ public class Transaction {
     public void setAccount(Account account) {
         this.account = account;
     }
+
+    public double getCurrentBalance() {
+        return currentBalance;
+    }
+
+    public void setCurrentBalance(double currentBalance) {
+        this.currentBalance = currentBalance;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    // Método toString para representar el objeto como una cadena de texto.
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", type=" + type +
+                ", amount=" + amount +
+                ", description='" + description + '\'' +
+                ", date=" + date +
+                '}';
+    }
 }
+
 
 
 //En resumen, la clase Transaction representa una transacción con atributos como el tipo de transacción (CRÉDITO o DÉBITO),

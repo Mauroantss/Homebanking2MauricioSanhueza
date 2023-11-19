@@ -10,12 +10,6 @@ import java.util.List;
 
 @RepositoryRestResource
 public interface ClientLoanRepository extends JpaRepository<ClientLoan, Long> {
-    List<ClientLoan> findByClient(Client client);
-
-    boolean existsById(Long id);
-
-    ClientLoan findByClientAndLoan(Client client, Loan loan);
-
 }
 
 // Esta interfaz extiende JpaRepository<ClientLoan, Long>, lo que significa que hereda las operaciones CRUD

@@ -4,9 +4,7 @@ import com.mindhub.HomeBanking2.models.Account;
 import com.mindhub.HomeBanking2.models.Client;
 import com.mindhub.HomeBanking2.models.Transaction;
 import com.mindhub.HomeBanking2.models.TransactionType;
-import com.mindhub.HomeBanking2.repositories.AccountRepository;
-import com.mindhub.HomeBanking2.repositories.ClientRepository;
-import com.mindhub.HomeBanking2.repositories.TransactionRepository;
+
 import com.mindhub.HomeBanking2.service.AccountService;
 import com.mindhub.HomeBanking2.service.ClientService;
 import com.mindhub.HomeBanking2.service.TransactionService;
@@ -21,87 +19,104 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-import static com.mindhub.HomeBanking2.utils.TransactionUtils.dateTime;
 
-@RestController // Indica que esta clase es un controlador REST
-@RequestMapping("/api") // Establece la ruta base para las solicitudes a este controlador
+// Estoy definiendo un controlador REST para gestionar operaciones relacionadas con transacciones.
+
+@RestController
+@RequestMapping("/api")
 public class TransactionController {
 
-    @Autowired // Inyección de dependencias para AccountService
+    // Estoy inyectando las dependencias necesarias.
+    @Autowired
+    private TransactionService transactionService;
+    @Autowired
+    private ClientService clientService;
+    @Autowired
     private AccountService accountService;
 
-    @Autowired // Inyección de dependencias para ClientService
-    private ClientService clientService;
+    // Estoy manejando la solicitud POST para realizar una transferencia entre cuentas.
+    @Transactional
+    @PostMapping("/clients/current/transfers")
+    public ResponseEntity<Object> createTransaction(Authentication authentication,
+                                                    @RequestParam Double amount,
+                                                    @RequestParam String description,
+                                                    @RequestParam String originNumber,
+                                                    @RequestParam String destinationNumber) {
 
-    @Autowired // Inyección de dependencias para TransactionService
-    private TransactionService transactionService;
-
-    // Manejar solicitudes POST a "/api/clients/current/transaction"
-    @Transactional // Indica que este método es transaccional
-    @PostMapping("/clients/current/transaction") // Establece la ruta para las solicitudes POST
-    public ResponseEntity<String> newTransaction(
-            @RequestParam Double amount, @RequestParam String description, @RequestParam String fromAccount,
-            @RequestParam String toAccount, Authentication authentication) {
-
-        // Obtener el cliente autenticado
+        // Obtengo el cliente autenticado y las cuentas de origen y destino.
         Client client = clientService.findClientByEmail(authentication.getName());
+        Account accountDebit = accountService.findAccountByNumber(originNumber);
+        Account accountCredit = accountService.findAccountByNumber(destinationNumber);
 
-        // Validaciones de entrada
-        if (amount <= 0) {
-            return new ResponseEntity<>("The amount must not be zero", HttpStatus.BAD_REQUEST);
-        }
-        if (description.isBlank()) {
-            return new ResponseEntity<>("Fill description field", HttpStatus.BAD_REQUEST);
-        }
-        if (fromAccount.isEmpty()) {
-            return new ResponseEntity<>("Fill 'FROM' account field", HttpStatus.BAD_REQUEST);
-        }
-        if (toAccount.isBlank()) {
-            return new ResponseEntity<>("Fill 'TO' account field", HttpStatus.BAD_REQUEST);
+        // Validaciones para garantizar la integridad de la transferencia.
+        if (client == null) {
+            return new ResponseEntity<>("Unknown client " + authentication.getName(),
+                    HttpStatus.UNAUTHORIZED);
         }
 
-        // Verificar si las cuentas de origen y destino son iguales
-        if (fromAccount.equals(toAccount)) {
-            return new ResponseEntity<>("Same accounts numbers", HttpStatus.BAD_REQUEST);
+        if (accountDebit.getClient() != client) {
+            return new ResponseEntity<>("The origin account doesn´t belong to the authenticated client",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (accountDebit == null) {
+            return new ResponseEntity<>("The origin account doesn´t exist",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (accountCredit == null) {
+            return new ResponseEntity<>("The destination account doesn´t exist",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (accountDebit.getBalance() < amount) {
+            return new ResponseEntity<>("Your funds are insufficient",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (amount <= 0){
+            return new ResponseEntity<>("The amount cannot be zero or negative",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (accountDebit.getNumber().equals(accountCredit.getNumber())) {
+            return new ResponseEntity<>("The destination account cannot be the same as the origin account",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (description == null) {
+            return new ResponseEntity<>("Description is required",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (amount == null) {
+            return new ResponseEntity<>("Amount is required",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (originNumber.isBlank() || originNumber.isEmpty()) {
+            return new ResponseEntity<>("Origin account is required",
+                    HttpStatus.FORBIDDEN);
+        }
+        if (destinationNumber.isBlank() || destinationNumber.isEmpty()) {
+            return new ResponseEntity<>("Destination account is required",
+                    HttpStatus.FORBIDDEN);
         }
 
-        // Obtener la cuenta de origen
-        Account sAccount = accountService.findAccountByNumber(fromAccount);
-        if (sAccount == null) {
-            return new ResponseEntity<>("Sender account does not exist", HttpStatus.BAD_REQUEST);
-        }
+        // Realizo la transferencia, actualizo los saldos y registro las transacciones.
+        double currentBalanceTransactionDebit = accountDebit.getBalance() - amount;
+        boolean active = true;
+        Transaction transactionDebit = new Transaction(TransactionType.DEBIT,
+                (-amount), accountDebit.getNumber() + description,
+                LocalDateTime.now() , currentBalanceTransactionDebit , active);
 
-        // Verificar si la cuenta de origen pertenece al cliente autenticado
-        if (!sAccount.getClient().equals(client)) {
-            return new ResponseEntity<>("Account does not belong to the authenticated client", HttpStatus.BAD_REQUEST);
-        }
+        double currentBalanceTransactionCredit = accountCredit.getBalance() + amount;
 
-        // Obtener la cuenta de destino
-        Account rAccount = accountService.findAccountByNumber(toAccount);
-        if (rAccount == null) {
-            return new ResponseEntity<>("Recipient account does not exist", HttpStatus.BAD_REQUEST);
-        }
+        Transaction transactionCredit = new Transaction(TransactionType.CREDIT,
+                amount, accountCredit.getNumber() + description,
+                LocalDateTime.now(), currentBalanceTransactionCredit, active);
 
-        // Verificar si el saldo de la cuenta de origen es suficiente para la transferencia
-        if (sAccount.getBalance() <= amount) {
-            return new ResponseEntity<>("Your balance is insufficient", HttpStatus.BAD_REQUEST);
-        }
+        transactionService.saveTransaction(transactionDebit);
+        accountDebit.addTransaction(transactionDebit);
+        transactionService.saveTransaction(transactionCredit);
+        accountCredit.addTransaction(transactionCredit);
 
-        // Crear la transacción de débito
-        Transaction debitTransaction = new Transaction(TransactionType.DEBIT, -amount, sAccount.getBalance() - amount, dateTime(), description);
-        sAccount.addTransaction(debitTransaction);
-        sAccount.setBalance(sAccount.getBalance() - amount);
-        transactionService.saveTransaction(debitTransaction);
+        accountDebit.setBalance(currentBalanceTransactionDebit);
+        accountCredit.setBalance(currentBalanceTransactionCredit);
 
-        // Crear la transacción de crédito
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount, rAccount.getBalance() + amount, dateTime(), description);
-        rAccount.addTransaction(creditTransaction);
-        rAccount.setBalance(rAccount.getBalance() + amount);
-        transactionService.saveTransaction(creditTransaction);
-
-        // Devolver una respuesta HTTP indicando que la transferencia se realizó con éxito
-        return new ResponseEntity<>("Transfer successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

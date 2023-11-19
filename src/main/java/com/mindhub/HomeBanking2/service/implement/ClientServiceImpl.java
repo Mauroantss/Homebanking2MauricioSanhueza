@@ -9,51 +9,44 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-@Service // Anotación que indica que esta clase es un componente de servicio gestionado por Spring.
+// Esta clase implementa la interfaz ClientService y proporciona la lógica de negocio para las operaciones relacionadas con clientes.
+
+@Service
 public class ClientServiceImpl implements ClientService {
 
-    @Autowired // Inyección de dependencia de la interfaz ClientRepository.
-    ClientRepository clientRepository;
+    // Se utiliza la inyección de dependencias para acceder al repositorio de clientes.
+    @Autowired
+    private ClientRepository clientRepository;
 
-    // Implementación de métodos definidos en la interfaz ClientService.
-
-    // Método para obtener todos los clientes.
     @Override
-    public List<Client> getAllClients() {
+    public List<Client> findAllClients() {
+        // Retorna todos los clientes almacenados en el repositorio.
         return clientRepository.findAll();
     }
 
-    // Método para obtener todos los clientes como objetos DTO.
-    @Override
-    public List<ClientDTO> getAllClientsDTO() {
-        // Mapea la lista de clientes a una lista de ClientDTO utilizando la función de mapeo.
-        return getAllClients().stream().map(ClientDTO::new).collect(Collectors.toList());
-    }
-
-    // Método para encontrar un cliente por su ID.
     @Override
     public Client findClientById(Long id) {
+        // Retorna el cliente con el ID proporcionado, o nulo si no se encuentra.
         return clientRepository.findById(id).orElse(null);
     }
 
-    // Método para encontrar un cliente como objeto DTO por su ID.
-    @Override
-    public ClientDTO findClientDTOById(Long id) {
-        return clientRepository.findById(id)
-                .map(ClientDTO::new) // Mapea el cliente a un ClientDTO si se encuentra.
-                .orElse(null);
-    }
-
-    // Método para encontrar un cliente por su dirección de correo electrónico.
     @Override
     public Client findClientByEmail(String email) {
+        // Retorna el cliente con el correo electrónico proporcionado.
         return clientRepository.findByEmail(email);
     }
 
-    // Método para guardar un cliente en el repositorio.
     @Override
     public void saveClient(Client client) {
+        // Guarda un cliente en el repositorio.
         clientRepository.save(client);
     }
+
+    @Override
+    public boolean existsClientByEmail(String email) {
+        // Verifica si existe un cliente con el correo electrónico proporcionado.
+        return clientRepository.existsClientByEmail(email);
+    }
 }
+
 
