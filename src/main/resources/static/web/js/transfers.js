@@ -41,8 +41,8 @@ createApp({
     },
     confirmTransfer() {
       // Realiza la transferencia aquí
-      const endpoint = "/api/clients/current/transaction";
-      const params = `amount=${this.amount}&description=${this.description}&fromAccount=${this.fromAccount}&toAccount=${this.toAccount}`;
+      const endpoint = "/api/clients/current/transfers";
+      const params = `amount=${this.amount}&description=${this.description}&originNumber=${this.fromAccount}&destinationNumber=${this.toAccount}`;
       axios.post(endpoint, params)
         .then((response) => {
           // Actualiza la información del cliente

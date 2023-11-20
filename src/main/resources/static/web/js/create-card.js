@@ -26,7 +26,7 @@ createApp({
       axios
         .post(
           "/api/clients/current/cards",
-          `cardColor=${this.cardColor}&cardType=${this.cardType}`
+          `color=${this.cardColor}&type=${this.cardType}`
         )
         .then((response) => {
           location.pathname = "/web/pages/card.html";

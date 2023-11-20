@@ -21,7 +21,6 @@ createApp({
     getClient() {
       axios.get('/api/clients/current')
         .then(response => {
-          console.log(response)
           this.client = response.data;
           this.accounts = response.data.accounts; 
         })
@@ -32,7 +31,6 @@ createApp({
     getLoans() {
       axios.get('/api/loans')
         .then(response => {
-          console.log(response)
           this.loans = response.data;
         })
         .catch(error => {
@@ -48,7 +46,7 @@ createApp({
         loanId: this.loanType,
         amount: this.amount,
         payments: this.paymentOptions,
-        toAccount: this.toAccount,
+        destinationAccount: this.toAccount,
       };
       this.showConfirmationDialog('Loan Application Confirmation', 'Do you want to submit the loan application?');
     },

@@ -68,7 +68,7 @@
                                 <select v-model="clientLoanId" class="form-control" id="clientLoan">
                                     <option value="" disabled>Select Loan</option>
                                     <option v-for="loan in client.loans" :value="loan.id">
-                                        {{ loan.loanName }} - Balance (${{loan.amount}})
+                                        {{ loan.loanName }} - Balance (${{loan.loanAmount}})
                                     </option>
                                 </select>
                             </div>

@@ -26,7 +26,7 @@ createApp({
       }).then((result) => {
         if (result.isConfirmed) {
           axios
-            .post("/api/clients/current/accounts/delete", `id=${accountId}`)
+            .put("/api/clients/current/accounts", `id=${accountId}`)
             .then(() => {
               Swal.fire({
                 icon: "success",
