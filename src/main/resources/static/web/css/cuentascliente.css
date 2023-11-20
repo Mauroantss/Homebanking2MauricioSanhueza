@@ -24,7 +24,7 @@ body {
 .dashboard {
     border: 1px solid #e0e0e0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
+ 
     padding: 20px;
     width: 90%;
     max-width: 800px;
@@ -38,7 +38,7 @@ body {
 }
 
 table.table-striped {
-    background-color: #ffffff;
+    
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -50,12 +50,10 @@ table.table-striped {
     color: green;
 }
 
-nav{
-background-color: #e3f2fd;
-}
+
 
 .credit-card-style {
-    background: linear-gradient(135deg, #A8DADC, #F4A261, #2A9D8F);
+    background: linear-gradient(135deg, #A8DADC, #a5968a, #184a45);
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
@@ -76,19 +74,20 @@ background-color: #e3f2fd;
     pointer-events: none;
 }
 .card .btn {
-    background-color: #E74C3C;
+    background-color: #1f41c9;
     color: white;
     border: none;
     padding: 0.5rem 2rem;
     border-radius: 2rem;
+    margin-top: 8px;
     transition: background-color 0.3s ease;
 }
 
 .card .btn:hover {
-    background-color: #C0392B;
+    background-color: #2b7dc0;
 }
 .button-style {
-    background-color: #E74C3C; /* Color de fondo */
+    background-color: #3c8ce7; /* Color de fondo */
     color: #ffffff;            /* Color del texto */
     border: none;
     padding: 10px 20px;
@@ -99,3 +98,165 @@ background-color: #e3f2fd;
 .button-style:hover {
     background-color: #264653; /* Color de fondo al pasar el cursor */
 }
+.btn-success {
+    box-shadow: none !important;
+}
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/web/images/pexels-pixabay-158776.jpg');
+    background-size: 150% 150%; 
+    background-position: center;
+    position: relative;
+    animation: moveBackground 20s infinite alternate; 
+}
+
+@keyframes moveBackground {
+    0% {
+        background-position: top left;
+    }
+    50% {
+        background-position: center center;
+    }
+    100% {
+        background-position: bottom right;
+    }
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.895);
+    z-index: -1; 
+}
+
+.overlay {
+    position: relative;
+    height: 100vh;
+    padding: 20px;
+    background-color: rgba(128, 128, 128, 0.5); 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0; 
+}
+
+nav a {
+    color: white;
+    margin-right: 15px;
+    text-decoration: none;
+    display: flex;
+    margin-top: 20px;
+    align-items: center; 
+}
+
+header h1, header p {
+    color: #FFFFFF;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #333;
+    color: #FFF;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body, html {
+    height: 100%;
+}
+
+footer {
+    height: 60px; 
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+footer a {
+    color: #FFF;  
+}
+
+.container {
+    width: 100%;
+}
+
+.loginRedirect{
+    margin-top: 2rem;
+}
+.loginRedirect,
+#form,
+#social-media a,
+#social-media a i {
+    color: white !important;  
+}
+
+#social-media a i {
+    transition: transform 0.3s ease;  
+}
+
+#social-media a:hover i {
+    transform: scale(1.2);  
+}
+
+#social-media {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 50px;  
+    color: white;
+    gap: 1rem;  
+}
+
+.icon-wrap {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.icon-wrap:hover {
+    transform: scale(1.8);
+}
+
+.icon-wrap-nav {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.icon-wrap-nav:hover {
+    transform: scale(1.2);
+}
+
+
+
+
+
+
+
+
+
+
+

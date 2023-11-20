@@ -25,12 +25,13 @@ class WebAuthorization {
                 // Defino rutas públicas a las que se puede acceder sin autenticación.
                 .antMatchers(
                         HttpMethod.POST,
-                        "/api/clients", "/api/login" // Permito el registro de clientes.
+                        "/api/clients", "/api/login","/api/loans" // Permito el registro de clientes.
                 ).permitAll()
                 .antMatchers(
                         "/web/index.html",
                         "/web/pages/login.html",
                         "/web/pages/register.html",
+                        "/web/pages/login-admin.html",
                         "/web/css/**",
                         "/web/js/**",
                         "/web/images/**",
@@ -45,7 +46,7 @@ class WebAuthorization {
                 ).hasAuthority("ADMIN")
                 // Rutas de solo lectura para administradores.
                 .antMatchers(HttpMethod.GET, "/api/clients", "/api/loans").hasAuthority("ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/loans/create").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/admin/loans").hasAuthority("ADMIN")
                 // Rutas que requieren autenticación.
                 .antMatchers(
                         "/web/pages/accounts.html",
@@ -53,12 +54,18 @@ class WebAuthorization {
                         "/web/pages/card.html",
                         "/web/pages/create-card.html",
                         "/web/pages/transfers.html",
+                        "/web/pages/loan-payment.html",
                         "/web/pages/loan-application.html",
-                        "/api/clients/current/**"
+                        "/api/clients/current/**",
+                        "api/loans/payments"
                 ).authenticated()
                 // Restrinjo el acceso a /api/loans solo a usuarios autenticados.
-                .antMatchers(HttpMethod.GET, "/api/loans").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/loans", "/api/loans/payments").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/clients/current/accounts", "/api/clients/current/cards",
+                        "/api/clients/current/transfers", "/api/loans").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.GET, "/api/clients/current", "/api/accounts/{id}",
+                        "/api/clients/current/accounts", "/api/loans").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.PUT, "/api/clients/current/cards", "/api/clients/current/accounts")
+                .hasAuthority("CLIENT")
                 // Deniego todas las demás solicitudes no configuradas.
                 .anyRequest().denyAll();
 

@@ -1,39 +1,64 @@
-const { createApp } = Vue;
-
-createApp({
+const app = Vue.createApp({
   data() {
-    return {
-      account: [],
-      transactions: [],
-    };
+      return {
+          client: {},
+          account: {},
+          transactions: {},
+          messageError: ""
+      };
   },
-  methods: {
-    logOut() {
-      
-      axios.post("/api/logout").then((response) => {
-        console.log("Signed out");
-        location.pathname = "/web/index.html"; // Redirige al usuario a la página de inicio.
-      });
 
-      
-    },
-  },
   created() {
-    const parameters = location.search;
-    const parametersKeyValue = new URLSearchParams(parameters);
-    const id = parametersKeyValue.get("id");
-
-    axios
-      .get(`/api/accounts/${id}`)
-      .then((response) => {
-        this.account = response.data;
-        this.transactions = response.data.transactions;
-        this.transactions.sort((a, b) => b.id - a.id);
-        setTimeout(() => (this.loading = false), 300);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      let urlParams = new URLSearchParams(location.search);
+      let id = urlParams.get('id')     
+      axios.get(`/api/accounts/${id}`)
+          .then(response => {
+            console.log(response)
+              this.account = response.data;
+              this.transactions = this.account.transactions
+              this.transactions.sort((a, b) => b.id - a.id);
+              console.log(this.transactions);
+          })
+          .catch(error => {
+              this.messageError = error.response.data;
+          });
+      
+      axios.get("/api/clients/current")
+          .then(response => {
+              this.client = response.data;
+          })
+          .catch(error => {
+              console.log(error);
+          });
   },
-  methods: {},
-}).mount("#app");
+
+  methods: {
+      logout() {
+          axios
+              .post(`/api/logout`)
+              .then(response => {
+                  console.log("SingOut");
+                  location.href = `http://localhost:8080/index.html`;
+              })
+              .catch(error => {
+                  console.log(error);
+              });
+      },
+
+      formatNumber(number) {
+          return number.toLocaleString("De-DE", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          });
+      },
+
+      dateFormat(dateString) {
+          const date = new Date(dateString);
+          const formatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+          return date.toLocaleDateString('es-ES', formatOptions);
+      }
+}   
+
+},
+);
+app.mount('#app');

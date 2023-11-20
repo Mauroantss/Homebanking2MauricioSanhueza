@@ -37,20 +37,13 @@ table.table-striped {
   .credit {
     background-color: rgba(0, 128, 0, 0.493) !important; 
   }
-  
-  
-
-nav{
-background-color: #e3f2fd;
-}
-
-.credit-card-style {
-    background: linear-gradient(135deg, #A8DADC, #F4A261, #2A9D8F);
+  .credit-card-style {
+    background: linear-gradient(135deg, #A8DADC, #a5968a, #184a45);
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
-    color: #264653; /* Un color oscuro que contrasta bien con los tonos pastel */
+    color: #01080a; /* Un color oscuro que contrasta bien con los tonos pastel */
 }
 
 .credit-card-style:before {
@@ -66,7 +59,7 @@ background-color: #e3f2fd;
     pointer-events: none;
 }
 .card .btn {
-    background-color: #E74C3C;
+    background-color: #1f41c9;
     color: white;
     border: none;
     padding: 0.5rem 2rem;
@@ -75,6 +68,319 @@ background-color: #e3f2fd;
 }
 
 .card .btn:hover {
-    background-color: #C0392B;
+    background-color: #2b7dc0;
 }
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('/web/images/pexels-pixabay-158776.jpg');
+    background-size: 150% 150%; 
+    background-position: center;
+    position: relative;
+    animation: moveBackground 20s infinite alternate; 
+}
+
+@keyframes moveBackground {
+    0% {
+        background-position: top left;
+    }
+    50% {
+        background-position: center center;
+    }
+    100% {
+        background-position: bottom right;
+    }
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.895);
+    z-index: -1; 
+}
+
+.overlay {
+    position: relative;
+    height: 100vh;
+    padding: 20px;
+    background-color: rgba(128, 128, 128, 0.5); 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0; 
+}
+
+nav a {
+    color: white;
+    margin-right: 15px;
+    text-decoration: none;
+    display: flex;
+    margin-top: 20px;
+    align-items: center; 
+}
+
+header h1, header p {
+    color: #FFFFFF;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #333;
+    color: #FFF;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body, html {
+    height: 100%;
+}
+
+footer {
+    height: 60px; 
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+footer a {
+    color: #FFF;  
+}
+
+.container {
+    width: 100%;
+}
+
+.loginRedirect{
+    margin-top: 2rem;
+}
+.loginRedirect,
+#form,
+#social-media a,
+#social-media a i {
+    color: white !important;  
+}
+
+#social-media a i {
+    transition: transform 0.3s ease;  
+}
+
+#social-media a:hover i {
+    transform: scale(1.2);  
+}
+
+#social-media {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 50px;  
+    color: white;
+    gap: 1rem;  
+}
+
+.icon-wrap {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.icon-wrap:hover {
+    transform: scale(1.8);
+}
+
+.icon-wrap-nav {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.icon-wrap-nav:hover {
+    transform: scale(1.2);
+}
+
+.modal {
+    display: block;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    width: 30%;
+    min-width: 255px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+  .modal-content button[type="submit"] {
+    align-self: flex-end; /* Alinear el botón a la derecha */
+}
+.input-group {
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.button-group {
+    text-align: right;
+}
+
+.credit-card-wrap, .debit-card-wrap {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    border-radius: 15px;
+    margin: 20px;
+    position: relative;
+    padding: 20px;
+    overflow: visible;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    background-color: #f5f5f5;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.credit-logo {
+    display: flex;
+    align-items: center;
+}
+
+.shape {
+    width: 50px;
+    height: 50px;
+    background-color: #0077b5;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.txt {
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.credit-font {
+    font-size: 18px;
+    margin: 10px 0;
+    letter-spacing: normal;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+.credit-card-number {
+    font-weight: bold;
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+}
+
+.credit-author, .credit-card-date {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.credit-card-gold, .credit-card-silver, .credit-card-titanium {
+    background-size: 40px 40px;
+    background-position: center;
+    background-repeat: repeat;
+}
+
+.credit-card-gold {
+    background-color: #FFD700;
+}
+
+.credit-card-silver {
+    background-color: #C0C0C0;
+}
+
+.credit-card-titanium {
+    background-color: #D1B2A1;
+}
+
+.gapContainer {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 400px) {
+    .credit-card-wrap, .debit-card-wrap {
+        max-width: 100%;
+        padding: 10px;
+    }
+}
+
+.container {
+    font-family: 'Arial', sans-serif;
+}
+
+.credit-card {
+    width: 500px; /* Se aumentó el ancho de la tarjeta de 240px a 300px */
+    height: 300px; /* Se aumentó la altura de la tarjeta de 150px a 180px */
+    border-radius: 15px;
+    border: 1px solid #d4d4d4;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px; /* Se añadió un padding para dar más espacio interno */
+}
+
+.title {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-bottom: 10px; /* Se añadió un margen inferior para separar los elementos */
+}
+
+
 

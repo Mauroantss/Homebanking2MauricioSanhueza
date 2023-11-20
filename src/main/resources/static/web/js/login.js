@@ -13,18 +13,21 @@ createApp({
     console.log("Aplicación Vue creada");
   },
   methods: {
-    logn() {
+    login() {
       console.log("Intentando iniciar sesión con", this.email, this.password);
       axios
         .post("/api/login", `email=${this.email}&password=${this.password}`)
         .then((response) => {
           console.log("Respuesta del servidor al iniciar sesión:", response);
           console.log("Signed in");
-          window.location.href = "/web/pages/accounts.html";
+          window.location = "/web/pages/accounts.html";
         })
         .catch((error) => {
           console.log("Error al intentar iniciar sesión:", error);
         });
+    },
+    Prueba(){
+      console.log("Hola")
     },
     register() {
       console.log("Intentando registrar con", this.firstName, this.lastName, this.email, this.password);
@@ -53,3 +56,5 @@ createApp({
     },
   },
 }).mount("#app");
+
+

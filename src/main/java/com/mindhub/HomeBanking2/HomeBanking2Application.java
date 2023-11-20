@@ -37,7 +37,7 @@ public class HomeBanking2Application {
 									  ClientLoanRepository clientLoanRepository, CardRepository cardRepository ) {
 
 		return args -> {
-//			// Obtener la fecha actual y formatearla
+			// Obtener la fecha actual y formatearla
 //			LocalDate today = LocalDate.now();
 //			LocalDate tomorrow = today.plusDays(1);
 //			LocalDateTime now = LocalDateTime.now();
@@ -53,34 +53,108 @@ public class HomeBanking2Application {
 //			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com" , passwordEncoder.encode("Melba1234"));
 //			clientRepository.save(client1);
 //
+//			Client client3 = new Client("Elad","Ministrador","admin@homebanking.com",passwordEncoder.encode("Admin123"));
+//			clientRepository.save(client3);
+//
 //
 //			// Crear cuentas bancarias y asociarlas con clientes
-//			Account account1 = new Account("VIN001", LocalDate.now(), 5000,true,AccountType.SAVING);
-//			accountRepository.save(account1);
-//
-//			Account account2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500,true,AccountType.CURRENT);
-//			accountRepository.save(account2);
-//
-//			Account account3 = new Account("VIN003", LocalDate.now(),8450,true,AccountType.SAVING);
+//			Account account1 = new Account("VIN001",
+//					LocalDate.now(),
+//					5000,true,AccountType.SAVING);
+//			Account account2 = new Account("VIN002",
+//					LocalDate.now().plusDays(1),
+//					7500,true,AccountType.CURRENT);
+//			Account account3 = new Account("VIN003",
+//					LocalDate.now(),
+//					5800,true,AccountType.SAVING);
+//			Account account4 = new Account("VIN004",
+//					LocalDate.now().plusDays(1),
+//					9400,true,AccountType.CURRENT);
+//			client1.addAccount(account1);
+//			client1.addAccount(account2);
 //			client2.addAccount(account3);
+//			client2.addAccount(account4);
+//
+//			accountRepository.save(account1);
+//			accountRepository.save(account2);
 //			accountRepository.save(account3);
+//			accountRepository.save(account4);
 //
-//			// Crear transacciones y asociarlas con cuentas
-//			Transaction transactionOne = new Transaction(DEBIT, -7836.7, "First Transaction", LocalDateTime.now(), account1.getBalance(),true);
-//			account1.addTransaction(transactionOne);
-//			transactionRepository.save(transactionOne);
+//			Transaction transaction1 = new Transaction(DEBIT,
+//					-7836.7,
+//					"Supermarket",
+//					LocalDateTime.now(), account1.getBalance(),true);
+//			Transaction transaction2 = new Transaction(CREDIT,
+//					9620.3,
+//					"Deposit",
+//					LocalDateTime.now().plusHours(8).plusMinutes(32),account1.getBalance(),true);
+//			Transaction transaction3 = new Transaction(DEBIT,
+//					-30000,
+//					"Rent",
+//					LocalDateTime.now().plusHours(21).plusMinutes(5), account1.getBalance(),true);
+//			Transaction transaction4 = new Transaction(DEBIT,
+//					-12400,
+//					"School",
+//					LocalDateTime.now().plusDays(2).plusMinutes(49),account1.getBalance(),true);
+//			Transaction transaction5 = new Transaction(CREDIT,
+//					17500,
+//					"Deposit",
+//					LocalDateTime.now().plusDays(3).plusHours(5).plusMinutes(12),account1.getBalance(),true);
+//			Transaction transaction6 = new Transaction(CREDIT,
+//					12300.25,
+//					"Deposit",
+//					LocalDateTime.now().plusDays(5).plusHours(6).plusMinutes(53),account2.getBalance(),true);
+//			Transaction transaction7 = new Transaction(DEBIT,
+//					-9300,
+//					"Shopping",
+//					LocalDateTime.now().plusDays(7).plusHours(21).plusMinutes(8),account2.getBalance(),true);
+//			Transaction transaction8 = new Transaction(DEBIT,
+//					-20000,
+//					"Supermarket",
+//					LocalDateTime.now().plusDays(8).plusHours(1).plusMinutes(37),account2.getBalance(),true);
+//			Transaction transaction9 = new Transaction(DEBIT,
+//					-28569,
+//					"School",
+//					LocalDateTime.now().plusDays(9).plusHours(7).plusMinutes(11),account3.getBalance(),true);
+//			Transaction transaction10 = new Transaction(DEBIT,
+//					-45000,
+//					"Rent",
+//					LocalDateTime.now().plusDays(11).plusHours(5).plusMinutes(12),account3.getBalance(),true);
+//			;
+//			Transaction transaction11 = new Transaction(CREDIT,
+//					4200,
+//					"Deposit",
+//					LocalDateTime.now().plusDays(12).plusHours(18).plusMinutes(14),account4.getBalance(),true);
+//			Transaction transaction12 = new Transaction(CREDIT,
+//					6890,
+//					"Deposit",
+//					LocalDateTime.now().plusDays(18).plusHours(13).plusMinutes(34),account4.getBalance(),true);
 //
-//			Transaction transactionTwo = new Transaction(CREDIT, 8435, "Second Transaction", LocalDateTime.now(), account1.getBalance(),true);
-//			account1.addTransaction(transactionTwo);
-//			transactionRepository.save(transactionTwo);
+//			account1.addTransaction(transaction1);
+//			account1.addTransaction(transaction2);
+//			account1.addTransaction(transaction3);
+//			account1.addTransaction(transaction4);
+//			account1.addTransaction(transaction5);
+//			account2.addTransaction(transaction6);
+//			account2.addTransaction(transaction7);
+//			account2.addTransaction(transaction8);
+//			account3.addTransaction(transaction9);
+//			account3.addTransaction(transaction10);
+//			account4.addTransaction(transaction11);
+//			account4.addTransaction(transaction12);
 //
-//			Transaction transaction1 = new Transaction(DEBIT, 4000.00,"First transaction",  LocalDateTime.now(),account2.getBalance(),true);
-//			account2.addTransaction(transaction1);
 //			transactionRepository.save(transaction1);
-//
-//			Transaction transaction2 = new Transaction(CREDIT, 23000.000, "Second transaction", LocalDateTime.now(),account2.getBalance(),true);
-//			account2.addTransaction(transaction2);
 //			transactionRepository.save(transaction2);
+//			transactionRepository.save(transaction3);
+//			transactionRepository.save(transaction4);
+//			transactionRepository.save(transaction5);
+//			transactionRepository.save(transaction6);
+//			transactionRepository.save(transaction7);
+//			transactionRepository.save(transaction8);
+//			transactionRepository.save(transaction9);
+//			transactionRepository.save(transaction10);
+//			transactionRepository.save(transaction11);
+//			transactionRepository.save(transaction12);
 //
 //
 //			// Crear tipos de préstamos y guardarlos
@@ -121,14 +195,14 @@ public class HomeBanking2Application {
 //			//Cards para los clientes
 //
 //			Card card1 = new Card(client1.getFirstName(). toUpperCase() + " " + client1.getLastName().toUpperCase() , CardType.DEBIT , CardColor.GOLD , "1234 5678 9012 3456" , 123 , LocalDate.now().plusYears(5) , LocalDate.now(), true);
-//			client1.addCard(card1); cardRepository.save(card1);
-//
 //			Card card2 = new Card(client1.getFirstName(). toUpperCase() + " " + client1.getLastName().toUpperCase() , CardType.CREDIT , CardColor.TITANIUM , "7890 1234 5678 9012" , 456 , LocalDate.now().plusYears(5) , LocalDate.now(), true);
-//			client1.addCard(card2); cardRepository.save(card2);
-//
 //			Card card3 = new Card(client2.getFirstName(). toUpperCase() + " " + client2.getLastName().toUpperCase() , CardType.CREDIT , CardColor.SILVER , "3456 7890 1234 5678" , 789 , LocalDate.now().plusYears(5) , LocalDate.now(), true);
-//			client2.addCard(card3); cardRepository.save(card3);
-
+//			client1.addCard(card1);
+//			client1.addCard(card2);
+//			client2.addCard(card3);
+//			cardRepository.save(card1);
+//			cardRepository.save(card2);
+//			cardRepository.save(card3);
 		};
 	}
 

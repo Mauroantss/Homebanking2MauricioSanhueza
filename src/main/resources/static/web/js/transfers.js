@@ -20,6 +20,7 @@ createApp({
     getClient() {
       axios.get("/api/clients/current")
         .then((response) => {
+          console.log(response)
           this.client = response.data;
           this.accounts = response.data.accounts;
           setTimeout(() => (this.loading = false), 800);

@@ -21,6 +21,7 @@ createApp({
     getClient() {
       axios.get('/api/clients/current')
         .then(response => {
+          console.log(response)
           this.client = response.data;
           this.accounts = response.data.accounts; 
         })
@@ -31,6 +32,7 @@ createApp({
     getLoans() {
       axios.get('/api/loans')
         .then(response => {
+          console.log(response)
           this.loans = response.data;
         })
         .catch(error => {
