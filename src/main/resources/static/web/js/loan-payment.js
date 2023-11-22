@@ -21,6 +21,7 @@ createApp({
     getClient() {
       axios.get("/api/clients/current")
         .then((response) => {
+            console.log(response)
           this.client = response.data;
           this.accounts = response.data.accounts;
           this.clientLoans = response.data.loans;
@@ -32,6 +33,7 @@ createApp({
     getLoans() {
       axios.get("/api/loans")
         .then((response) => {
+            console.log(response)
           this.loans = response.data;
           this.interestRate = response.data.interestRate;
         })
@@ -58,21 +60,20 @@ createApp({
         confirmButtonText: "Yes, make payment"
       }).then((result) => {
         if (result.isConfirmed) {
-          axios.post("/api/loans/payments", {
-            loanId: this.clientLoanId,
-            accountId: this.accountId,
-            amount: this.amount,
-            payments: this.payments,
-            description: this.description
-          })
-          .then((response) => {
-            Swal.fire("Payment successful!", "Your payment has been processed.", "success");
-            // Actualizar la información del cliente o redirigir si es necesario
-          })
-          .catch((error) => {
-            Swal.fire("Error", "There was a problem processing your payment.", "error");
-            console.error("Error al realizar el pago:", error);
-          });
+        //   const params = new URLSearchParams();
+        //   params.append('idLoan', this.clientLoanId);
+        //   params.append('idAccount', this.accountId);
+        //   params.append('amount', this.amount);
+
+          axios.post("/api/loans/payments", `idLoan=${this.clientLoandId}&idAccount=${this.accountId}&amount=${this.amount}`)
+            .then((response) => {
+              Swal.fire("Payment successful!", "Your payment has been processed.", "success");
+              // Aquí puedes actualizar la información del cliente o redirigir si es necesario
+            })
+            .catch((error) => {
+              Swal.fire("Error", "There was a problem processing your payment.", "error");
+              console.error("Error al realizar el pago:", error);
+            });
         }
       });
     },

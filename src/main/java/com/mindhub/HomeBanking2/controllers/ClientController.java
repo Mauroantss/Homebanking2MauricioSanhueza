@@ -44,6 +44,10 @@ public class ClientController {
                 .map(client -> new ClientDTO(client)).collect(Collectors.toList());
         return clients;
     }
+    //genero una variable que se llama client de tipo list client dto, del client service busco todos los clientes, uso stream por el metodo de orden superior
+    //hace la lista cada vez que se manda la petición por cada uno de los elementos que se encuentren es esta coleccion
+
+    //Asocio una peticion de tipo get a la ruta y se me ejecuta el metodo
 
     // Estoy manejando la solicitud GET para obtener un cliente específico por su ID.
     @GetMapping("/clients/{id}")

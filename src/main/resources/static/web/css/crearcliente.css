@@ -10,8 +10,18 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    color:white !important
 }
 
 footer {
     margin-top: 40 px;
+}
+.containernav {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bank-logo {
+    display: flex;
+    justify-content: space-between;
 }

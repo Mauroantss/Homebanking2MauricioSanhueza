@@ -178,10 +178,15 @@ footer a {
     margin-top: 2rem;
 }
 .loginRedirect,
+a,
 #form,
 #social-media a,
 #social-media a i {
     color: white !important;  
+}
+
+h2,h3{
+    color:white !important
 }
 
 #social-media a i {
@@ -381,6 +386,14 @@ footer a {
     opacity: 0.6;
     margin-bottom: 10px; /* Se añadió un margen inferior para separar los elementos */
 }
+.containernav {
+    display: flex;
+    justify-content: space-between;
+}
 
+.bank-logo {
+    display: flex;
+    justify-content: space-between;
+}
 
 

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,12 +33,14 @@ public class Client {
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<ClientLoan> clientLoans = new HashSet<>(); // Relación one-to-many con la entidad ClientLoan.
+    // Creo una instancia al ser un nuevo constructor y crea un espacio en memoria para contener los elementos que se añadan a la coleccion de tipo set
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Card> cards = new HashSet<>(); // Relación one-to-many con la entidad Card.
 
     public Client() {
-    }
+
+    }//lo usa hibernate a la hora de tener que crear una instancia
 
     // Constructor para crear una instancia del cliente con información específica.
     public Client(String firstName, String lastName, String email, String password) {
@@ -91,9 +94,11 @@ public class Client {
 
     // Método para agregar una cuenta al conjunto de cuentas del cliente.
     public void addAccount(Account account) {
-        account.setClient(this);
+        account.setClient(this); //porpiedad client que tengo en la cuenta //this hace referencia al cliente, al cliente que esta llamando al metodo
         accounts.add(account);
-    }
+
+    } //es un metodo que no retorna, tiene account por parametro, le estoy asignando un cliente a la cuenta y cliente es quien llama all metodo addaccount,
+    //account.add, a la propiedad cuenta le agrego la cuenta que viene por parametro
 
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
@@ -118,8 +123,10 @@ public class Client {
     // Método para obtener una lista de préstamos asociados al cliente.
     @JsonIgnore
     public List<Loan> getLoans() {
-        return clientLoans.stream().map(loans -> loans.getLoan()).collect(toList());
-    }
+        return clientLoans.stream().map(clientLoan -> clientLoan.getLoan()).collect(toList());
+    } // Obtengo una lista de prestamos asociados al cliente
+
+    //Metodo publico que retorna una lista de loans, busca en la propiedad de clientLoans, la transforma a stream para hacer los metodos de orden superior, itero con CADA elemento de esa coleccion y obtengo los loans y despues de obtener los loans los hago una lista y eso es lo que retorna
 
     // Método toString para representar el objeto como una cadena de texto.
     @Override

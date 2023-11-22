@@ -9,30 +9,27 @@ import javax.persistence.*;
 @Entity
 public class ClientLoan {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GeneratedValue( strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private Long id; // Identificador único del préstamo del cliente.
-
-    private double amount; // Monto del préstamo.
-
-    private int payments; // Número de pagos del préstamo.
-
+    private Long id;
+    private double amount;
+    private int payments;
+    private Double currentAmount;
+    private int currentPayments;
     @ManyToOne(fetch = FetchType.EAGER)
-    private Client client; // Relación many-to-one con la entidad Client.
-
+    private Client client;
     @ManyToOne(fetch = FetchType.EAGER)
-    private Loan loan; // Relación many-to-one con la entidad Loan.
+    private Loan loan;
 
     public ClientLoan() {
     }
 
-    // Constructor para crear una instancia de ClientLoan con información específica.
-    public ClientLoan(double amount, int payments) {
+    public ClientLoan(double amount, int payments, Double currentAmount, int currentPayments) {
         this.amount = amount;
         this.payments = payments;
+        this.currentAmount = currentAmount;
+        this.currentPayments = currentPayments;
     }
-
-    // Métodos getter y setter para acceder y modificar los atributos del préstamo del cliente.
 
     public Long getId() {
         return id;
@@ -54,11 +51,26 @@ public class ClientLoan {
         this.payments = payments;
     }
 
+    public Double getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(Double currentAmount) {
+        this.currentAmount = currentAmount;
+    }
+
+    public int getCurrentPayments() {
+        return currentPayments;
+    }
+
+    public void setCurrentPayments(int currentPayments) {
+        this.currentPayments = currentPayments;
+    }
+
     public Client getClient() {
         return client;
     }
 
-    // Método para establecer el cliente asociado al préstamo.
     public void setClient(Client client) {
         this.client = client;
     }
@@ -67,12 +79,10 @@ public class ClientLoan {
         return loan;
     }
 
-    // Método para establecer el tipo de préstamo asociado al préstamo del cliente.
     public void setLoan(Loan loan) {
         this.loan = loan;
     }
 
-    // Método toString para representar el objeto como una cadena de texto.
     @Override
     public String toString() {
         return "ClientLoan{" +
@@ -82,6 +92,7 @@ public class ClientLoan {
                 '}';
     }
 }
+
 
 
 

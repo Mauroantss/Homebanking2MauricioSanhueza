@@ -75,7 +75,7 @@ public class CardController {
     }
 
     // Estoy manejando la solicitud PUT para desactivar una tarjeta del cliente autenticado.
-    @PutMapping("/clients/current/cards")
+    @PatchMapping("/clients/current/cards")
     public ResponseEntity<Object> deleteCard(Authentication authentication, @RequestParam Long id) {
         // Obtengo el cliente autenticado.
         Client client = clientService.findClientByEmail(authentication.getName());

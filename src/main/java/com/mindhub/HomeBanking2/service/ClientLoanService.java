@@ -12,6 +12,11 @@ public interface ClientLoanService {
 
     // Guarda la información de un préstamo de un cliente en el sistema.
     void saveClientLoan(ClientLoan clientLoan);
+    ClientLoan findById (Long id);
+
+    Boolean existsById (Long id);
+
+
 }
 
 

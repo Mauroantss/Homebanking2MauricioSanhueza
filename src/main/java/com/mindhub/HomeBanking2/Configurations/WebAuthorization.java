@@ -56,12 +56,11 @@ class WebAuthorization {
                         "/web/pages/transfers.html",
                         "/web/pages/loan-payment.html",
                         "/web/pages/loan-application.html",
-                        "/api/clients/current/**",
-                        "api/loans/payments"
+                        "/api/clients/current/**"
                 ).authenticated()
                 // Restrinjo el acceso a /api/loans solo a usuarios autenticados.
                 .antMatchers(HttpMethod.POST, "/api/clients/current/accounts", "/api/clients/current/cards",
-                        "/api/clients/current/transfers", "/api/loans/**").hasAuthority("CLIENT")
+                        "/api/clients/current/transfers", "/api/loans/**", "api/loans/payments").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.GET, "/api/clients/current", "/api/accounts/{id}",
                         "/api/clients/current/accounts", "/api/loans").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.PUT, "/api/clients/current/cards", "/api/clients/current/accounts")
@@ -76,7 +75,8 @@ class WebAuthorization {
                 .loginPage("/api/login"); // Establezco la ruta para el inicio de sesión.
 
         // Configuro la ruta para cerrar sesión.
-        http.logout().logoutUrl("/api/logout");
+        http.logout().logoutUrl("/api/logout").deleteCookies();
+
 
         // Desactivo la protección CSRF, ya que no utilizo formularios generados desde el servidor.
         http.csrf().disable();
@@ -95,6 +95,8 @@ class WebAuthorization {
 
         // Si el cierre de sesión es exitoso, envío una respuesta de éxito.
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
+        //Genero una instancia nueva
 
         // Construyo y retorno la configuración de seguridad.
         return http.build();

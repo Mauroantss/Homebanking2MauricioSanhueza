@@ -10,6 +10,8 @@ public class ClientLoanDTO {
     private String loanName;  // Nombre del tipo de préstamo.
     private double loanAmount;  // Monto del préstamo asociado al cliente.
     private int loanPayments;  // Número de pagos del préstamo asociado al cliente.
+    private  Double currentAmount;
+    private int currentPayments;
 
     // Constructor vacío por defecto.
     public ClientLoanDTO() {
@@ -22,6 +24,8 @@ public class ClientLoanDTO {
         this.loanName = clientLoan.getLoan().getName();  // Asigno el nombre del tipo de préstamo.
         this.loanAmount = clientLoan.getAmount();  // Asigno el monto del préstamo asociado al cliente.
         this.loanPayments = clientLoan.getPayments();  // Asigno el número de pagos del préstamo asociado al cliente.
+        this.currentAmount = clientLoan.getCurrentAmount();
+        this.currentPayments = clientLoan.getCurrentPayments();
     }
 
     // Métodos getter para acceder a las propiedades del préstamo asociado al cliente.
@@ -44,6 +48,13 @@ public class ClientLoanDTO {
 
     public int getLoanPayments() {
         return loanPayments;
+    }
+    public Double getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public int getCurrentPayments() {
+        return currentPayments;
     }
 }
 

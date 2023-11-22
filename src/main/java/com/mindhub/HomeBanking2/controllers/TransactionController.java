@@ -117,6 +117,6 @@ public class TransactionController {
         accountDebit.setBalance(currentBalanceTransactionDebit);
         accountCredit.setBalance(currentBalanceTransactionCredit);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>("Transaction successfully", HttpStatus.CREATED);
     }
 }

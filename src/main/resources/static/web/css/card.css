@@ -111,3 +111,12 @@
     opacity: 0.6;
     margin-bottom: 10px; /* Se añadió un margen inferior para separar los elementos */
 }
+.containernav {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bank-logo {
+    display: flex;
+    justify-content: space-between;
+}

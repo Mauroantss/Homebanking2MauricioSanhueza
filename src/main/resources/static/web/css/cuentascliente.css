@@ -53,7 +53,7 @@ table.table-striped {
 
 
 .credit-card-style {
-    background: linear-gradient(135deg, #A8DADC, #a5968a, #184a45);
+    background: linear-gradient(135deg, #A8DADC, #3b3937, #01423b);
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
@@ -172,6 +172,7 @@ header h1, header p {
 
 button {
     margin-top: 20px;
+    margin-right: 20px;
     padding: 10px 20px;
     border: none;
     background-color: #333;
@@ -199,6 +200,20 @@ footer {
 footer a {
     color: #FFF;  
 }
+h1,h2,h3{
+    color:white !important;
+    
+}
+p{
+    color:white !important;
+    font-size:medium;
+    text-shadow: 5px 5px 5px #000000;
+}
+h4,h5{
+    color:white !important;
+    font-size:medium;
+    text-shadow: 5px 5px 5px #000000;
+}
 
 .container {
     width: 100%;
@@ -208,10 +223,12 @@ footer a {
     margin-top: 2rem;
 }
 .loginRedirect,
+a,
 #form,
 #social-media a,
 #social-media a i {
     color: white !important;  
+    font-size: large;
 }
 
 #social-media a i {
@@ -249,6 +266,16 @@ footer a {
 .icon-wrap-nav:hover {
     transform: scale(1.2);
 }
+.containernav {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bank-logo {
+    display: flex;
+    justify-content: space-between;
+}
+
 
 
 

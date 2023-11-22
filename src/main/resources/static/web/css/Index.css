@@ -105,6 +105,7 @@ footer a {
     margin-top: 2rem;
 }
 .loginRedirect,
+a, p,
 #form,
 #social-media a,
 #social-media a i {
@@ -194,7 +195,31 @@ footer a {
 .button-group {
     text-align: right;
 }
+.containernav {
+    display: flex;
+    justify-content: space-between;
+}
 
+.bank-logo {
+    display: flex;
+    justify-content: space-between;
+}
 
+#img1{
+    object-fit: cover;
+}
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.895);
+    z-index: -1; 
+}
+h5{
+    color: white !important;
+}
 
-
+  
