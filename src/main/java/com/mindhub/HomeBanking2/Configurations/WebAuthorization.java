@@ -46,7 +46,7 @@ class WebAuthorization {
                 ).hasAuthority("ADMIN")
                 // Rutas de solo lectura para administradores.
                 .antMatchers(HttpMethod.GET, "/api/clients", "/api/loans").hasAuthority("ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/admin/loans").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/loans/create").hasAuthority("ADMIN")
                 // Rutas que requieren autenticación.
                 .antMatchers(
                         "/web/pages/accounts.html",
@@ -56,7 +56,8 @@ class WebAuthorization {
                         "/web/pages/transfers.html",
                         "/web/pages/loan-payment.html",
                         "/web/pages/loan-application.html",
-                        "/api/clients/current/**"
+                        "/api/clients/current/**",
+                        "/web/pages/create-account.html"
                 ).authenticated()
                 // Restrinjo el acceso a /api/loans solo a usuarios autenticados.
                 .antMatchers(HttpMethod.POST, "/api/clients/current/accounts", "/api/clients/current/cards",

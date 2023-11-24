@@ -47,85 +47,38 @@
                     <h1>Make Loan Payment</h1>
                     <div class="custom-form-container text-left">
                         <form @submit.prevent="payLoan">
+                            <!-- Choose Loan -->
+                            <div class="mb-3">
+                                <label for="loanId" class="form-label">Choose Loan</label>
+                                <select v-model="idLoan" class="form-control" id="loanId">
+                                    <option value="0">Select the loan to pay</option>
+                                    <option v-for="loan of loans" :value="loan.id">
+                                        {{loan.loanName}} (Value of your fee: US${{ formatNumber(Math.round(loan.loanAmount / loan.loanPayments)) }})
+
+                                    </option>
+                                </select>
+                            </div>
+        
                             <!-- Choose Account -->
                             <div class="mb-3">
                                 <label for="accountId" class="form-label">Choose Account</label>
-                                <select
-                                    name="accountId"
-                                    class="form-control"
-                                    id="accountId"
-                                    v-model="accountId"
-                                >
-                                    <option value="" disabled>Select Account</option>
+                                <select v-model="idAccount" class="form-control" id="accountId">
+                                    <option value="0">Select your payment account</option>
                                     <option v-for="account of accounts" :value="account.id">
-                                        Account Number #{{ account.number }} - Balance (${{account.balance}})
+                                        {{account.number}} (Balance: US${{ formatNumber(Number(account.balance))}})
                                     </option>
                                 </select>
                             </div>
-            
-                            <!-- Choose Loan -->
-                            <div class="mb-3">
-                                <label for="clientLoan" class="form-label">Choose Loan</label>
-                                <select v-model="clientLoanId" class="form-control" id="clientLoan">
-                                    <option value="" disabled>Select Loan</option>
-                                    <option v-for="loan in client.loans" :value="loan.id">
-                                        {{ loan.loanName }} - Balance (${{loan.loanAmount}})
-                                    </option>
-                                </select>
-                            </div>
-            
+        
                             <!-- Amount to Pay -->
                             <div class="mb-3">
                                 <label for="amount" class="form-label">Amount to pay</label>
-                                <input
-                                    class="form-control"
-                                    type="number"
-                                    id="amount"
-                                    placeholder="Amount"
-                                    min="1"
-                                    name="amount"
-                                    v-model="amount"
-                                    required
-                                />
+                                <input v-model="amount" type="number" class="form-control" id="amount" placeholder="Amount" min="1" required>
                             </div>
-            
-                            <!-- Number of Payments -->
-                            <div class="mb-3">
-                                <label for="payments" class="form-label"># Payments</label>
-                                <input
-                                    class="form-control"
-                                    type="number"
-                                    id="payments"
-                                    placeholder="# Payments"
-                                    min="1"
-                                    name="payments"
-                                    v-model="payments"
-                                    required
-                                />
-                            </div>
-            
-                            <!-- Description -->
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <input
-                                    class="form-control"
-                                    type="text"
-                                    id="description"
-                                    placeholder="Description"
-                                    name="description"
-                                    v-model="description"
-                                    required
-                                />
-                            </div>
-            
+        
                             <!-- Submit Button -->
                             <div class="d-grid gap-2">
-                                <button
-                                    class="btn btn-primary"
-                                    type="submit"
-                                >
-                                    Make Payment
-                                </button>
+                                <button class="btn btn-primary" type="submit">Confirm Pay</button>
                             </div>
                         </form>
                     </div>

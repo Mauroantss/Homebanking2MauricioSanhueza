@@ -395,5 +395,24 @@ h2,h3{
     display: flex;
     justify-content: space-between;
 }
-
+.crosscard{
+    width: 9rem;
+    position: absolute;
+    transform: translate(-71px,-198px);
+    }
+#txt0card{
+    color: white;
+    font-size: 3rem;
+}
+#btncreate{
+    font-size: 2rem;
+}
+.crosscard2{
+    width: 2rem;
+    position: absolute;
+    transform: translate(-40px,-7px);
+}
+#txtcross{
+    color: white    ;
+}
 

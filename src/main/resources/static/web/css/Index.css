@@ -34,7 +34,6 @@ body::before {
 .overlay {
     position: relative;
     height: 100vh;
-    padding: 20px;
     background-color: rgba(128, 128, 128, 0.5); 
     display: flex;
     flex-direction: column;
@@ -50,6 +49,7 @@ nav {
     top: 0;
     left: 0;
     padding: 10px 0; 
+    font-size: 3rem;
 }
 
 nav a {
@@ -105,15 +105,25 @@ footer a {
     margin-top: 2rem;
 }
 .loginRedirect,
-a, p,
-#form,
-#social-media a,
-#social-media a i {
+
+#form
+ {
     color: white !important;  
+    text-shadow: 4px 4px 4px #000000;
+    font-size: 6rem;
+}
+
+a{
+    color: white !important;
+    font-size: 2rem;
+}
+nav.a{
+    font-size: 3rem;
 }
 
 #social-media a i {
     transition: transform 0.3s ease;  
+    color: white !important;
 }
 
 #social-media a:hover i {
@@ -203,6 +213,8 @@ a, p,
 .bank-logo {
     display: flex;
     justify-content: space-between;
+    width: 23rem;
+    height: 24rem;
 }
 
 #img1{
@@ -221,5 +233,68 @@ body::before {
 h5{
     color: white !important;
 }
+.rectangular-container {
+    width: 50%; /* Reduce el ancho a la mitad del contenedor padre */
+    height: 150px; /* Altura reducida */
+    display: flex;
+    align-items: center;
+    margin: 10px auto; /* Centra el contenedor y añade un margen alrededor */
+    padding: 10px;
+    background: none;
+}
+
+.left-aligned-image, .right-aligned-image {
+    width: 30%; /* Reduce el ancho de las imágenes */
+    height: auto; /* Ajusta la altura automáticamente para mantener la proporción */
+}
+
+.text-content {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right-aligned-image {
+    order: 2;
+}
+.left-aligned-image, .right-aligned-image {
+    width: 30%;
+    height: auto;
+    border-radius: 10px; /* Añade bordes redondeados */
+}
+
+.rectangular-container {
+    width: 50%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    margin: 10px auto;
+    padding: 10px;
+    background: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suaviza la transición del efecto hover */
+    border-radius: 10px; /* Opcional: si también quieres bordes redondeados para el contenedor */
+}
+
+.rectangular-container:hover {
+    transform: translateY(-5px); /* Eleva el contenedor */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* Añade sombra para efecto de elevación */
+}
+
+#txtopen{
+    font-size: 1rem;
+}
+#txtopen2{
+    font-size: 1rem;
+}
+#txtwhyus{
+    color: white;
+}
+
+
+
+
+
 
   

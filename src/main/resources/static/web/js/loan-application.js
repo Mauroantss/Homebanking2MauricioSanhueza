@@ -18,6 +18,9 @@ createApp({
     this.getLoans();
   },
   methods: {
+    formatNumber(number) {
+      return Math.round(number).toLocaleString("De-DE");
+    },
     getClient() {
       axios.get('/api/clients/current')
         .then(response => {

@@ -94,7 +94,7 @@ public class Client {
 
     // Método para agregar una cuenta al conjunto de cuentas del cliente.
     public void addAccount(Account account) {
-        account.setClient(this); //porpiedad client que tengo en la cuenta //this hace referencia al cliente, al cliente que esta llamando al metodo
+        account.setClient(this); //propiedad client que tengo en la cuenta //this hace referencia al cliente, al cliente que esta llamando al metodo
         accounts.add(account);
 
     } //es un metodo que no retorna, tiene account por parametro, le estoy asignando un cliente a la cuenta y cliente es quien llama all metodo addaccount,

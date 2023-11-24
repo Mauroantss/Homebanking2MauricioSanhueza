@@ -4,10 +4,11 @@ createApp({
   data() {
     return {
       inputValue: 0,
+      name: '',
+      maxAmount: null,
       payments: [],
-      maxAmount: 0,
-      loanType: "",
-      interestRate: 0,
+      interestPercentage: null
+      
     };
   },
   created() {},
@@ -33,11 +34,14 @@ createApp({
         cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
+          // Construye el objeto de datos para enviar al servidor
+          
+          
+          
+
           axios
-            .post(
-              "/api/admin/loans",
-              `loanType=${this.loanType}&payments=${this.payments}&maxAmount=${this.maxAmount}&interestRate=${this.interestRate}`
-            )
+          .post("/api/loans/create",`name=${this.name}&maxAmount=${this.maxAmount}&payments=${this.payments}&interestPercentage=${this.interestPercentage}`
+          )
             .then(() => {
               Swal.fire({
                 icon: "success",
@@ -47,7 +51,7 @@ createApp({
                 text: "Loan created successfully.",
                 confirmButtonColor: "#003f80",
               }).then(() => {
-                location.pathname = "web/pages/admin-loan.html";
+                location.pathname = "web/pages/manager.html";
               });
             })
             .catch((error) => {
@@ -75,7 +79,7 @@ createApp({
       }
     },
     resetPayments() {
-      this.payments = 0;
+      this.payments = [];
     },
   },
 }).mount("#app");

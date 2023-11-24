@@ -129,7 +129,7 @@ public class LoanController {
     }
 
     // Estoy manejando la solicitud POST para que un administrador cree un nuevo tipo de préstamo.
-    @PostMapping("/admin/loans")
+    @PostMapping("/loans/create")
     public ResponseEntity<Object> createNewLoanType (Authentication authentication,
                                                      @RequestParam String name , @RequestParam Double maxAmount ,
                                                      @RequestParam List<Integer> payments , @RequestParam Double interestPercentage) {

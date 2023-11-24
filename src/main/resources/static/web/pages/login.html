@@ -15,12 +15,17 @@
 
 <body>
 
-<div id="app" >
+
     <div class="overlay">
         <div class="containernav">
-          <img src="../images/logo banking.png" alt="" width="200" height="200" class="bank-logo">
-          <nav class="navbar navbar-expand-lg d-flex justify-content-around align-items-center">
+            <img src="../images/logo banking.png" alt="" width="200" height="200" class="bank-logo">
+            <nav class="navbar navbar-expand-lg d-flex justify-content-around align-items-center">
                 <a href="../index.html" class="navbar-brand">Home</a>
+            
+                    <a href="../pages/login-admin.html" class="navbar-brand">
+                        <span><i class="bi bi-box-arrow-in-right"></i> ADMIN LOG IN</span>
+                    </a>
+                
             </nav>
         </div>
         <div class="container d-flex justify-content-center vh-100 align-items-center flex-wrap">
@@ -38,53 +43,53 @@
                 <a href="https://web.whatsapp.com/" class="mb-2"><span class="icon-wrap"><i
                             class="bi bi-whatsapp"></i></span></a>
             </section>
-            
-        
-    <main>
-        <div>
-            
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div id="form" class="col-lg-8 col-lg-12">
-                        <div class="bg-gradient text-center p-4">
+
+
+            <div id="app">
+                <main>
+                    <div id="form" class="container d-flex justify-content-center align-items-center mt-5">
+                        <div class="text-center">
                             <h1>Log In</h1>
-                            <form>
+                            <form @submit.prevent="login">
                                 <div class="mb-3">
                                     <label for="emailInput" class="form-label">Username</label>
-                                    <input type="email" class="form-control" id="emailInput" placeholder="Email" required>
+                                    <input type="email" class="form-control" id="emailInput" v-model="email"
+                                        placeholder="Email" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="passwordInput" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="passwordInput" required>
+                                    <input type="password" class="form-control" id="passwordInput" v-model="password"
+                                        required>
                                 </div>
-                                <button type="submit" class="btn btn-primary">LOGIN</button>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">LOGIN</button>
+                                </div>
                             </form>
-                            <p class="mt-3">You are not a client? <a href="/web/pages/register.html">Open an account now</a></p>
+
                         </div>
                     </div>
-                </div>
+
+                    <div  class="d-flex justify-content-center">
+                        <p  id="txtopen" class="loginRedirect">You are not a client? <a id="txtopen2" class="loginRedirect"
+                                href="/web/pages/register.html">open
+                                an account now</a></p>
+                    </div>
+
+                </main>
             </div>
-            
-            
-        </div>
-    </main>
-    <div class="position-fixed bottom-0 end-0 pb-3 pe-3">
-        <a href="/web/pages/login-admin.html" class="navbar-brand">
-            <span><i class="bi bi-box-arrow-in-right"></i> ADMIN LOG IN</span>
-        </a>
-    </div>
-    
-        </div>
-</div>
-<footer>
-    <p><i class="bi bi-c-circle"></i> All rights reserved Mindhub-Banking 2023 | Programmed and designed by Mauricio Sanhueza</p>
-  </footer>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
-        <script src="../js/login.js"></script>
+          
+
+
+            <footer>
+                <p><i class="bi bi-c-circle"></i> All rights reserved Mindhub-Banking 2023 | Programmed and designed by
+                    Mauricio Sanhueza</p>
+            </footer>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
+            <script src="../js/login.js"></script>
 </body>
 
 </html>
